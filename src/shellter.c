@@ -1,0 +1,175 @@
+/**
+ * \file shellter.c
+ * \brief Mini Shell.
+ * \author Quentin D. Jordan H.
+ * \version 1.0
+ * \date January 17, 2018 
+ */
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<errno.h>
+
+#include<getopt.h>
+
+#include"../include/shellter.h"
+
+
+#define STDOUT 1
+#define STDERR 2
+
+#define MAX_PATH_LENGTH 4096
+
+
+#define USAGE_SYNTAX "[options] [command_string | file]"
+#define USAGE_PARAMS "OPTIONS:\n\
+  -c, --command : commands are read from the first non-option argument command_string\n\
+***\n\
+  -v, --verbose : enable *verbose* mode\n\
+  -h, --help    : display this help\n\
+"
+
+/**
+ * Procedure which displays binary usage
+ * by printing on stdout all available options
+ *
+ * \return void
+ */
+void printUsage(char* binName) {
+  dprintf(1, "USAGE: %s %s\n\n%s\n", binName, USAGE_SYNTAX, USAGE_PARAMS);
+}
+
+
+/**
+ * Procedure checks if variable must be free
+ * (check: ptr != NULL)
+ *
+ * \param void* toFree pointer to an allocated mem
+ * \see man 3 free
+ * \return void
+ */
+void freeIfNeeded(void* toFree) {
+  if (toFree != NULL) free(toFree);  
+}
+
+
+/**
+ *
+ * \see man 3 strndup
+ * \see man 3 perror
+ * \return
+ */
+char* dupOptargStr() {
+  char* str = NULL;
+
+  if (optarg != NULL) {
+    str = strndup(optarg, MAX_PATH_LENGTH);
+    
+    // Checking if ERRNO is set
+    if (str == NULL) 
+      perror(strerror(errno));
+  }
+
+  return str;
+}
+
+
+/**
+ * Binary options declaration
+ * (must end with {0,0,0,0})
+ *
+ * \see man 3 getopt_long or getopt
+ * \see struct option definition
+ */
+static struct option binaryOpts[] = 
+{
+  { "help",    no_argument,       0, 'h' },
+  { "verbose", no_argument,       0, 'v' },
+  { "command", optional_argument, 0, 'c' },
+  { 0,         0,                 0,  0  }
+};
+
+/**
+ * Binary options string
+ * (linked to optionn declaration)
+ *
+ * \see man 3 getopt_long or getopt
+ */ 
+const char* binaryOptstr = "hvc:";
+
+
+
+/**
+ * Binary main loop
+ *
+ * \return 1 if it exit successfully 
+ */
+int main(int argc, char** argv)
+{
+  /**
+   * Binary variables
+   * (could be defined in a structure)
+   */
+  short int isVerboseMode = 0;
+  char* commandParam = NULL;
+
+  // Parsing options
+  int opt = -1;
+  int optIdx = -1;
+
+  while ((opt = getopt_long(argc, argv, binaryOptstr, binaryOpts, &optIdx)) != -1)
+  {
+    switch (opt)
+    {
+      case 'c':
+        //command param
+        if (optarg)
+        {
+          commandParam = dupOptargStr();         
+        }
+        break;
+      case 'v':
+        //verbose mode
+        isVerboseMode = 1;
+        break;
+      case 'h':
+        printUsage(argv[0]);
+
+        freeIfNeeded(commandParam);
+ 
+        exit(EXIT_SUCCESS);
+      default :
+        break;
+    }
+  } 
+
+  /**
+   * Checking binary requirements
+   * (could defined in a separate function)
+   */
+ /* if ()
+  {
+    dprintf(STDERR, "Bad usage! See HELP [--help|-h]\n");
+
+    freeIfNeeded(commandParam);
+
+    // Exiting with a failure ERROR CODE (== 1)
+    exit(EXIT_FAILURE);
+  }*/
+
+
+  // Printing params
+  dprintf(1, "** PARAMS **\n%-8s: %s\n%-8s: %d\n", 
+          "command", commandParam, 
+          "verbose", isVerboseMode);
+
+  // Business logic must be implemented at this point
+
+  /* LOREM IPSUM DOT SIR AMET */
+
+
+  // Freeing allocated data
+  freeIfNeeded(commandParam);
+
+  return EXIT_SUCCESS;
+}
