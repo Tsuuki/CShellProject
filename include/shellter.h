@@ -80,4 +80,14 @@ void clean(const char*, FILE*);
  * Retrieve user name executing program
  * \return char*
  */ 
-const char* getUserName();
+char* getUserName();
+
+/**
+ * Retrieve user host name
+ * \return char*
+ */
+char* getUserHostName();
+
+char* str_replace();
+
+char* getRootPermission();
