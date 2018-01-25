@@ -4,15 +4,16 @@
 
 #include <stdio.h> // For fprintf, perror
 #include <stdlib.h> // For exit
+#include <string.h>
 #include <errno.h>
 
 #define CHECK(x) \
   do { \
     if (!(x)) { \
-      fprintf(stderr, "\"%s\":%s:%d: ", __FILE__, __func__, __LINE__); \
-	  if(errno==0) errno=ECANCELED; \
-      perror(#x); \
-      exit(EXIT_FAILURE); \
+      fprintf(stderr, "shellter: %s: ", __FUNCTION__); \
+	  if(errno==0) \
+      errno=ECANCELED; \
+    perror(#x); \
     } \
   } while (0)
 

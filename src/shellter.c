@@ -92,6 +92,8 @@ void executeShell() {
 
   while(run) {
     printPrompt();
+    changeDirectory("......./..");
+    printPrompt();
   }
   
   exit(EXIT_SUCCESS);
@@ -107,9 +109,9 @@ void printWelcome() {
 
 void changeDirectory(char* path) {
   if(path == NULL) {
-    chdir(getEnvVar("HOME"));
+    CHECK(chdir(getEnvVar("HOME")) != -1);
   } else {
-    CHECK(chdir(path));
+    CHECK(chdir(path) != -1);
   }
 }
 
