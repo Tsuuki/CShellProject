@@ -12,6 +12,11 @@
 #include<stdbool.h>
 #include<getopt.h>
 
+#include <unistd.h>
+#include <string.h>
+#include <sys/types.h>
+#include <pwd.h>
+
 #include"../include/shellter.h"
 
 #define STDOUT 1
@@ -78,10 +83,56 @@ void executeBatch(char* commandParam) {
 
 void executeShell() {
   while(RUN) {
-
+    printPrompt();
   }
 
   exit(EXIT_SUCCESS);
+}
+
+void printPrompt() {
+  char str[1024] = "";
+
+  char hostname[1024];
+  gethostname(hostname, 1024);
+  
+  printf("%s@%s:%s$ ",getUserName(), hostname, getWorkingDirectory());
+  fgets(str, sizeof(str), stdin);
+  clean(str, stdin);
+  getWorkingDirectory();
+}
+
+// FREE MEMORY ??
+const char *getUserName()
+{
+  uid_t uid = geteuid();
+  struct passwd *pw = getpwuid(uid);
+  if (pw)
+  {
+    return pw->pw_name;
+  }
+
+  return "guest";
+}
+
+// FREE MEMORY ??
+char* getWorkingDirectory() {
+  char *cwd = malloc(1024 * sizeof(char));
+  getcwd(cwd, sizeof(char) * 1024);
+  //printf("Current working dir: %s\n", cwd);
+  return cwd;
+}
+
+void clean(const char *buffer, FILE *fp){
+    
+    char *p = strchr(buffer,'\n');
+
+    if (p != NULL)
+        *p = 0;
+    else {
+        int c;
+        while ((c = fgetc(fp)) != '\n' && c != EOF);
+    }
+
 }
 
 /**
