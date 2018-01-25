@@ -27,9 +27,9 @@ char* dupOptargStr();
 /**
  *  Run the program in batch mode
  * 
- * \param char* commandParam paramters for the command
+ * \param char* commandParam parameter for the command
  */
-void executeBatch(char* commandParam);
+void executeBatch(char*);
 
 /**
  * Run the progam in shell mode
@@ -57,3 +57,27 @@ void echo(char*);
  * Exit the shell by passing run to false
  */
 void exitShell();
+
+/**
+ * Display shell prompt at screen
+ */
+void printPrompt();
+
+/**
+ * Get the current users directory
+ * \return char*
+ */
+char* getWorkingDirectory();
+
+/**
+ * Clean the char* get by fgets
+ * \param const char* buffer to clean
+ * \param FILE stream to get the next buffer
+ */
+void clean(const char*, FILE*);
+
+/**
+ * Retrieve user name executing program
+ * \return char*
+ */ 
+const char* getUserName();
