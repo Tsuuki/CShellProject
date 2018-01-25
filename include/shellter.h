@@ -15,7 +15,6 @@ void printUsage(char*);
  * \return void
  */
 void freeIfNeeded(void*);
-
 /**
  *
  * \see man 3 strndup
@@ -68,26 +67,3 @@ void printPrompt();
  * \return char*
  */
 char* getWorkingDirectory();
-
-/**
- * Clean the char* get by fgets
- * \param const char* buffer to clean
- * \param FILE stream to get the next buffer
- */
-void clean(const char*, FILE*);
-
-/**
- * Retrieve user name executing program
- * \return char*
- */ 
-char* getUserName();
-
-/**
- * Retrieve user host name
- * \return char*
- */
-char* getUserHostName();
-
-char* str_replace();
-
-char* getRootPermission();
