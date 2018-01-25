@@ -5,18 +5,21 @@
  * \version 1.0
  * \date January 17, 2018 
  */
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-#include<errno.h>
-#include<stdbool.h>
-#include<getopt.h>
-#include<unistd.h>
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <stdbool.h>
+#include <getopt.h>
 #include <unistd.h>
 #include <string.h>
 #include <sys/types.h>
 #include <pwd.h>
+
+#include "../include/shellter.h"
+#include "../include/manageEnvVar.h"
+#include "../include/typedef.h"
+#include "../include/check.h"
 
 #define KNRM  "\x1B[0m"
 #define KRED  "\x1B[31m"
@@ -27,10 +30,6 @@
 #define KCYN  "\x1B[36m"
 #define KWHT  "\x1B[37m"
 #define BOLD  "\x1B[1m"
-
-#include"../include/shellter.h"
-#include"../include/manageEnvVar.h"
-#include"../include/check.h"
 
 #define STDOUT 1
 #define STDERR 2
@@ -85,9 +84,7 @@ char* dupOptargStr() {
 
   if (optarg != NULL) {
     str = strndup(optarg, MAX_PATH_LENGTH);
-    // Checking if ERRNO is set
-    if (str == NULL) 
-      perror(strerror(errno));
+    CHECK(str == NULL); 
   }
 
   return str;
@@ -108,18 +105,22 @@ void executeShell() {
 }
 
 void printWelcome() {
-  printf("=======================================\n");
-  printf("=               WELCOME               =\n");
-  printf("=               IN THE                =\n");
-  printf("=              SHELLTER               =\n");
-  printf("=======================================\n");
+  printf("╔═════════════════════════════════════╗\n");
+  printf("║               WELCOME               ║\n");
+  printf("║               IN THE                ║\n");
+  printf("║              SHELLTER               ║\n");
+  printf("╚═════════════════════════════════════╝\n");
+}
+
+void parser(char* command) {
+  
 }
 
 void changeDirectory(char* path) {
   if(path == NULL) {
-    chdir(getEnvVar("HOME"));
+    CHECK(chdir(getEnvVar("HOME")) != -1);
   } else {
-    CHECK(chdir(path));
+    CHECK(chdir(path) != -1);
   }
 }
 
@@ -253,12 +254,9 @@ void clean(const char *buffer, FILE *fp){
  */
 int main(int argc, char** argv)
 {
-  /**
-   * Binary variables
-   * (could be defined in a structure)
-   */
-  short int isVerboseMode = 0;
-  char* commandParam = NULL;
+  Parameters parameters;
+  parameters.verbose = false;
+  parameters.command = NULL;
 
   // Parsing options
   int opt = -1;
@@ -275,24 +273,24 @@ int main(int argc, char** argv)
         if (optarg)
         {
           shellterMode = false; 
-          commandParam = dupOptargStr();      
-          executeBatch(commandParam);   
+          parameters.command = dupOptargStr();      
+          executeBatch(parameters.command);   
         } else {
-          freeIfNeeded(commandParam);
+          freeIfNeeded(parameters.command);
           exit(EXIT_FAILURE);
         }
         break;
       case 'v':
         //verbose mode
-        isVerboseMode = 1;
+        parameters.verbose = true;
         // Printing params
         dprintf(1, "** PARAMS **\n%-8s: %s\n%-8s: %d\n", 
-                "command", commandParam, 
-                "verbose", isVerboseMode);
+                "command", parameters.command, 
+                "verbose", parameters.verbose);
         break;
       case 'h':
         printUsage(argv[0]);
-        freeIfNeeded(commandParam);
+        freeIfNeeded(parameters.command);
         exit(EXIT_SUCCESS);
       default :
         break;
@@ -317,7 +315,6 @@ int main(int argc, char** argv)
   }*/
 
   // Freeing allocated data
-  freeIfNeeded(commandParam);
 
   return EXIT_SUCCESS;
 }
