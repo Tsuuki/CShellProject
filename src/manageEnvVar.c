@@ -8,11 +8,11 @@
  * File containing all the functions on environment variables
  */
 
-#include<unistd.h>
-#include<stdio.h>
+#include <unistd.h>
+#include <stdio.h>
 
-#include"../include/manageEnvVar.h"
-#include"../include/check.h"
+#include "../include/manageEnvVar.h"
+#include "../include/check.h"
 
 extern char** environ;
 
@@ -45,7 +45,7 @@ char* getEnvVar(char* name) {
     } else {
         value = getenv(name);
     }
-    
+
     return value;
 }
 
