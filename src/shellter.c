@@ -11,15 +11,16 @@
 #include<errno.h>
 #include<stdbool.h>
 #include<getopt.h>
+#include<unistd.h>
 
 #include"../include/shellter.h"
+#include"../include/manageEnvVar.h"
+#include"../include/check.h"
 
 #define STDOUT 1
 #define STDERR 2
 
 #define MAX_PATH_LENGTH 4096
-#define RUN true
-
 
 #define USAGE_SYNTAX "[options] [command_string | file]"
 #define USAGE_PARAMS "OPTIONS:\n\
@@ -51,6 +52,11 @@ static struct option binaryOpts[] =
  */ 
 const char* binaryOptstr = "hvc:";
 
+/**
+ * If the shell need to run
+ */ 
+bool run = true;
+
 void printUsage(char* binName) {
   dprintf(1, "USAGE: %s %s\n\n%s\n", binName, USAGE_SYNTAX, USAGE_PARAMS);
 }
@@ -77,11 +83,37 @@ void executeBatch(char* commandParam) {
 }
 
 void executeShell() {
-  while(RUN) {
+  printWelcome();
+
+  while(run) {
 
   }
-
+  
   exit(EXIT_SUCCESS);
+}
+
+void printWelcome() {
+  printf("=======================================\n");
+  printf("=               WELCOME               =\n");
+  printf("=               IN THE                =\n");
+  printf("=              SHELLTER               =\n");
+  printf("=======================================\n");
+}
+
+void changeDirectory(char* path) {
+  if(path == NULL) {
+    chdir(getEnvVar("HOME"));
+  } else {
+    CHECK(chdir(path));
+  }
+}
+
+void echo(char* text) {
+  printf("%s\n", text);
+}
+
+void exitShell() { 
+  run = false;
 }
 
 /**
@@ -115,7 +147,10 @@ int main(int argc, char** argv)
           shellterMode = false; 
           commandParam = dupOptargStr();      
           executeBatch(commandParam);   
-        } 
+        } else {
+          freeIfNeeded(commandParam);
+          exit(EXIT_FAILURE);
+        }
         break;
       case 'v':
         //verbose mode
@@ -127,9 +162,7 @@ int main(int argc, char** argv)
         break;
       case 'h':
         printUsage(argv[0]);
-
         freeIfNeeded(commandParam);
- 
         exit(EXIT_SUCCESS);
       default :
         break;

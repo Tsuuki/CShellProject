@@ -35,3 +35,25 @@ void executeBatch(char* commandParam);
  * Run the progam in shell mode
  */
 void executeShell();
+
+/**
+ * Print a welcome message
+ */
+void printWelcome();
+
+/**
+ * Change directory to the path
+ * \param char* path new path
+ */
+void changeDirectory(char*);
+
+/**
+ * Print the text in the shell
+ * \param char* text text to print
+ */
+void echo(char*);
+
+/**
+ * Exit the shell by passing run to false
+ */
+void exitShell();
