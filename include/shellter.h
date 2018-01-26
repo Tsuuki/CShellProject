@@ -67,3 +67,5 @@ void printPrompt();
  * \return char*
  */
 char* getWorkingDirectory();
+
+void writeToFile();

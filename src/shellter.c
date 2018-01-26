@@ -41,6 +41,10 @@
   -v, --verbose : enable *verbose* mode\n\
   -h, --help    : display this help\n\
 "
+
+FILE *fpHistory = NULL;
+int commandNumber = 0;
+
 /**
  * Binary options declaration
  * (must end with {0,0,0,0})
@@ -142,6 +146,20 @@ void printPrompt() {
 
   fgets(str, sizeof(str), stdin);
   clean(str, stdin);
+  writeToFile(str);
+}
+
+void writeToFile(char* command){ // TODO CHANGER QUAND ON POURRA EXIT et CTRL+C POUR CLOSE LE FICHIER
+  if(fpHistory == NULL) {
+    fpHistory = fopen("/tmp/shelterHistory", "a+");
+  }
+
+  if(fpHistory != NULL) {
+    fprintf(fpHistory, "%d\t%s\n", commandNumber, command);
+    commandNumber++;
+    fclose(fpHistory);
+    fpHistory = NULL;
+  }
 }
 
 // FREE MEMORY ??
