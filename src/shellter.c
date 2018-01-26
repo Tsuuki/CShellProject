@@ -99,15 +99,15 @@ void executeBatch(char* commandParam) {
 }
 
 void executeShell() {
-  char line[BUFFERSIZE];
+  char* line = malloc(BUFFERSIZE * sizeof(char));
   printWelcome();
 
   while(run) {
-    printPrompt();
-    memset(line, '\0', BUFFERSIZE);
-    fgets(line, BUFFERSIZE, stdin);
-   parse(line);
+    prompt(line);
+    parse(line);
   }
+
+  freeIfNeeded(line);
   
   exit(EXIT_SUCCESS);
 }
@@ -136,9 +136,7 @@ void exitShell() {
   run = false;
 }
 
-void printPrompt() {
-  char str [1024];
-
+char* prompt(char* str) {
   printf("%s%s@%s%s:%s%s%s%s%s%s%s ",
     KCYN, getUserName(),
     getUserHostName(), KWHT,
@@ -149,6 +147,8 @@ void printPrompt() {
   fgets(str, sizeof(str), stdin);
   clean(str, stdin);
   writeToFile(str);
+
+  return str;
 }
 
 void writeToFile(char* command){ // TODO CHANGER QUAND ON POURRA EXIT et CTRL+C POUR CLOSE LE FICHIER

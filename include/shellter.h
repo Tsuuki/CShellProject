@@ -59,8 +59,9 @@ void exitShell();
 
 /**
  * Display shell prompt at screen
+ * \return char* command enter by the user
  */
-void printPrompt();
+char* prompt();
 
 /**
  * Get the current users directory
