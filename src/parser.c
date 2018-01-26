@@ -18,7 +18,9 @@
 #define BUFFERSIZE 4096
 
 struct Node* parse(char* commandParam) {
-  int i, j, k = 0;
+  int i = 0;
+  int j = 0;
+  int k = 0;
   char commandParamCopy[BUFFERSIZE] = "";
   char operator[BUFFERSIZE] = "";
   char command[BUFFERSIZE] = "";
@@ -26,23 +28,25 @@ struct Node* parse(char* commandParam) {
   Node* node = NULL;
 
   strcpy(commandParamCopy, commandParam);
+  
   while(commandParamCopy[i] != '\0') {
+    // Search for operators
     if(strchr("|",commandParamCopy[i]) != NULL || strchr("&",commandParamCopy[i]) != NULL || strchr(">",commandParamCopy[i]) != NULL || strchr("<",commandParamCopy[i]) != NULL) {
       while (strchr("|",commandParamCopy[i]) != NULL || strchr("&",commandParamCopy[i])!= NULL || strchr(">",commandParamCopy[i]) != NULL || strchr("<",commandParamCopy[i]) != NULL) {
         operator[k] = commandParamCopy[i];
         i++;
         k++;
       }
+      
       if(rootNode == NULL) {
         rootNode = createNode(operator, command);
-      } else if(rootNode->nextNode == NULL) {
-        node = addNode(rootNode, operator, command);
+        node = rootNode;
       } else {
         node = addNode(node, operator, command);
       }
 
-      strcpy(operator, "");
-      strcpy(command, "");
+      memset(operator, 0, sizeof(operator));
+      memset(command, 0, sizeof(command));
       k = 0;
       j = 0;
     }
@@ -50,26 +54,17 @@ struct Node* parse(char* commandParam) {
     i++;
     j++;
   }
-
-  if(command != NULL) {
-    if(rootNode == NULL) { // A FACTORISER !
+  // When the while is over, we add the last command
+  if(command != NULL){
+    if(rootNode == NULL) {
       rootNode = createNode(operator, command);
-    } else if(rootNode->nextNode == NULL) {
-      node = addNode(rootNode, operator, command);
+      node = rootNode;
     } else {
       node = addNode(node, operator, command);
     }
   }
 
   return rootNode;
-}
-
-void printNodes(struct Node* node) {
-  printf("Nodes :\n");
-  while(node != NULL) {
-    printf("  operator : %s, command : %s\n", node->operator, node->command);
-    node = node->nextNode;
-  }
 }
 
 struct Node* createNode(char* operator, char* command) {
@@ -86,13 +81,21 @@ struct Node* createNode(char* operator, char* command) {
 
 struct Node* addNode(struct Node* node, char* operator, char* command) {
   Node* nextNode;
-
   if(node != NULL) {
     nextNode = createNode(operator, command);
     node->nextNode = nextNode;
+    node = nextNode;
   }
 
-  return nextNode;
+  return node;
+}
+
+void printNodes(struct Node* node) {
+  printf("Nodes :\n");
+  while(node != NULL) {
+    printf("  operator : %s, command : %s\n", node->operator, node->command);
+    node = node->nextNode;
+  }
 }
 
 char* trimWhitepaces(char* str) {

@@ -15,11 +15,8 @@
 
 #include "../include/shellter.h"
 #include "../include/manageEnvVar.h"
-<<<<<<< HEAD
 #include "../include/parser.h"
-=======
 #include "../include/utils.h"
->>>>>>> 0acca56d0c38397d6403ebcf6111887b2a66fcb7
 #include "../include/typedef.h"
 #include "../include/check.h"
 
@@ -105,7 +102,7 @@ void executeShell() {
     printPrompt();
     memset(line, '\0', BUFFERSIZE);
     fgets(line, BUFFERSIZE, stdin);
-    parse(line);
+   parse(line);
   }
   
   exit(EXIT_SUCCESS);
