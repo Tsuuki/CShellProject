@@ -15,6 +15,7 @@
 
 #include "../include/shellter.h"
 #include "../include/manageEnvVar.h"
+#include "../include/parser.h"
 #include "../include/utils.h"
 #include "../include/typedef.h"
 #include "../include/check.h"
@@ -33,6 +34,7 @@
 #define STDERR 2
 
 #define MAX_PATH_LENGTH 4096
+#define BUFFERSIZE 4096
 
 #define USAGE_SYNTAX "[options] [command_string | file]"
 #define USAGE_PARAMS "OPTIONS:\n\
@@ -97,10 +99,14 @@ void executeBatch(char* commandParam) {
 }
 
 void executeShell() {
+  char line[BUFFERSIZE];
   printWelcome();
 
   while(run) {
     printPrompt();
+    memset(line, '\0', BUFFERSIZE);
+    fgets(line, BUFFERSIZE, stdin);
+   parse(line);
   }
   
   exit(EXIT_SUCCESS);
@@ -112,10 +118,6 @@ void printWelcome() {
   printf("║               IN THE                ║\n");
   printf("║              SHELLTER               ║\n");
   printf("╚═════════════════════════════════════╝\n");
-}
-
-void parser(char* command) {
-  
 }
 
 void changeDirectory(char* path) {

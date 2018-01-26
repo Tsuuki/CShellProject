@@ -1,3 +1,12 @@
+/**
+ * \file utils.c
+ * \brief Util file.
+ * \author Quentin D. Jordan H.
+ * \version 1.0
+ * \date January 26, 2018 
+ * 
+ * Contain all the utils functions
+ */
 #include "../include/utils.h"
 #include <sys/types.h>
 #include <pwd.h>
