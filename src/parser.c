@@ -6,6 +6,7 @@
  * \date January 26, 2018 
  * parse the command in char in a tree and return the first node
  */
+
 #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -28,7 +29,7 @@ struct Node* parse(char* commandParam) {
   Node* node = NULL;
 
   strcpy(commandParamCopy, commandParam);
-  
+
   while(commandParamCopy[i] != '\0') {
     // Search for operators
     if(strchr("|",commandParamCopy[i]) != NULL || strchr("&",commandParamCopy[i]) != NULL || strchr(">",commandParamCopy[i]) != NULL || strchr("<",commandParamCopy[i]) != NULL) {
@@ -81,6 +82,7 @@ struct Node* createNode(char* operator, char* command) {
 
 struct Node* addNode(struct Node* node, char* operator, char* command) {
   Node* nextNode;
+
   if(node != NULL) {
     nextNode = createNode(operator, command);
     node->nextNode = nextNode;
