@@ -7,13 +7,15 @@
  * 
  * Contain all the utils functions
  */
-#include "../include/utils.h"
 #include <sys/types.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+
+#include "../include/utils.h"
+#include "../include/manageEnvVar.h"
 
 // FREE MEMORY ??
 char* getRootPermission() {
@@ -42,6 +44,14 @@ char* getUserName() {
   }
 
   return "guest";
+}
+
+// FREE MEMORY ??
+char* getWorkingDirectory() {
+  char* cwd = malloc(1024 * sizeof(char));
+  getcwd(cwd, sizeof(char) * 1024);
+ 
+  return cwd;
 }
 
 // You must free the result if result is non-NULL. CHECK THIS

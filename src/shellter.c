@@ -17,6 +17,7 @@
 #include "../include/shellter.h"
 #include "../include/manageEnvVar.h"
 #include "../include/parser.h"
+#include "../include/executer.h"
 #include "../include/utils.h"
 #include "../include/typedef.h"
 #include "../include/check.h"
@@ -101,14 +102,17 @@ void executeBatch(char* commandParam) {
 
 void executeShell() {
   char* line = malloc(BUFFERSIZE * sizeof(char));
+  Node* rootNode;
   printWelcome();
 
   while(run) {
     prompt(line);
-    parse(line);
+    rootNode = parse(line);
+    execute(rootNode);
   }
 
   freeIfNeeded(line);
+  freeIfNeeded(rootNode);
   
   exit(EXIT_SUCCESS);
 }
@@ -121,31 +125,21 @@ void printWelcome() {
   printf("╚═════════════════════════════════════╝\n");
 }
 
-void changeDirectory(char* path) {
-  if(path == NULL) {
-    CHECK(chdir(getEnvVar("HOME")) != -1);
-  } else {
-    CHECK(chdir(path) != -1);
-  }
-}
-
-void echo(char* text) {
-  printf("%s\n", text);
-}
-
-void exitShell() { 
-  run = false;
-}
-
 char* prompt(char* str) {
+  char* cwd = getWorkingDirectory();
+
+  if(strstr(cwd, getEnvVar("HOME")) != NULL) {
+    cwd = str_replace(cwd, getEnvVar("HOME"), "~");
+  }
+
   printf("%s%s@%s%s:%s%s%s%s%s%s%s ",
     KCYN, getUserName(),
     getUserHostName(), KWHT,
-    KYEL, BOLD, getWorkingDirectory(),
+    KYEL, BOLD, cwd,
     KNRM, KWHT, getRootPermission(),
     KNRM);
 
-  fgets(str, sizeof(str), stdin);
+  fgets(str, BUFFERSIZE * sizeof(char), stdin);
   clean(str, stdin);
   writeToFile(str);
 
@@ -163,18 +157,6 @@ void writeToFile(char* command){ // TODO CHANGER QUAND ON POURRA EXIT et CTRL+C 
     fclose(fpHistory);
     fpHistory = NULL;
   }
-}
-
-// FREE MEMORY ??
-char* getWorkingDirectory() {
-  char *cwd = malloc(1024 * sizeof(char));
-  getcwd(cwd, sizeof(char) * 1024); // WHY ?
-
-  if(strstr(cwd, getEnvVar("HOME")) != NULL) {
-    cwd = str_replace(cwd, getEnvVar("HOME"), "~");
-  }
- 
-  return cwd;
 }
 
 /**

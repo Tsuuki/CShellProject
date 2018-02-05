@@ -9,17 +9,20 @@ struct Node* parse(char*);
  * Create and return a new node from operator and command in parameters 
  * \param char* operator operator to add in the node
  * \param char* command command to add in the node
+ * \param char* arguments arguments to add in the node
  * \return struct Node*  node created
  */
-struct Node* createNode(char*, char*);
+struct Node* createNode(char*, char*, char*);
 
 /**
  * Add a nextNode to a node and return the nextNode
  * \param Node* node node to have a next one
  * \param char* operator operator to add in the next node
+ * \param char* command command to add in the node
+ * \param char* arguments arguments to add in the node
  * \return struct Node* node created
  */
-struct Node* addNode(struct Node*, char*, char*);
+struct Node* addNode(struct Node*, char*, char*, char*);
 
 /**
  * Print all the node tree

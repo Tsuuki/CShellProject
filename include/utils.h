@@ -20,6 +20,12 @@ char* getUserName();
 char* getUserHostName();
 
 /**
+ * Get the current users directory
+ * \return char*
+ */
+char* getWorkingDirectory();
+
+/**
  * Replace substring from another within string
  * \param char* original string
  * \param char* to replace

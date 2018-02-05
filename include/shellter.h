@@ -41,32 +41,9 @@ void executeShell();
 void printWelcome();
 
 /**
- * Change directory to the path
- * \param char* path new path
- */
-void changeDirectory(char*);
-
-/**
- * Print the text in the shell
- * \param char* text text to print
- */
-void echo(char*);
-
-/**
- * Exit the shell by passing run to false
- */
-void exitShell();
-
-/**
  * Display shell prompt at screen
  * \return char* command enter by the user
  */
 char* prompt();
-
-/**
- * Get the current users directory
- * \return char*
- */
-char* getWorkingDirectory();
 
 void writeToFile();
