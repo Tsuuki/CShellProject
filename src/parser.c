@@ -86,9 +86,9 @@ struct Node* parse(char* commandParam) {
 struct Node* createNode(char* operator, char* command, char* arguments) {
   Node* node = malloc(sizeof(node));
   Action* action = malloc(sizeof(Action));
-  node->operator = malloc(BUFFERSIZE*sizeof(char));
-  action->command = malloc(BUFFERSIZE*sizeof(char));
-  action->arguments = malloc(BUFFERSIZE*sizeof(char));
+  node->operator = malloc(BUFFERSIZE * sizeof(char));
+  action->command = malloc(BUFFERSIZE * sizeof(char));
+  action->arguments = malloc(BUFFERSIZE * sizeof(char));
 
   strcpy(node->operator, trimWhitepaces(operator));
   strcpy(action->command, trimWhitepaces(command));

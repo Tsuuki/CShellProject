@@ -9,10 +9,18 @@ void execute(struct Node* rootNode);
 /**
  * Check if there is a  build in command
  * 
- * \param Node* rootNode of the tree
+ * \param Node* node of the tree to check
+ * \return bool true if there was a buildInCommand
+ */
+bool checkBuildInCommand(struct Node* node);
+
+/**
+ * Execute the command in parameter
+ * 
+ * \param struct Node* node containing the command to execute
  * \return void
  */
-void checkBuildInCommand(struct Node* rootNode);
+void executeCommand(struct Node* node);
 
 /**
  * Change directory to the path
@@ -49,3 +57,5 @@ void exitShell();
  * \return str the string without starting and ending double quote
  */
 char* trimDoubleQuote(char* str);
+
+char* fillArray(char* command, char* arguments);
