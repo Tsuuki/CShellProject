@@ -212,21 +212,6 @@ int main(int argc, char** argv)
   if(shellterMode) {
     executeShell();
   }
-  /**
-   * Checking binary requirements
-   * (could defined in a separate function)
-   */
- /* if ()
-  {
-    dprintf(STDERR, "Bad usage! See HELP [--help|-h]\n");
-
-    freeIfNeeded(commandParam);
-
-    // Exiting with a failure ERROR CODE (== 1)
-    exit(EXIT_FAILURE);
-  }*/
-
-  // Freeing allocated data
 
   return EXIT_SUCCESS;
 }

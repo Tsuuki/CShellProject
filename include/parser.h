@@ -1,38 +1,44 @@
 /**
  * Parse the commmand in parameter
- * \param char* command command to parse
- * \return struct node* return the command with the root node
+ * 
+ * \param char* command to parse
+ * \return struct Node* return the command into a struct Node *
  */
-struct Node* parse(char*);
+struct Node* parse(char* command);
 
 /**
- * Create and return a new node from operator and command in parameters 
- * \param char* operator operator to add in the node
- * \param char* command command to add in the node
- * \param char* arguments arguments to add in the node
- * \return struct Node*  node created
+ * Create and return a new struct Node from operator and command in parameters 
+ * 
+ * \param char* operator to add in the node
+ * \param char* command to add in the node
+ * \param char* arguments to add in the node
+ * \return struct Node* newly created
  */
-struct Node* createNode(char*, char*, char*);
+struct Node* createNode(char* operator, char* command, char* arguments);
 
 /**
- * Add a nextNode to a node and return the nextNode
- * \param Node* node node to have a next one
- * \param char* operator operator to add in the next node
- * \param char* command command to add in the node
- * \param char* arguments arguments to add in the node
+ * Add the next node to a node and return the next node
+ * 
+ * \param Node* node to have a next one
+ * \param char* operator to add in the next node
+ * \param char* command to add in the node
+ * \param char* arguments to add in the node
  * \return struct Node* node created
  */
-struct Node* addNode(struct Node*, char*, char*, char*);
+struct Node* addNode(struct Node* rootNode, char* operator, char* command, char* arguments);
 
 /**
  * Print all the node tree
- *\param struct Node* root node to display
+ * 
+ * \param struct Node* root node to display
+ * \return void
  */
 void printNodes(struct Node* node);
 
 /**
  * Trim leading and trailing whitespaces of the char*
- * \param char* str char* that need whitespaces to be removed
+ * 
+ * \param char* str that need whitespaces to be removed
  * \return char* str without leading and trailing whitespaces
  */
-char* trimWhitepaces(char*);
+char* trimWhitepaces(char* str);

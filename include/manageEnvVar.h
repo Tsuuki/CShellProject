@@ -1,24 +1,31 @@
 /**
- * List all the existing environment variables 
+ * Print all the existing environment variables in the shell
+ * 
+ * \return void
  */
-void listEnvVar();
+void printEnvVar();
 
 /**
  * Add a variable to the environment
- * \param char* name name of the new variable
- * \param char* value value of the new variable
+ * 
+ * \param char* name of the new variable
+ * \param char* value of the new variable
+ * \return void
  */
-void addEnvVar(char*, char*);
+void addEnvVar(char* name, char* value);
 
 /**
- * Get an environment variable
- * \param char* name name of the variable to get
- * \return char* value value of the variable
+ * Get the value of environment variable passed in parameter
+ * 
+ * \param char* name of the variable to get
+ * \return char* value of the variable
  */
-char* getEnvVar(char*);
+char* getEnvVar(char* name);
 
 /**
  * Delete the environment variable
- * \param char* name name of the variable to delete
+ * 
+ * \param char* name of the variable to delete
+ * \return void
  */
-void delEnvVar(char*);
+void delEnvVar(char* name);

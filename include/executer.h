@@ -1,34 +1,45 @@
 /**
  * Execute the command in the node tree
+ * 
  * \param Node* rootNode of the tree
+ * \return void
  */
-void execute(struct Node*);
+void execute(struct Node* rootNode);
 
 /**
  * Check if there is a  build in command
+ * 
  * \param Node* rootNode of the tree
+ * \return void
  */
-void checkBuildInCommand(struct Node*);
+void checkBuildInCommand(struct Node* rootNode);
 
 /**
  * Change directory to the path
- * \param char* path new path
+ * 
+ * \param char* new path
+ * \return void
  */
-void changeDirectory(char*);
+void changeDirectory(char* path);
 
 /**
  * Print the current working directory
+ * 
+ * \return void
  */
 void printWorkingDirectory();
 
 /**
- * Print the text in the shell
- * \param char* text text to print
+ * Print the string in the shell
+ * 
+ * \param char* str to print
+ * \return void
  */
-void echo(char*);
+void echo(char* str);
 
 /**
  * Exit the shell by passing run to false
+ * \return void
  */
 void exitShell();
 

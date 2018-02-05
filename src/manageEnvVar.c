@@ -16,7 +16,7 @@
 
 extern char** environ;
 
-void listEnvVar() {
+void printEnvVar() {
   int i = 0;
   
   while(environ[i]) {
