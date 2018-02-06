@@ -47,7 +47,7 @@
 "
 
 FILE *fpHistory = NULL;
-int commandNumber = 0;
+int commandNumber = -1;
 
 /**
  * Binary options declaration
@@ -131,7 +131,7 @@ char* prompt(char* str) {
   if(strstr(cwd, getEnvVar("HOME")) != NULL) {
     cwd = str_replace(cwd, getEnvVar("HOME"), "~");
   }
-
+ 
   printf("%s%s@%s%s:%s%s%s%s%s%s%s ",
     KCYN, getUserName(),
     getUserHostName(), KWHT,
@@ -147,16 +147,55 @@ char* prompt(char* str) {
 }
 
 void writeToFile(char* command){ // TODO CHANGER QUAND ON POURRA EXIT et CTRL+C POUR CLOSE LE FICHIER
-  if(fpHistory == NULL) {
-    fpHistory = fopen("/tmp/shelterHistory", "a+");
+
+  if(commandNumber == -1) {
+    CHECK((fpHistory = fopen("/tmp/shellterHistory", "a+")) != NULL);
+    fseek(fpHistory, 0, SEEK_END);
+
+    if(ftell(fpHistory) > 0)
+        getCmdNum();
+    else
+      commandNumber = 1;
+
+    fclose(fpHistory);
   }
 
-  if(fpHistory != NULL) {
-    fprintf(fpHistory, "%d\t%s\n", commandNumber, command);
-    commandNumber++;
-    fclose(fpHistory);
-    fpHistory = NULL;
+  CHECK((fpHistory = fopen("/tmp/shellterHistory", "a")) != NULL);
+  fprintf(fpHistory, "%d\t%s\n", commandNumber, command);
+  commandNumber++;
+  fclose(fpHistory);
+}
+
+void getCmdNum() {
+
+  int c;
+  int i = -2;
+  fseek(fpHistory, i, SEEK_END);
+  while((c = fgetc(fpHistory)) != '\n') {
+    i--;
+    fseek(fpHistory, i, SEEK_END);
   }
+
+  char* nbStr = malloc(BUFFERSIZE * sizeof(char));
+  memset(nbStr, 0, BUFFERSIZE * sizeof(char));
+  int l = 0;
+  while((c = fgetc(fpHistory)) <= '9' && c >= '0' && c != EOF) {
+    i++;
+    fseek(fpHistory, i, SEEK_SET);
+    nbStr[l] = (char)c;
+    //*nbStr++ = (char)c; DOESN'T WORK
+    l++;
+  }
+
+  nbStr[l] = '\0';
+
+  int number;
+  if (sscanf(nbStr, "%d", &number) == 1) {
+    commandNumber = number + 1;
+    return;
+  }
+
+  commandNumber = 1;
 }
 
 /**

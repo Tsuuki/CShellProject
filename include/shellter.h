@@ -55,3 +55,4 @@ void printWelcome();
 char* prompt();
 
 void writeToFile();
+void getCmdNum();
