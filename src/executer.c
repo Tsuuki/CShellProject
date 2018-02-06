@@ -23,14 +23,11 @@
 
 extern bool run;
 
-void execute(struct Node* rootNode) {
-  Node* node = rootNode;
-  
-  while(node != NULL) {
+void execute(struct Node* node) {
+  if(node != NULL) {
     if(!checkBuildInCommand(node)) {
       executeCommand(node);
     }
-    node = node->next;
   }
 }
 
@@ -73,8 +70,8 @@ void executeCommand(struct Node* node) {
   if (pid == 0) {
     fillActionArray(&action, node->action->command, node->action->arguments);
     execvp(action[0], action);
-    
-    printf("Unknow command\n");
+
+    printf("%s : unknow command\n", node->action->command);
   } else {
     wait(&status);
     free(action);

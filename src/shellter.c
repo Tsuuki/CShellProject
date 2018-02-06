@@ -104,7 +104,7 @@ void executeShell() {
   while(run) {
     prompt(line);
     rootNode = parse(line);
-    execute(rootNode);
+    handle(rootNode);
   }
 
   freeIfNeeded(line);

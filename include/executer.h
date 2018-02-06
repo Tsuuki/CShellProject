@@ -1,10 +1,10 @@
 /**
- * Execute the command in the node tree
+ * Execute the command in the node
  * 
- * \param Node* rootNode of the tree
+ * \param Node* node to be executed
  * \return void
  */
-void execute(struct Node* rootNode);
+void execute(struct Node* node);
 
 /**
  * Check if there is a  build in command
