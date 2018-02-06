@@ -17,20 +17,17 @@
 
 #include "../include/typedef.h"
 #include "../include/utils.h"
-#include "../include/executer.h"
 #include "../include/check.h"
 #include "../include/manageEnvVar.h"
+#include "../include/executer.h"
 
 extern bool run;
 
-void execute(struct Node* rootNode) {
-  Node* node = rootNode;
-  
-  while(node != NULL) {
+void execute(struct Node* node) {
+  if(node != NULL) {
     if(!checkBuildInCommand(node)) {
       executeCommand(node);
     }
-    node = node->next;
   }
 }
 
@@ -46,6 +43,12 @@ bool checkBuildInCommand(struct Node* node) {
   } else if(strcmp(node->action->command, "echo") == 0) {
     echo(node->action->arguments);
     isBuildInCommand = true;
+  } else if(strcmp(node->action->command, "printvar") == 0) {
+    printEnvVar();
+  } else if(strcmp(node->action->command, "addvar") == 0) {
+    addEnvVar(node->action->arguments);
+  } else if(strcmp(node->action->command, "delvar") == 0) {
+    delEnvVar(node->action->arguments);
   } else if(strcmp(node->action->command, "exit") == 0) {
     exitShell();
     isBuildInCommand = true;
@@ -67,6 +70,8 @@ void executeCommand(struct Node* node) {
   if (pid == 0) {
     fillActionArray(&action, node->action->command, node->action->arguments);
     execvp(action[0], action);
+
+    printf("%s : unknow command\n", node->action->command);
   } else {
     wait(&status);
     free(action);

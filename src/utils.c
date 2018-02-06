@@ -14,8 +14,8 @@
 #include <unistd.h>
 #include <string.h>
 
-#include "../include/utils.h"
 #include "../include/manageEnvVar.h"
+#include "../include/utils.h"
 
 // FREE MEMORY ??
 char* getRootPermission() {
@@ -112,4 +112,8 @@ void clean(const char *buffer, FILE *fp){
         while ((c = fgetc(fp)) != '\n' && c != EOF);
     }
 
+}
+
+void freeIfNeeded(void* toFree) {
+  if (toFree != NULL) free(toFree);  
 }

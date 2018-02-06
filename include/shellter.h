@@ -8,15 +8,6 @@
 void printUsage(char* binName);
 
 /**
- * Procedure checks if variable must be free
- * (check: ptr != NULL)
- *
- * \param void* toFree pointer to an allocated mem
- * \see man 3 free
- * \return void
- */
-void freeIfNeeded(void*);
-/**
  *  Return a copy of the string of the command in parameter
  * 
  * \see man 3 strndup

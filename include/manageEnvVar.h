@@ -8,11 +8,10 @@ void printEnvVar();
 /**
  * Add a variable to the environment
  * 
- * \param char* name of the new variable
- * \param char* value of the new variable
+ * \param char* string containing the name and the value of the var
  * \return void
  */
-void addEnvVar(char* name, char* value);
+void addEnvVar(char* str);
 
 /**
  * Get the value of environment variable passed in parameter

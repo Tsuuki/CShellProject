@@ -11,8 +11,9 @@
 #include <unistd.h>
 #include <stdio.h>
 
-#include "../include/manageEnvVar.h"
+#include "../include/utils.h"
 #include "../include/check.h"
+#include "../include/manageEnvVar.h"
 
 extern char** environ;
 
@@ -24,17 +25,22 @@ void printEnvVar() {
   }
 }
 
-void addEnvVar(char* name, char* value) {
-  if(name == NULL || value == NULL) {
+void addEnvVar(char* str) {
+  char* string[2];
+  string[0] = strtok(str, "=");
+  string[1] = strtok(NULL, "=");
+  
+  if(string[0] == NULL || string[1] == NULL) {
     printf("incorrect arguments\n");
   } else {
-    if(getenv(name) != NULL) {
-      printf("%s overwrittened\n", name);
+    if(getenv(string[0]) != NULL) {
+      printf("%s overwrittened\n", string[0]);
     } else {
-      printf("%s created\n", name);
+      printf("%s created\n", string[0]);
     }
     
-    CHECK(setenv(name, value, 1) != -1);
+    CHECK(setenv(string[0], string[1], 1) != -1);
+    freeIfNeeded(string);
   }
 }
 
@@ -54,6 +60,7 @@ void delEnvVar(char* name) {
   if(name == NULL) {
     printf("name is empty\n");
   } else {
-    CHECK(unsetenv("name") != -1);
+    CHECK(unsetenv(name) != -1);
+    printf("%s deleted\n", name);
   }
 }
