@@ -81,10 +81,6 @@ void printUsage(char* binName) {
   dprintf(1, "USAGE: %s %s\n\n%s\n", binName, USAGE_SYNTAX, USAGE_PARAMS);
 }
 
-void freeIfNeeded(void* toFree) {
-  if (toFree != NULL) free(toFree);  
-}
-
 char* dupOptargStr() {
   char* str = NULL;
 

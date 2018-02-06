@@ -17,9 +17,9 @@
 
 #include "../include/typedef.h"
 #include "../include/utils.h"
-#include "../include/executer.h"
 #include "../include/check.h"
 #include "../include/manageEnvVar.h"
+#include "../include/executer.h"
 
 extern bool run;
 
@@ -46,6 +46,12 @@ bool checkBuildInCommand(struct Node* node) {
   } else if(strcmp(node->action->command, "echo") == 0) {
     echo(node->action->arguments);
     isBuildInCommand = true;
+  } else if(strcmp(node->action->command, "printvar") == 0) {
+    printEnvVar();
+  } else if(strcmp(node->action->command, "addvar") == 0) {
+    addEnvVar(node->action->arguments);
+  } else if(strcmp(node->action->command, "delvar") == 0) {
+    delEnvVar(node->action->arguments);
   } else if(strcmp(node->action->command, "exit") == 0) {
     exitShell();
     isBuildInCommand = true;

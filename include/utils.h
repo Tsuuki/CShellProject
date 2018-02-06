@@ -1,11 +1,10 @@
 #include <stdio.h>
 
 /**
- * Clean the char* get by fgets
- * \param const char* buffer to clean
- * \param FILE stream to get the next buffer
- */
-void clean(const char*, FILE*);
+ * Check if the program is execute with root permission
+ * \return char* corresponding to root or not
+ */ 
+char* getRootPermission();
 
 /**
  * Retrieve user name executing program
@@ -35,7 +34,18 @@ char* getWorkingDirectory();
 char* str_replace(char*, char*, char*);
 
 /**
- * Check if the program is execute with root permission
- * \return char* corresponding to root or not
- */ 
-char* getRootPermission();
+ * Clean the char* get by fgets
+ * \param const char* buffer to clean
+ * \param FILE stream to get the next buffer
+ */
+void clean(const char*, FILE*);
+
+/**
+ * Procedure checks if variable must be free
+ * (check: ptr != NULL)
+ *
+ * \param void* toFree pointer to an allocated mem
+ * \see man 3 free
+ * \return void
+ */
+void freeIfNeeded(void*);

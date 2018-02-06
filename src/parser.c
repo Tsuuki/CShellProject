@@ -13,8 +13,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#include "../include/parser.h"
 #include "../include/typedef.h"
+#include "../include/parser.h"
 
 #define BUFFERSIZE 4096
 
