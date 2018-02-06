@@ -57,6 +57,7 @@ bool checkBuildInCommand(struct Node* node) {
 void executeCommand(struct Node* node) {
   pid_t pid;
   int status = 0;
+  char** action  = NULL;
   
   CHECK(node->action != NULL);
   
@@ -64,26 +65,11 @@ void executeCommand(struct Node* node) {
   CHECK(pid != -1);
   
   if (pid == 0) {
-    int i = 0;
-    char*  arguments = strtok (node->action->arguments, " ");
-    char** action  = NULL;
-
-    // realloc for the command
-    action = realloc (action, ++i * sizeof(char*));
-    action[i-1] = node->action->command;
-    // split string and append tokens to action
-    while (arguments) {
-      action = realloc (action, ++i * sizeof(char*));
-      action[i-1] = arguments;
-      arguments = strtok (NULL, " ");
-    }
-    // realloc for the NULL
-    action = realloc (action, (i+1) * sizeof(char*));
-    action[i] = 0;
-
+    fillActionArray(&action, node->action->command, node->action->arguments);
     execvp(action[0], action);
   } else {
     wait(&status);
+    free(action);
   }
 }
 
@@ -106,4 +92,26 @@ void echo(char* str) {
 
 void exitShell() { 
   run = false;
+}
+
+void fillActionArray(char*** action, char* command, char* arguments) {
+  int size = 0;
+  char*  argumentsStr = strtok(arguments, " ");
+  char** tmp = NULL;
+  
+  // realloc for the command
+  tmp = realloc(tmp, size++ * sizeof(char*));
+  tmp[size-1] = command;
+  // split string and append tokens to action
+  while (argumentsStr) {
+    tmp = realloc(tmp, size++ * sizeof(char*));
+    tmp[size-1] = argumentsStr;
+    argumentsStr = strtok(NULL, " ");
+  }
+  // realloc for the NULL
+  tmp = realloc(tmp, size++ * sizeof(char*));
+  tmp[size-1] = 0;
+
+  *action = realloc(*action, size * sizeof(char*));
+  memcpy(*action, tmp, size * sizeof(char*));
 }

@@ -47,15 +47,25 @@ void echo(char* str);
 
 /**
  * Exit the shell by passing run to false
+ * 
  * \return void
  */
 void exitShell();
 
 /**
- * trim the double quote at start and end of a string
+ * Trim the double quote at start and end of a string
+ * 
  * \param str the string
  * \return str the string without starting and ending double quote
  */
 char* trimDoubleQuote(char* str);
 
-char* fillArray(char* command, char* arguments);
+/**
+ * Fill the action array
+ * 
+ * \param char*** action array pointer
+ * \param char* command 
+ * \param char* arguments
+ * \return void
+ */
+void fillActionArray(char*** action, char* command, char* arguments);
