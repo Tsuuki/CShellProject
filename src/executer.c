@@ -73,6 +73,8 @@ void executeCommand(struct Node* node) {
   if (pid == 0) {
     fillActionArray(&action, node->action->command, node->action->arguments);
     execvp(action[0], action);
+    
+    printf("Unknow command\n");
   } else {
     wait(&status);
     free(action);
