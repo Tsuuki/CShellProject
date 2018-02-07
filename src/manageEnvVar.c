@@ -15,7 +15,7 @@
 #include "../include/check.h"
 #include "../include/manageEnvVar.h"
 
-extern char** environ;
+extern char **environ;
 
 void printEnvVar() {
   int i = 0;
@@ -25,8 +25,8 @@ void printEnvVar() {
   }
 }
 
-void addEnvVar(char* str) {
-  char* string[2];
+void addEnvVar(char *str) {
+  char *string[2];
   string[0] = strtok(str, "=");
   string[1] = strtok(NULL, "=");
   
@@ -44,8 +44,8 @@ void addEnvVar(char* str) {
   }
 }
 
-char* getEnvVar(char* name) {
-  char* value = "";
+char *getEnvVar(char *name) {
+  char *value = "";
 
   if(name == NULL) {
     printf("name is empty\n");
@@ -56,7 +56,7 @@ char* getEnvVar(char* name) {
   return value;
 }
 
-void delEnvVar(char* name) {
+void delEnvVar(char *name) {
   if(name == NULL) {
     printf("name is empty\n");
   } else {

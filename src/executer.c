@@ -1,11 +1,11 @@
 /**
- * \file execute.c
- * \brief execute the command in the tree
- * \author Quentin D. Jordan H.
- * \version 1.0
- * \date January 26, 2018 
- * 
- * Execute all the command in the node tree 
+ *\file execute.c
+ *\brief execute the command in the tree
+ *\author Quentin D. Jordan H.
+ *\version 1.0
+ *\date January 26, 2018 
+ *
+ *Execute all the command in the node tree 
  */
 
 #include <unistd.h>
@@ -23,26 +23,25 @@
 
 extern bool run;
 
-void execute(struct Node* node) {
+void execute(struct Node *node) {
   if(node != NULL) {
     if(!checkBuildInCommand(node)) {
-      executeCommand(node);
+      if(!executeCommand(node)) {
+        printf("%s : unknow command\n", node->action->command);
+      }
     }
   }
 }
 
-bool checkBuildInCommand(struct Node* node) {
-  bool isBuildInCommand = false;
+bool checkBuildInCommand(struct Node *node) {
+  bool isBuildInCommand = true;
 
   if(strcmp(node->action->command, "cd") == 0) {
     changeDirectory(node->action->arguments);
-    isBuildInCommand = true;
   } else if(strcmp(node->action->command, "pwd") == 0) {
     printWorkingDirectory();
-    isBuildInCommand = true;
   } else if(strcmp(node->action->command, "echo") == 0) {
     echo(node->action->arguments);
-    isBuildInCommand = true;
   } else if(strcmp(node->action->command, "printvar") == 0) {
     printEnvVar();
   } else if(strcmp(node->action->command, "addvar") == 0) {
@@ -51,16 +50,18 @@ bool checkBuildInCommand(struct Node* node) {
     delEnvVar(node->action->arguments);
   } else if(strcmp(node->action->command, "exit") == 0) {
     exitShell();
-    isBuildInCommand = true;
+  } else {
+    isBuildInCommand = false;
   }
 
   return isBuildInCommand;
 }
 
-void executeCommand(struct Node* node) {
+bool executeCommand(struct Node *node) {
   pid_t pid;
+  bool isExecuted = true;
   int status = 0;
-  char** action  = NULL;
+  char **action  = NULL;
   
   CHECK(node->action != NULL);
   
@@ -71,14 +72,16 @@ void executeCommand(struct Node* node) {
     fillActionArray(&action, node->action->command, node->action->arguments);
     execvp(action[0], action);
 
-    printf("%s : unknow command\n", node->action->command);
+    isExecuted = false;
   } else {
     wait(&status);
     free(action);
   }
+
+  return isExecuted;
 }
 
-void changeDirectory(char* path) {
+void changeDirectory(char *path) {
   if(strcmp(path, "") == 0) {
     CHECK(chdir(getEnvVar("HOME")) != -1);
   } else {
@@ -90,33 +93,44 @@ void printWorkingDirectory(){
   printf("%s\n", getWorkingDirectory());
 }
 
-void echo(char* str) {
-  str = str_replace(str, "\"", "");
-  printf("%s\n", str);
+void echo(char *str) {
+  if(strcmp(str, "") != 0) {
+    if(strchr("$", str[0])) {
+        str++;
+        char *value = getEnvVar(str);
+        if(value != NULL) {
+          printf("%s\n", getEnvVar(str));
+        } else {
+          printf("%s : unkonw environment variable\n", str);
+        }
+    } else {
+      printf("%s\n", str);
+    }
+  }  
 }
 
 void exitShell() { 
   run = false;
 }
 
-void fillActionArray(char*** action, char* command, char* arguments) {
+void fillActionArray(char ***action, char *command, char *arguments) {
   int size = 0;
-  char*  argumentsStr = strtok(arguments, " ");
-  char** tmp = NULL;
+  char * argumentsStr = strtok(arguments, " ");
+  char **tmp = NULL;
   
   // realloc for the command
-  tmp = realloc(tmp, size++ * sizeof(char*));
+  tmp = realloc(tmp, size++  *sizeof(char*));
   tmp[size-1] = command;
   // split string and append tokens to action
   while (argumentsStr) {
-    tmp = realloc(tmp, size++ * sizeof(char*));
+    tmp = realloc(tmp, size++  *sizeof(char*));
     tmp[size-1] = argumentsStr;
     argumentsStr = strtok(NULL, " ");
   }
   // realloc for the NULL
-  tmp = realloc(tmp, size++ * sizeof(char*));
+  tmp = realloc(tmp, size++  *sizeof(char*));
   tmp[size-1] = 0;
 
-  *action = realloc(*action, size * sizeof(char*));
-  memcpy(*action, tmp, size * sizeof(char*));
+  *action = realloc(*action, size  *sizeof(char*));
+  memcpy(*action, tmp, size  *sizeof(char*));
 }

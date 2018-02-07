@@ -8,23 +8,23 @@ void printEnvVar();
 /**
  * Add a variable to the environment
  * 
- * \param char* string containing the name and the value of the var
+ * \param char *string containing the name and the value of the var
  * \return void
  */
-void addEnvVar(char* str);
+void addEnvVar(char *str);
 
 /**
  * Get the value of environment variable passed in parameter
  * 
- * \param char* name of the variable to get
- * \return char* value of the variable
+ * \param char *name of the variable to get
+ * \return char *value of the variable
  */
-char* getEnvVar(char* name);
+char* getEnvVar(char *name);
 
 /**
  * Delete the environment variable
  * 
- * \param char* name of the variable to delete
+ * \param char *name of the variable to delete
  * \return void
  */
-void delEnvVar(char* name);
+void delEnvVar(char *name);

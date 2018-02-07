@@ -18,8 +18,8 @@
 #include "../include/executer.h"
 #include "../include/handler.h"
 
-void handle(struct Node* rootNode) {
-  Node* node = rootNode;
+void handle(struct Node *rootNode) {
+  Node *node = rootNode;
 
   if(rootNode != NULL && !(memcmp(rootNode, node, sizeof(Node)) == 0 && strcmp(node->action->command, "") == 0)){
     while(node != NULL) {
