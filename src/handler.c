@@ -21,14 +21,16 @@
 void handle(struct Node *rootNode) {
   Node *node = rootNode;
 
-  if(rootNode != NULL && !(memcmp(rootNode, node, sizeof(Node)) == 0 && strcmp(node->action->command, "") == 0)){
-    while(node != NULL) {
-      if(node->next == NULL) {
-        execute(node);
-      }
-      
-      node = node->next;
+  if(rootNode == NULL || (memcmp(rootNode, node, sizeof(Node)) == 0 && strcmp(node->action->command, "") == 0)){
+    return;
+  }
+
+  while(node != NULL) {
+    if(node->next == NULL) {
+      execute(node);
     }
+    
+    node = node->next;
   }
   
   freeIfNeeded(rootNode);

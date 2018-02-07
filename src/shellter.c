@@ -86,14 +86,16 @@ char* dupOptargStr() {
 
   if (optarg != NULL) {
     str = strndup(optarg, MAX_PATH_LENGTH);
-    CHECK(str == NULL); 
   }
 
   return str;
 }
 
 void executeBatch(char* commandParam) {
-  
+  Node* rootNode = parse(commandParam);
+  handle(rootNode);
+
+  exit(EXIT_SUCCESS);
 }
 
 void executeShell() {
