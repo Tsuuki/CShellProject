@@ -17,7 +17,7 @@
 #include "../include/shellter.h"
 #include "../include/manageEnvVar.h"
 #include "../include/parser.h"
-#include "../include/executer.h"
+#include "../include/handler.h"
 #include "../include/utils.h"
 #include "../include/typedef.h"
 #include "../include/check.h"
@@ -172,19 +172,20 @@ void getCmdNum() {
     fseek(fpHistory, i, SEEK_END);
   }
 
-  char* nbStr = malloc(BUFFERSIZE * sizeof(char));
+  char *nbStr = malloc(BUFFERSIZE * sizeof(char));
   memset(nbStr, 0, BUFFERSIZE * sizeof(char));
   int l = 0;
   while((c = fgetc(fpHistory)) <= '9' && c >= '0' && c != EOF) {
     i++;
     fseek(fpHistory, i, SEEK_SET);
     nbStr[l] = (char)c;
-    //*nbStr++ = (char)c; DOESN'T WORK
+    //*nbStr++ = (char)c; //DOESN'T WORK
     l++;
   }
 
   nbStr[l] = '\0';
-
+  //*(nbStr) = '\0'; DOESN'T WORK
+  
   int number;
   if (sscanf(nbStr, "%d", &number) == 1) {
     commandNumber = number + 1;
