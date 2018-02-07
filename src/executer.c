@@ -34,7 +34,7 @@ void execute(struct Node *node) {
 }
 
 bool checkBuildInCommand(struct Node *node) {
-  bool isBuildInCommand = true;
+  bool isExecuted = true;
 
   if(strcmp(node->action->command, "cd") == 0) {
     changeDirectory(node->action->arguments);
@@ -48,13 +48,15 @@ bool checkBuildInCommand(struct Node *node) {
     addEnvVar(node->action->arguments);
   } else if(strcmp(node->action->command, "delvar") == 0) {
     delEnvVar(node->action->arguments);
+  } else if(strcmp(node->action->command, "history") == 0) {
+    printHistory();
   } else if(strcmp(node->action->command, "exit") == 0) {
     exitShell();
   } else {
-    isBuildInCommand = false;
+    isExecuted = false;
   }
 
-  return isBuildInCommand;
+  return isExecuted;
 }
 
 bool executeCommand(struct Node *node) {
@@ -113,7 +115,19 @@ void exitShell() {
   run = false;
 }
 
-void fillActionArray(char ***action, char *command, char *arguments) {
+void printHistory() {
+  int c;
+  FILE *file;
+  CHECK((file = fopen("/tmp/shellterHistory", "r")) != NULL);
+  if(file) {
+    while((c = getc(file)) != EOF) {
+      putchar(c);
+    }
+    fclose(file);
+  }
+}
+
+void fillActionArray(char*** action, char* command, char* arguments) {
   int size = 0;
   char * argumentsStr = strtok(arguments, " ");
   char **tmp = NULL;

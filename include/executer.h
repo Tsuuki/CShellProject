@@ -46,9 +46,16 @@ void printWorkingDirectory();
 void echo(char *str);
 
 /**
- *Exit the shell by passing run to false
- *
- *\return void
+ * Print the current history of shell
+ * 
+ * \return void
+ */
+void printHistory();
+
+/**
+ * Exit the shell by passing run to false
+ * 
+ * \return void
  */
 void exitShell();
 
