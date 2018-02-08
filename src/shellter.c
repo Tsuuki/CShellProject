@@ -93,6 +93,7 @@ char* dupOptargStr() {
 
 void executeBatch(char* commandParam) {
   Node* rootNode = parse(commandParam);
+  
   handle(rootNode);
 
   exit(EXIT_SUCCESS);

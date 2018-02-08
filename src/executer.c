@@ -23,14 +23,22 @@
 
 extern bool run;
 
-void execute(struct Node *node) {
+bool execute(struct Node *node) {
+  bool isExecuted = true;
   if(node != NULL) {
     if(!checkBuildInCommand(node)) {
-      if(!executeCommand(node)) {
-        printf("%s : unknow command\n", node->action->command);
+      switch(executeCommand(node)) {
+        case 1 :
+          isExecuted = false;
+          break;
+        case 2 :
+          isExecuted = false;
+          printf("%s : unknow command\n", node->action->command);
+          break;
       }
     }
   }
+  return isExecuted;
 }
 
 bool checkBuildInCommand(struct Node *node) {
@@ -59,9 +67,9 @@ bool checkBuildInCommand(struct Node *node) {
   return isExecuted;
 }
 
-bool executeCommand(struct Node *node) {
+int executeCommand(struct Node *node) {
   pid_t pid;
-  bool isExecuted = true;
+  int code = true;
   int status = 0;
   char **action  = NULL;
   
@@ -72,15 +80,19 @@ bool executeCommand(struct Node *node) {
   
   if (pid == 0) {
     fillActionArray(&action, node->action->command, node->action->arguments);
+
     execvp(action[0], action);
 
-    isExecuted = false;
+    exit(errno);
   } else {
     wait(&status);
+    if(WIFEXITED(status))
+      code = WEXITSTATUS(status);
+      
     free(action);
   }
 
-  return isExecuted;
+  return code;
 }
 
 void changeDirectory(char *path) {

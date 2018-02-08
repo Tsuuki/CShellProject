@@ -4,7 +4,7 @@
  *\param Node *node to be executed
  *\return void
  */
-void execute(struct Node *node);
+bool execute(struct Node *node);
 
 /**
  *Check if there is a  build in command
@@ -18,9 +18,9 @@ bool checkBuildInCommand(struct Node *node);
  *Execute the command in parameter
  *
  *\param struct Node *node containing the command to execute
- *\return bool true if a command has been executed
+ *\return int code 0 : ok 1 : error in function 2 : unknown function
  */
-bool executeCommand(struct Node *node);
+int executeCommand(struct Node *node);
 
 /**
  *Change directory to the path

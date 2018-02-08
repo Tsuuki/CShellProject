@@ -23,7 +23,7 @@ struct Node* parse(char* commandParam) {
   int j = 0;
   int k = 0;
   int l = 0;
-  bool parsingArguments = false;
+  bool isParsingArguments = false;
   char commandParamCopy[BUFFERSIZE] = "";
   char operator[BUFFERSIZE] = "";
   char command[BUFFERSIZE] = "";
@@ -41,6 +41,9 @@ struct Node* parse(char* commandParam) {
         i++;
         j++;
       }
+      while(isspace((unsigned char)commandParamCopy[i]))
+        i++; // Skip whitespace
+      
       
       if(rootNode == NULL) {
         rootNode = createNode(operator, command, arguments);
@@ -51,17 +54,18 @@ struct Node* parse(char* commandParam) {
 
       memset(operator, 0, sizeof(operator));
       memset(command, 0, sizeof(command));
-      memset(command, 0, sizeof(arguments));
+      memset(arguments, 0, sizeof(arguments));
       j = 0;
       k = 0;
       l = 0;
-      parsingArguments = false;
+      isParsingArguments = false;
     }
-    if(isspace((unsigned char)commandParamCopy[i]) && parsingArguments != true) {
-      parsingArguments = true;
-      i++; // Skip the whitespace
+    if(isspace((unsigned char)commandParamCopy[i]) && !isParsingArguments ) {
+      isParsingArguments = true;
+      while(isspace((unsigned char)commandParamCopy[i]))
+        i++; // Skip whitespace
     } 
-    if(!parsingArguments){
+    if(!isParsingArguments){
       command[k] = commandParamCopy[i];
       k++;
     } else {
@@ -74,7 +78,6 @@ struct Node* parse(char* commandParam) {
   if(command != NULL){
     if(rootNode == NULL) {
       rootNode = createNode(operator, command, arguments);
-      node = rootNode;
     } else {
       node = addNode(node, operator, command, arguments);
     }
@@ -102,7 +105,7 @@ struct Node* createNode(char* operator, char* command, char* arguments) {
 
 struct Node* addNode(struct Node* node, char* operator, char* command, char* arguments) {
   Node* next;
-
+  
   if(node != NULL) {
     next = createNode(operator, command, arguments);
     node->next = next;
