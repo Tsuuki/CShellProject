@@ -13,12 +13,12 @@
 #include <stdbool.h>
 
 #include "../include/typedef.h"
-#include "../include/utils.h"
 #include "../include/check.h"
+#include "../include/utils.h"
 #include "../include/executer.h"
 #include "../include/handler.h"
 
-void handle(struct Node *rootNode) {
+void handle(Node *rootNode) {
   Node *node = rootNode;
   bool run = true;
 

@@ -16,14 +16,14 @@
 #include <sys/wait.h>
 
 #include "../include/typedef.h"
-#include "../include/utils.h"
 #include "../include/check.h"
+#include "../include/utils.h"
 #include "../include/manageEnvVar.h"
 #include "../include/executer.h"
 
 extern bool run;
 
-bool execute(struct Node *node) {
+bool execute(Node *node) {
   bool isExecuted = true;
   if(node != NULL) {
     if(!checkBuildInCommand(node)) {
@@ -35,13 +35,17 @@ bool execute(struct Node *node) {
           isExecuted = false;
           printf("%s : unknow command\n", node->action->command);
           break;
+        case 3 :
+          isExecuted = false;
+          printf("wrong command\n");
+          break;
       }
     }
   }
   return isExecuted;
 }
 
-bool checkBuildInCommand(struct Node *node) {
+bool checkBuildInCommand(Node *node) {
   bool isExecuted = true;
 
   if(strcmp(node->action->command, "cd") == 0) {
@@ -67,14 +71,15 @@ bool checkBuildInCommand(struct Node *node) {
   return isExecuted;
 }
 
-int executeCommand(struct Node *node) {
+int executeCommand(Node *node) {
   pid_t pid;
   int code = true;
   int status = 0;
   char **action  = NULL;
-  
-  CHECK(node->action != NULL);
-  
+
+  if(node->action == NULL) 
+    return 3;
+
   pid = fork();
   CHECK(pid != -1);
   
@@ -89,7 +94,7 @@ int executeCommand(struct Node *node) {
     if(WIFEXITED(status))
       code = WEXITSTATUS(status);
       
-    free(action);
+    freeIfNeeded(action);
   }
 
   return code;
@@ -141,22 +146,24 @@ void printHistory() {
 
 void fillActionArray(char*** action, char* command, char* arguments) {
   int size = 0;
-  char * argumentsStr = strtok(arguments, " ");
+  char *argumentsStr = strtok(arguments, " ");
   char **tmp = NULL;
-  
+
   // realloc for the command
-  tmp = realloc(tmp, size++  *sizeof(char*));
+  tmp = realloc(tmp, size++ * sizeof(char *));
   tmp[size-1] = command;
+
   // split string and append tokens to action
   while (argumentsStr) {
-    tmp = realloc(tmp, size++  *sizeof(char*));
+    tmp = realloc(tmp, size++ * sizeof(char *));
     tmp[size-1] = argumentsStr;
     argumentsStr = strtok(NULL, " ");
   }
+
   // realloc for the NULL
-  tmp = realloc(tmp, size++  *sizeof(char*));
+  tmp = realloc(tmp, size++  * sizeof(char *));
   tmp[size-1] = 0;
 
-  *action = realloc(*action, size  *sizeof(char*));
-  memcpy(*action, tmp, size  *sizeof(char*));
+  *action = realloc(*action, size * sizeof(char *));
+  memcpy(*action, tmp, size * sizeof(char*));
 }
