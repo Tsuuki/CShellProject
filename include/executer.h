@@ -76,3 +76,11 @@ char *trimDoubleQuote(char *str);
  *\return void
  */
 void fillActionArray(char ***action, char *command, char *arguments);
+
+/**
+ * Get the size needed for the tmp array
+ * 
+ * \param char *arguments of the action
+ * \return int size
+ */
+int getSize(char *arguments);

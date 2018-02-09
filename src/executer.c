@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 
@@ -146,10 +147,10 @@ void printHistory() {
   }
 }
 
-void fillActionArray(char*** action, char* command, char* arguments) {
+void fillActionArray(char ***action, char *command, char *arguments) {
   int i = 0;
+  char **tmp = malloc(getSize(arguments) * sizeof(char *));
   char *argumentsStr = strtok(arguments, " ");
-  char *tmp[MAX_ARGUMENTS];
 
   // realloc for the command
   tmp[i] = command;
@@ -167,4 +168,17 @@ void fillActionArray(char*** action, char* command, char* arguments) {
 
   *action = realloc(*action, i * sizeof(char *));
   memcpy(*action, tmp, i * sizeof(char*));
+}
+
+int getSize(char *arguments) {
+  int i;
+  int size = 0;
+
+  for(i = 0; arguments[i] != '\0'; i++) {
+    if(isspace(arguments[i])) {
+      size++;
+    }
+  }
+
+  return size + 3;
 }
