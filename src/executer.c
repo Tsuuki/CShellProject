@@ -21,6 +21,8 @@
 #include "../include/manageEnvVar.h"
 #include "../include/executer.h"
 
+#define MAX_ARGUMENTS 20
+
 extern bool run;
 
 bool execute(Node *node) {
@@ -145,25 +147,24 @@ void printHistory() {
 }
 
 void fillActionArray(char*** action, char* command, char* arguments) {
-  int size = 0;
+  int i = 0;
   char *argumentsStr = strtok(arguments, " ");
-  char **tmp = NULL;
+  char *tmp[MAX_ARGUMENTS];
 
   // realloc for the command
-  tmp = realloc(tmp, size++ * sizeof(char *));
-  tmp[size-1] = command;
+  tmp[i] = command;
+  i++;
 
   // split string and append tokens to action
   while (argumentsStr) {
-    tmp = realloc(tmp, size++ * sizeof(char *));
-    tmp[size-1] = argumentsStr;
+    tmp[i] = argumentsStr;
+    i++;
     argumentsStr = strtok(NULL, " ");
   }
-
+  i++;
   // realloc for the NULL
-  tmp = realloc(tmp, size++  * sizeof(char *));
-  tmp[size-1] = 0;
+  tmp[i-1] = 0;
 
-  *action = realloc(*action, size * sizeof(char *));
-  memcpy(*action, tmp, size * sizeof(char*));
+  *action = realloc(*action, i * sizeof(char *));
+  memcpy(*action, tmp, i * sizeof(char*));
 }
