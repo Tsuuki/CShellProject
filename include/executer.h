@@ -4,7 +4,7 @@
  *\param Node *node to be executed
  *\return void
  */
-void execute(struct Node *node);
+bool execute(Node *node);
 
 /**
  *Check if there is a  build in command
@@ -12,15 +12,15 @@ void execute(struct Node *node);
  *\param Node *node of the tree to check
  *\return bool true if there was a buildInCommand
  */
-bool checkBuildInCommand(struct Node *node);
+bool checkBuildInCommand(Node *node);
 
 /**
  *Execute the command in parameter
  *
- *\param struct Node *node containing the command to execute
- *\return bool true if a command has been executed
+ *\param Node *node containing the command to execute
+ *\return int code 0 : ok 1 : error in function 2 : unknown function
  */
-bool executeCommand(struct Node *node);
+int executeCommand(Node *node);
 
 /**
  *Change directory to the path
@@ -76,3 +76,11 @@ char *trimDoubleQuote(char *str);
  *\return void
  */
 void fillActionArray(char ***action, char *command, char *arguments);
+
+/**
+ * Get the size needed for the tmp array
+ * 
+ * \param char *arguments of the action
+ * \return int size
+ */
+int getSize(char *arguments);

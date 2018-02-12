@@ -12,38 +12,53 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 
 #include "../include/typedef.h"
-#include "../include/utils.h"
 #include "../include/check.h"
+#include "../include/utils.h"
 #include "../include/manageEnvVar.h"
 #include "../include/executer.h"
 #include "../include/manageAlias.h"
 #include "../include/parser.h"
 
+#define MAX_ARGUMENTS 20
+
 extern bool run;
 extern struct AliasArray *aliases;
 
-void execute(struct Node *node) {
+bool execute(Node *node) {
+  bool isExecuted = true;
   if(node != NULL) {
     if(!checkBuildInCommand(node)) {
-      if(!executeCommand(node)) {
-        printf("%s : unknow command\n", node->action->command);
+      switch(executeCommand(node)) {
+        case 1 :
+          isExecuted = false;
+          break;
+        case 2 :
+          isExecuted = false;
+          printf("%s : unknow command\n", node->action->command);
+          break;
+        case 3 :
+          isExecuted = false;
+          printf("wrong command\n");
+          break;
       }
     }
   }
+  return isExecuted;
 }
 
-bool checkBuildInCommand(struct Node *node) {
+bool checkBuildInCommand(Node *node) {
   bool isExecuted = true;
 
   int c;
 
   if((c = isAliasExist(node->action->command)) != -1){
     printf("On rentre coucou : %s\n", aliases->aliases[c].command);
-    node = parse((aliases->aliases[c]).command);
+    //node = parse((aliases->aliases[c]).command);
     printf("Commande : %s\n", node->action->command);
   }
 
@@ -72,27 +87,32 @@ bool checkBuildInCommand(struct Node *node) {
   return isExecuted;
 }
 
-bool executeCommand(struct Node *node) {
+int executeCommand(Node *node) {
   pid_t pid;
-  bool isExecuted = true;
+  int code = true;
   int status = 0;
   char **action  = NULL;
-  
-  CHECK(node->action != NULL);
-  
+
+  if(node->action == NULL) 
+    return 3;
+
   pid = fork();
   CHECK(pid != -1);
   if (pid == 0) {
     fillActionArray(&action, node->action->command, node->action->arguments);
+
     execvp(action[0], action);
 
-    isExecuted = false;
+    exit(errno);
   } else {
     wait(&status);
-    free(action);
+    if(WIFEXITED(status))
+      code = WEXITSTATUS(status);
+      
+    freeIfNeeded(action);
   }
 
-  return isExecuted;
+  return code;
 }
 
 void changeDirectory(char *path) {
@@ -139,24 +159,38 @@ void printHistory() {
   }
 }
 
-void fillActionArray(char*** action, char* command, char* arguments) {
-  int size = 0;
-  char * argumentsStr = strtok(arguments, " ");
-  char **tmp = NULL;
-  
+void fillActionArray(char ***action, char *command, char *arguments) {
+  int i = 0;
+  char **tmp = malloc(getSize(arguments) * sizeof(char *));
+  char *argumentsStr = strtok(arguments, " ");
+
   // realloc for the command
-  tmp = realloc(tmp, size++  *sizeof(char*));
-  tmp[size-1] = command;
+  tmp[i] = command;
+  i++;
+
   // split string and append tokens to action
   while (argumentsStr) {
-    tmp = realloc(tmp, size++  *sizeof(char*));
-    tmp[size-1] = argumentsStr;
+    tmp[i] = argumentsStr;
+    i++;
     argumentsStr = strtok(NULL, " ");
   }
+  i++;
   // realloc for the NULL
-  tmp = realloc(tmp, size++  *sizeof(char*));
-  tmp[size-1] = 0;
+  tmp[i-1] = 0;
 
-  *action = realloc(*action, size  *sizeof(char*));
-  memcpy(*action, tmp, size  *sizeof(char*));
+  *action = realloc(*action, i * sizeof(char *));
+  memcpy(*action, tmp, i * sizeof(char*));
+}
+
+int getSize(char *arguments) {
+  int i;
+  int size = 0;
+
+  for(i = 0; arguments[i] != '\0'; i++) {
+    if(isspace(arguments[i])) {
+      size++;
+    }
+  }
+
+  return size + 3;
 }

@@ -14,8 +14,8 @@
 #include <unistd.h>
 #include <string.h>
 
-#include "../include/manageEnvVar.h"
 #include "../include/utils.h"
+#include "../include/manageEnvVar.h"
 
 // FREE MEMORY ??
 char* getRootPermission() {

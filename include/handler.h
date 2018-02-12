@@ -4,4 +4,4 @@
  * \param strcut Node* rootNode of the tree
  * \return void
  */
-void handle(struct Node *rootNode);
+void handle(Node *rootNode);

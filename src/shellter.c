@@ -13,14 +13,17 @@
 #include <getopt.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/types.h>
+#include <wait.h>
+#include <signal.h>
 
-#include "../include/shellter.h"
+#include "../include/typedef.h"
+#include "../include/check.h"
+#include "../include/utils.h"
 #include "../include/manageEnvVar.h"
 #include "../include/parser.h"
 #include "../include/handler.h"
-#include "../include/utils.h"
-#include "../include/typedef.h"
-#include "../include/check.h"
+#include "../include/shellter.h"
 #include "../include/manageAlias.h"
 
 #define KNRM  "\x1B[0m"
@@ -89,25 +92,28 @@ char* dupOptargStr() {
 
   if (optarg != NULL) {
     str = strndup(optarg, MAX_PATH_LENGTH);
-    CHECK(str == NULL); 
   }
 
   return str;
 }
 
 void executeBatch(char* commandParam) {
+  Tree *tree = parse(commandParam);
   
+  handle(tree->rootNode);
+
+  exit(EXIT_SUCCESS);
 }
 
 void executeShell() {
-  char* line = malloc(BUFFERSIZE * sizeof(char));
-  Node* rootNode;
+  char *line = malloc(BUFFERSIZE * sizeof(char));
+  Tree *tree;
   printWelcome();
 
   while(run) {
     prompt(line);
-    rootNode = parse(line);
-    handle(rootNode);
+    tree = parse(line);
+    handle(tree->rootNode);
   }
 
   freeIfNeeded(line);

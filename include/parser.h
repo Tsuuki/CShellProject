@@ -1,44 +1,53 @@
 /**
  * Parse the commmand in parameter
  * 
- * \param char* command to parse
- * \return struct Node* return the command into a struct Node *
+ * \param char* commandParam to parse
+ * \return Tree *tree return the command into a Tree struct
  */
-struct Node* parse(char* command);
+Tree *parse(char *commandParam);
 
 /**
- * Create and return a new struct Node from operator and command in parameters 
+ * Create and return a new Tree fromm rootNode and isBackground
  * 
- * \param char* operator to add in the node
- * \param char* command to add in the node
- * \param char* arguments to add in the node
- * \return struct Node* newly created
+ * \param Node *rootNode
+ * \param bool isBackground
+ * \return Tree *tree
  */
-struct Node* createNode(char* operator, char* command, char* arguments);
+Tree *createTree(Node *rootNode, bool isBackground);
+
+/**
+ * Create and return a new Node from operator and command in parameters 
+ * 
+ * \param char *operator to add in the node
+ * \param char *command to add in the node
+ * \param char *arguments to add in the node
+ * \return Node *newly created
+ */
+Node *createNode(char *operator, char *command, char *arguments);
 
 /**
  * Add the next node to a node and return the next node
  * 
- * \param Node* node to have a next one
- * \param char* operator to add in the next node
- * \param char* command to add in the node
- * \param char* arguments to add in the node
- * \return struct Node* node created
+ * \param Node *node to have a next one
+ * \param char *operator to add in the next node
+ * \param char *command to add in the node
+ * \param char *arguments to add in the node
+ * \return Node *node created
  */
-struct Node* addNode(struct Node* rootNode, char* operator, char* command, char* arguments);
+Node *addNode(Node *node, char *operator, char *command, char *arguments);
 
 /**
  * Print all the node tree
  * 
- * \param struct Node* root node to display
+ * \param Node *root node to display
  * \return void
  */
-void printNodes(struct Node* node);
+void printNodes(Node *node);
 
 /**
  * Trim leading and trailing whitespaces of the char*
  * 
- * \param char* str that need whitespaces to be removed
- * \return char* str without leading and trailing whitespaces
+ * \param char *str that need whitespaces to be removed
+ * \return char *str without leading and trailing whitespaces
  */
-char* trimWhitepaces(char* str);
+char *trimWhitepaces(char *str);
