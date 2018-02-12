@@ -22,3 +22,20 @@ typedef struct Node {
     struct Action* action;
     struct Node* next;
 } Node;
+
+/**
+ * Struct Alias define an alias and its command 
+ */
+typedef struct Alias {
+    char *alias;
+    char *command;
+} Alias;
+
+/**
+ * Struct AliasArray define an array of alias and its command 
+ */
+typedef struct AliasArray {
+    int numAliases;
+    Alias *aliases;
+} AliasArray;
+

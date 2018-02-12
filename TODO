@@ -1,0 +1,10 @@
+1 - REVUE DE CODE
+  - StringComp() chaine vide
+  - *pointer
+  - Erreur avec CHECK / errno voir Andreas
+  - struct typdef
+
+2 - Arrow key history
+3 - Redirection erreur /dev/null
+4 - Commande incomplète prompt
+5 - ASK Andreas - pourquoi je peux pas passer l'array en paramètre alias

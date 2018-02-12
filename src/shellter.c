@@ -21,6 +21,7 @@
 #include "../include/utils.h"
 #include "../include/typedef.h"
 #include "../include/check.h"
+#include "../include/manageAlias.h"
 
 #define KNRM  "\x1B[0m"
 #define KRED  "\x1B[31m"
@@ -76,6 +77,8 @@ const char* binaryOptstr = "hvc:";
  * If the shell need to run
  */ 
 bool run = true;
+
+struct AliasArray *aliases;
 
 void printUsage(char* binName) {
   dprintf(1, "USAGE: %s %s\n\n%s\n", binName, USAGE_SYNTAX, USAGE_PARAMS);
@@ -141,7 +144,7 @@ char* prompt(char* str) {
   return str;
 }
 
-void writeToFile(char* command){ // TODO CHANGER QUAND ON POURRA EXIT et CTRL+C POUR CLOSE LE FICHIER
+void writeToFile(char* command){
 
   if(commandNumber == -1) {
     CHECK((fpHistory = fopen("/tmp/shellterHistory", "a+")) != NULL);
@@ -210,6 +213,8 @@ int main(int argc, char** argv)
   int optIdx = -1;
 
   bool shellterMode = true;
+
+  initAliases();
 
   while ((opt = getopt_long(argc, argv, binaryOptstr, binaryOpts, &optIdx)) != -1)
   {

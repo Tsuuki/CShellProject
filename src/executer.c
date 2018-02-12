@@ -20,8 +20,11 @@
 #include "../include/check.h"
 #include "../include/manageEnvVar.h"
 #include "../include/executer.h"
+#include "../include/manageAlias.h"
+#include "../include/parser.h"
 
 extern bool run;
+extern struct AliasArray *aliases;
 
 void execute(struct Node *node) {
   if(node != NULL) {
@@ -35,6 +38,14 @@ void execute(struct Node *node) {
 
 bool checkBuildInCommand(struct Node *node) {
   bool isExecuted = true;
+
+  int c;
+
+  if((c = isAliasExist(node->action->command)) != -1){
+    printf("On rentre coucou : %s\n", aliases->aliases[c].command);
+    node = parse((aliases->aliases[c]).command);
+    printf("Commande : %s\n", node->action->command);
+  }
 
   if(strcmp(node->action->command, "cd") == 0) {
     changeDirectory(node->action->arguments);
@@ -50,6 +61,8 @@ bool checkBuildInCommand(struct Node *node) {
     delEnvVar(node->action->arguments);
   } else if(strcmp(node->action->command, "history") == 0) {
     printHistory();
+  } else if(strcmp(node->action->command, "alias") == 0) {
+    manageAlias(node);
   } else if(strcmp(node->action->command, "exit") == 0) {
     exitShell();
   } else {
@@ -69,7 +82,6 @@ bool executeCommand(struct Node *node) {
   
   pid = fork();
   CHECK(pid != -1);
-  
   if (pid == 0) {
     fillActionArray(&action, node->action->command, node->action->arguments);
     execvp(action[0], action);
