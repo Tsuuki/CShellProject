@@ -32,7 +32,7 @@ extern struct AliasArray *aliases;
 bool execute(Node *node) {
   bool isExecuted = true;
   if(node != NULL) {
-    if(!checkBuildInCommand(node)) {
+    if(!checkBuildInCommand(&node)) {
       switch(executeCommand(node)) {
         case 1 :
           isExecuted = false;
@@ -51,34 +51,32 @@ bool execute(Node *node) {
   return isExecuted;
 }
 
-bool checkBuildInCommand(Node *node) {
+bool checkBuildInCommand(Node **node) {
   bool isExecuted = true;
 
   int c;
 
-  if((c = isAliasExist(node->action->command)) != -1){
-    printf("On rentre coucou : %s\n", aliases->aliases[c].command);
-    //node = parse((aliases->aliases[c]).command);
-    printf("Commande : %s\n", node->action->command);
+  if((c = isAliasExist(node[0]->action->command)) != -1){
+    node[0] = (parse((aliases->aliases[c]).command))->rootNode;
   }
 
-  if(strcmp(node->action->command, "cd") == 0) {
-    changeDirectory(node->action->arguments);
-  } else if(strcmp(node->action->command, "pwd") == 0) {
+  if(strcmp(node[0]->action->command, "cd") == 0) {
+    changeDirectory(node[0]->action->arguments);
+  } else if(strcmp(node[0]->action->command, "pwd") == 0) {
     printWorkingDirectory();
-  } else if(strcmp(node->action->command, "echo") == 0) {
-    echo(node->action->arguments);
-  } else if(strcmp(node->action->command, "printvar") == 0) {
+  } else if(strcmp(node[0]->action->command, "echo") == 0) {
+    echo(node[0]->action->arguments);
+  } else if(strcmp(node[0]->action->command, "printvar") == 0) {
     printEnvVar();
-  } else if(strcmp(node->action->command, "addvar") == 0) {
-    addEnvVar(node->action->arguments);
-  } else if(strcmp(node->action->command, "delvar") == 0) {
-    delEnvVar(node->action->arguments);
-  } else if(strcmp(node->action->command, "history") == 0) {
+  } else if(strcmp(node[0]->action->command, "addvar") == 0) {
+    addEnvVar(node[0]->action->arguments);
+  } else if(strcmp(node[0]->action->command, "delvar") == 0) {
+    delEnvVar(node[0]->action->arguments);
+  } else if(strcmp(node[0]->action->command, "history") == 0) {
     printHistory();
-  } else if(strcmp(node->action->command, "alias") == 0) {
-    manageAlias(node);
-  } else if(strcmp(node->action->command, "exit") == 0) {
+  } else if(strcmp(node[0]->action->command, "alias") == 0) {
+    manageAlias(node[0]);
+  } else if(strcmp(node[0]->action->command, "exit") == 0) {
     exitShell();
   } else {
     isExecuted = false;

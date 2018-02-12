@@ -12,7 +12,7 @@ bool execute(Node *node);
  *\param Node *node of the tree to check
  *\return bool true if there was a buildInCommand
  */
-bool checkBuildInCommand(Node *node);
+bool checkBuildInCommand(Node **node);
 
 /**
  *Execute the command in parameter
