@@ -13,6 +13,9 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
+#include <regex.h>
+#include <sys/types.h>
+#include <ctype.h>
 
 #include "../include/typedef.h"
 #include "../include/manageAlias.h"
@@ -33,13 +36,34 @@ Alias initAlias() {
   return al;
 }
 
-
+//TODO http://nicolasj.developpez.com/articles/regex/#LIV-B
 void manageAlias(Node *node) {
   //printf("command = %s\nargument = %s\n", node->action->command, node->action->arguments);
   if(strcmp(node->action->arguments, "") == 0)
     printAlias();
   else {
     //TODO DIFFERENCIER ADD AND DELETE
+    const char *delRegex = "^-d [:alnum:]+$";
+    const char *helpRegex = "^(-h$|--help$)";
+    const char *addRegex = "^[:alnum:]+=[:alnum:]+";
+    regex_t preg;
+
+    if(regcomp(&preg, addRegex, REG_NOSUB | REG_EXTENDED) == 0) {
+      int match = 0;
+      size_t nmatch = 0;
+      regmatch_t *pmatch = NULL;
+      printf("Regex ok\n");
+      nmatch = preg.re_nsub;
+      pmatch = malloc(sizeof (*pmatch) * nmatch);
+
+      if(pmatch) {
+        printf("chaine : %s\n", node->action->arguments);
+        match = regexec(&preg, node->action->arguments, nmatch, pmatch, 0);
+        regfree(&preg);
+
+        printf("Match ? %d\n", match);
+      }
+    }
     addAlias(node);
   }
 }
