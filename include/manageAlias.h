@@ -23,6 +23,12 @@ void removeAlias();
 void printAlias();
 
 /**
+ * Printf alias usage
+ * \return void
+ */ 
+void printAliasUsage();
+
+/**
  * Init an empty array of alias
  * \return void
  */

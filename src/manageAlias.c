@@ -46,9 +46,10 @@ void manageAlias(Node *node) {
     const char *delRegex = "^-d [:alnum:]+$";
     const char *helpRegex = "^(-h$|--help$)";
     const char *addRegex = "^[:alnum:]+=[:alnum:]+";
+    const char *searchRegex = "^(-s|--search)\\s[:alnum:]+"; //strstr (contains)
     regex_t preg;
 
-    if(regcomp(&preg, addRegex, REG_NOSUB | REG_EXTENDED) == 0) {
+    if(regcomp(&preg, searchRegex, REG_NOSUB | REG_EXTENDED) == 0) {
       int match = 0;
       size_t nmatch = 0;
       regmatch_t *pmatch = NULL;
@@ -66,6 +67,22 @@ void manageAlias(Node *node) {
     }
     addAlias(node);
   }
+}
+
+void printAliasUsage() {
+  dprintf(1, "%-8s %s\n"
+    "%-8s %s\n"
+    "%-8s %s\n"
+    "CRUD operation on alias.\n\n"
+    "%-20s %s\n"
+    "%-20s %s\n"
+    "%-20s %s\n",
+      "USAGE:", "alias NAME=COMMANDE",
+      "  or:", "alias [OPTION] NAME",
+      "  or:", "alias [OPTION]",
+      "  -d","delete the given alias from aliases",
+      "  -h, --help","display this help and exit",
+      "  -s, --search","search the given alias in aliases");
 }
 
 void addAlias(Node *node) {
