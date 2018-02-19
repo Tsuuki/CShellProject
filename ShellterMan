@@ -1,0 +1,29 @@
+.\" Manpage for Shellter.
+.\" Contact us to correct errors or typos.
+.TH SHELLTER 1 "19 Feb 2018" "1.0" "Shellter man page"
+.SH NAME
+Shellter \- \fBSHELL\fRter command interpreter
+.SH SYNOPSIS
+.B shellter
+[OPTIONS]
+[command string]
+.SH DESCRIPTION
+Shellter is a simplified \fBsh\fR-compatible command language interpreter that executes commands read from standard input.
+.SH OPTIONS
+.TP 8
+.BR -c        
+If the \fB-c\fR option is present, then commands are read from the first non-option  argument  command_string.
+.TP
+.BR -h        
+Display a usage message on standard output and exit successfully.
+.TP
+.BR -v
+Display readline variable names and values in such a way that they can be re-read.
+.SH COPYRIGHT
+Shellter is Copyright (C) 2018 under MIT License
+.SH SEE ALSO
+bash(1)
+.SH BUGS
+No known bugs.
+.SH AUTHOR
+Quentin Dell & Jordan Hiertz

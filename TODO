@@ -8,3 +8,6 @@
 3 - Redirection erreur /dev/null
 4 - Commande incomplète prompt
 5 - ASK Andreas - pourquoi je peux pas passer l'array en paramètre alias
+6 - Faire le verbose mode comme décrit dans le man (ou le bash) (réecriture de la commande) ou bien changerle man
+7 - Man écrire une partie sur les alias
+8 - Man écrire une partie sur les variables d'environnements
