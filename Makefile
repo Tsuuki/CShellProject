@@ -50,6 +50,14 @@ gcov: $(GEXEC)
 package: gcov doc all
 	rm -rf $(AR_NAME)
 	tar cvfz $(AR_NAME) ./*
+
+man:
+	apt-get update
+	apt-get install groff
+	sudo mkdir -p /usr/local/man/man1
+	sudo cp ./ShellterMan /usr/local/man/man1/shellter.1
+	sudo gzip /usr/local/man/man1/shellter.1
+	@echo "You can now use 'man shellter'"
 clean:	
 	rm -rf $(OBJ)
 
