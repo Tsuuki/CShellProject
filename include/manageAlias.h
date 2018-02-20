@@ -8,7 +8,14 @@ void manageAlias(struct Node *node);
  * Add alias to the current shell
  * \return void
  */ 
-void addAlias(Node *node);
+void addAlias(char *alias);
+
+/**
+ * Delete alias to the current shell
+ * \param char* alias name
+ * \return void
+ */
+void delAlias(char *alias);
 
 /**
  * Remove alias to the current shell
@@ -51,3 +58,5 @@ void getAliasInfos(char*, char**, char**);
  * \param char* alias name
  */
 int isAliasExist(char*);
+
+bool checkRegex(const char*, char**, char*);

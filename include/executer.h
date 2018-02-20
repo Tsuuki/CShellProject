@@ -9,7 +9,7 @@ bool execute(Node *node);
 /**
  *Check if there is a  build in command
  *
- *\param Node *node of the tree to check
+ *\param Node **node address of the tree to check
  *\return bool true if there was a buildInCommand
  */
 bool checkBuildInCommand(Node **node);

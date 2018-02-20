@@ -42,30 +42,86 @@ void manageAlias(Node *node) {
   if(strcmp(node->action->arguments, "") == 0)
     printAlias();
   else {
-    //TODO DIFFERENCIER ADD AND DELETE
-    const char *delRegex = "^-d [:alnum:]+$";
-    const char *helpRegex = "^(-h$|--help$)";
-    const char *addRegex = "^[:alnum:]+=[:alnum:]+";
-    const char *searchRegex = "^(-s|--search)\\s[:alnum:]+"; //strstr (contains)
-    regex_t preg;
 
-    if(regcomp(&preg, searchRegex, REG_NOSUB | REG_EXTENDED) == 0) {
-      int match = 0;
-      size_t nmatch = 0;
-      regmatch_t *pmatch = NULL;
-      printf("Regex ok\n");
-      nmatch = preg.re_nsub;
-      pmatch = malloc(sizeof (*pmatch) * nmatch);
+    const char *delRegex = "(^-d [[:alnum:]]+$)";
+    const char *helpRegex = "(^(-h$|--help$))";
+    const char *addRegex = "(^[[:alnum:]]+=.+)";
+    const char *searchRegex = "(^(-s|--search)\\s[:alnum:]+)"; //strstr (contains)
 
-      if(pmatch) {
-        printf("chaine : %s\n", node->action->arguments);
-        match = regexec(&preg, node->action->arguments, nmatch, pmatch, 0);
-        regfree(&preg);
+    char *alias = NULL;
 
-        printf("Match ? %d\n", match);
+    if(checkRegex(addRegex, &alias, node->action->arguments)) {
+      printf("ADD ALIAS : %s\n", alias);
+      addAlias(alias);
+    }
+
+    if(checkRegex(delRegex, &alias, node->action->arguments)) {
+      printf("DEL ALIAS : %s\n", alias);
+      delAlias(alias);
+    }
+
+    if(checkRegex(searchRegex, &alias, node->action->arguments)) {
+      printf("SEARCH ALIAS : %s\n", alias);
+    }
+
+    if(checkRegex(helpRegex, &alias, node->action->arguments)) {
+      printAliasUsage();
+    }
+  }
+}
+
+bool checkRegex(const char* regex, char** alias, char* str) {
+  regex_t preg;
+
+  if(regcomp(&preg, regex, REG_EXTENDED) == 0) {
+    size_t nmatch = 0;
+    regmatch_t *pmatch = NULL;
+    
+    nmatch = preg.re_nsub;
+    pmatch = malloc(sizeof (*pmatch) * nmatch);
+
+    if(pmatch) {
+      if(regexec(&preg, str, nmatch, pmatch, 0) == 0) {
+        ssize_t size = pmatch[0].rm_eo - pmatch[0].rm_so;
+        *alias = malloc(sizeof(*alias) * (size + 1));
+        if(*alias) {
+          strcpy(*alias,*&str);
+          regfree(&preg);
+          return true;
+        }
       }
     }
-    addAlias(node);
+  }
+  return false;
+}
+
+void delAlias(char* alias) {
+  alias += 3;
+  int c = isAliasExist(alias);
+  if(c == -1) {
+    printf("This alias doesn't exist\n");
+    return ;
+  }
+
+  struct AliasArray tmp;
+  tmp.aliases = malloc(sizeof(Alias) *(aliases->numAliases - 1));
+
+  if(tmp.aliases) {
+    int i, j = 0;
+    while(i < aliases->numAliases) {
+      if(i != c) {
+        tmp.aliases[j] = initAlias();
+        tmp.aliases[j].alias = aliases->aliases[i].alias;
+        tmp.aliases[j].command = aliases->aliases[i].command;
+        j++;
+      }
+      i++;
+    }
+
+    free(aliases->aliases);
+    aliases->aliases = tmp.aliases;
+    aliases->numAliases = aliases->numAliases - 1;
+    free(tmp.aliases);
   }
 }
 
@@ -85,12 +141,12 @@ void printAliasUsage() {
       "  -s, --search","search the given alias in aliases");
 }
 
-void addAlias(Node *node) {
+void addAlias(char *alias) {
 
   char *aliasName = malloc(4096 * sizeof(char)); // TODO REAL SIZE
   char *aliasCommande = malloc(4096 * sizeof(char)); // TODO REAL SIZE
 
-  getAliasInfos(node->action->arguments, &aliasName, &aliasCommande);
+  getAliasInfos(alias, &aliasName, &aliasCommande);
 
   if(strcmp(aliasName, "") == 0 || strcmp(aliasCommande, "") == 0)
     return;
@@ -126,6 +182,7 @@ void getAliasInfos(char* alias, char** name, char** commande) {
     i++;
   }
 
+  (*name)[i] = '\0';
   ++alias;
   
   i = 0;
@@ -134,6 +191,7 @@ void getAliasInfos(char* alias, char** name, char** commande) {
     ++alias;
     i++;
   }
+  (*commande)[i] = '\0';
 }
 
 void printAlias() {
