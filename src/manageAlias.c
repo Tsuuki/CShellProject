@@ -5,7 +5,7 @@
  * \version 1.0
  * \date February 07, 2018 
  * 
- * File containing all the functions on environment variables
+ * File containing all the alias functions
  */
 
 #include <unistd.h>
@@ -19,26 +19,23 @@
 
 #include "../include/typedef.h"
 #include "../include/manageAlias.h"
+#include "../include/check.h"
 
 extern struct AliasArray *aliases;
 
 void initAliases() {
   aliases = malloc(sizeof(*aliases));
+
+  if(!aliases) {
+    CHECK(aliases != NULL);
+    exit(EXIT_FAILURE);
+  }
+
   aliases->numAliases = 0;
   aliases->aliases = NULL;
-  //TODO check Aliases
 }
 
-Alias initAlias() {
-  Alias al;
-  al.alias = malloc(4096 * sizeof(char)); //TODO CALCULER LA TAILLE
-  al.command = malloc(4096 * sizeof(char)); //TODO CALCULER LA TAILLE
-  return al;
-}
-
-//TODO http://nicolasj.developpez.com/articles/regex/#LIV-B
 void manageAlias(Node *node) {
-  //printf("command = %s\nargument = %s\n", node->action->command, node->action->arguments);
   if(strcmp(node->action->arguments, "") == 0)
     printAlias();
   else {
@@ -46,20 +43,17 @@ void manageAlias(Node *node) {
     const char *delRegex = "(^-d [[:alnum:]]+$)";
     const char *helpRegex = "(^(-h$|--help$))";
     const char *addRegex = "(^[[:alnum:]]+=.+)";
-    const char *searchRegex = "(^(-s|--search)\\s[[:alnum:]]+)"; //strstr (contains)
+    const char *searchRegex = "(^(-s|--search)\\s[[:alnum:]]+)";
 
     char *alias = NULL;
 
     if(checkRegex(addRegex, &alias, node->action->arguments)) {
-      printf("ADD ALIAS : %s\n", alias);
       addAlias(alias);
     }
     else if(checkRegex(delRegex, &alias, node->action->arguments)) {
-      printf("DEL ALIAS : %s\n", alias);
       delAlias(alias);
     }
     else if(checkRegex(searchRegex, &alias, node->action->arguments)) {
-      printf("SEARCH ALIAS : %s\n", alias);
       searchAlias(alias);
     }
     else if(checkRegex(helpRegex, &alias, node->action->arguments)) {
@@ -99,6 +93,7 @@ bool checkRegex(const char* regex, char** alias, char* str) {
 }
 
 void delAlias(char* alias) {
+  // Remove "-d "
   alias += 3;
   int c = isAliasExist(alias);
   if(c == -1) {
@@ -106,6 +101,7 @@ void delAlias(char* alias) {
     return ;
   }
 
+  // Create temporary array with size - 1
   struct AliasArray tmp;
   tmp.aliases = malloc(sizeof(Alias) *(aliases->numAliases - 1));
 
@@ -113,7 +109,6 @@ void delAlias(char* alias) {
     int i, j = 0;
     while(i < aliases->numAliases) {
       if(i != c) {
-        tmp.aliases[j] = initAlias();
         tmp.aliases[j].alias = aliases->aliases[i].alias;
         tmp.aliases[j].command = aliases->aliases[i].command;
         j++;
@@ -128,11 +123,11 @@ void delAlias(char* alias) {
 }
 
 void searchAlias(char* alias) {
+  //Remove "-s " or "--search "
   while(*alias != ' '){
     alias++;
   }
   alias++;
-  printf("NUM alias : %d\n", aliases->numAliases);
   for(int i = 0; i < aliases->numAliases; i++) {
     if(strstr(aliases->aliases[i].alias, alias) != NULL) {
       printf("alias %s='%s'\n",aliases->aliases[i].alias, aliases->aliases[i].command);
@@ -158,55 +153,69 @@ void printAliasUsage() {
 
 void addAlias(char *alias) {
 
-  char *aliasName = malloc(4096 * sizeof(char)); // TODO REAL SIZE
-  char *aliasCommande = malloc(4096 * sizeof(char)); // TODO REAL SIZE
+  char *aliasName;
+  char *aliasCommand;
 
-  getAliasInfos(alias, &aliasName, &aliasCommande);
+  getAliasInfos(alias, &aliasName, &aliasCommand);
 
-  if(strcmp(aliasName, "") == 0 || strcmp(aliasCommande, "") == 0)
+  if(strcmp(aliasName, "") == 0 || strcmp(aliasCommand, "") == 0)
     return;
 
   int c = isAliasExist(aliasName);
 
   if(c == -1) {
-    //TODO WHITESPACE
-    aliases->aliases = realloc(aliases->aliases, sizeof(Alias) *(aliases->numAliases +1)); //TODO CHECK
-    aliases->aliases[aliases->numAliases] = initAlias();
-    aliases->aliases[aliases->numAliases].alias = aliasName;
-    aliases->aliases[aliases->numAliases].command = aliasCommande;
-    aliases->numAliases++;
-  }
-  else {
-    aliases->aliases[c].command = aliasCommande;
-  }
+    aliases->aliases = realloc(aliases->aliases, sizeof(Alias) *(aliases->numAliases +1));
 
-  
-}
-
-void getAliasInfos(char* alias, char** name, char** commande) {
-
-  int i = 0;
-  while(*alias != '='){
-    if(*alias == 0) {
-      (*name) = "";
+    if(!aliases->aliases) {
+      CHECK(aliases->aliases != NULL);
       return;
     }
 
-    (*name)[i] = *alias;
+    aliases->aliases[aliases->numAliases].alias = aliasName;
+    aliases->aliases[aliases->numAliases].command = aliasCommand;
+    aliases->numAliases++;
+  }
+  else {
+    aliases->aliases[c].command = aliasCommand;
+  }
+}
+
+void getAliasInfos(char* alias, char** aliasName, char** aliasCommand) {
+
+  // First, calculate size of alias to allocate memory
+  int i = 0;
+  while(alias[i] != '='){
+    i++;
+  }
+
+  // Allocate name + '\0'
+  *aliasName = malloc(sizeof(char) * (i + 1));
+  // Allocate command + '\0' - name - '='
+  *aliasCommand = malloc(sizeof(char) * (strlen(alias) - i));
+
+  // Then copy name and command
+  i = 0;
+  while(*alias != '='){
+    if(*alias == 0) {
+      (*aliasName) = "";
+      return;
+    }
+
+    (*aliasName)[i] = *alias;
     ++alias;
     i++;
   }
 
-  (*name)[i] = '\0';
+  (*aliasName)[i] = '\0';
   ++alias;
   
   i = 0;
   while(*alias != 0) {
-    (*commande)[i] = *alias;
+    (*aliasCommand)[i] = *alias;
     ++alias;
     i++;
   }
-  (*commande)[i] = '\0';
+  (*aliasCommand)[i] = '\0';
 }
 
 void printAlias() {
@@ -226,6 +235,5 @@ int isAliasExist(char* name) {
       return i;
     }
   }
-
   return -1;
 }
