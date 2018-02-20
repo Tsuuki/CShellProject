@@ -46,7 +46,7 @@ void manageAlias(Node *node) {
     const char *delRegex = "(^-d [[:alnum:]]+$)";
     const char *helpRegex = "(^(-h$|--help$))";
     const char *addRegex = "(^[[:alnum:]]+=.+)";
-    const char *searchRegex = "(^(-s|--search)\\s[:alnum:]+)"; //strstr (contains)
+    const char *searchRegex = "(^(-s|--search)\\s[[:alnum:]]+)"; //strstr (contains)
 
     char *alias = NULL;
 
@@ -54,18 +54,21 @@ void manageAlias(Node *node) {
       printf("ADD ALIAS : %s\n", alias);
       addAlias(alias);
     }
-
-    if(checkRegex(delRegex, &alias, node->action->arguments)) {
+    else if(checkRegex(delRegex, &alias, node->action->arguments)) {
       printf("DEL ALIAS : %s\n", alias);
       delAlias(alias);
     }
-
-    if(checkRegex(searchRegex, &alias, node->action->arguments)) {
+    else if(checkRegex(searchRegex, &alias, node->action->arguments)) {
       printf("SEARCH ALIAS : %s\n", alias);
+      searchAlias(alias);
     }
-
-    if(checkRegex(helpRegex, &alias, node->action->arguments)) {
+    else if(checkRegex(helpRegex, &alias, node->action->arguments)) {
       printAliasUsage();
+    }
+    else {
+      dprintf(1, "%-8s %s\n%-8s",
+          "alias : invalid option:", node->action->arguments,
+          "enter \"alias --help\" for more information.\n");
     }
   }
 }
@@ -121,7 +124,19 @@ void delAlias(char* alias) {
     free(aliases->aliases);
     aliases->aliases = tmp.aliases;
     aliases->numAliases = aliases->numAliases - 1;
-    free(tmp.aliases);
+  }
+}
+
+void searchAlias(char* alias) {
+  while(*alias != ' '){
+    alias++;
+  }
+  alias++;
+  printf("NUM alias : %d\n", aliases->numAliases);
+  for(int i = 0; i < aliases->numAliases; i++) {
+    if(strstr(aliases->aliases[i].alias, alias) != NULL) {
+      printf("alias %s='%s'\n",aliases->aliases[i].alias, aliases->aliases[i].command);
+    }
   }
 }
 
