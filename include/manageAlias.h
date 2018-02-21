@@ -1,14 +1,30 @@
 /**
  * Call the right function for add print or remove aliases
+ * \param Node* node containing command and arguments
  * \return void
  */ 
 void manageAlias(struct Node *node);
 
 /**
  * Add alias to the current shell
+ * \param char* containing alias name and command
  * \return void
  */ 
-void addAlias(Node *node);
+void addAlias(char *alias);
+
+/**
+ * Delete alias to the current shell
+ * \param char* alias name
+ * \return void
+ */
+void delAlias(char *alias);
+
+/**
+ * Search alias from the current shell
+ * \param char* alias name
+ * \return void
+ */
+void searchAlias(char *alias);
 
 /**
  * Remove alias to the current shell
@@ -35,19 +51,25 @@ void printAliasUsage();
 void initAliases();
 
 /**
- * Init an empty alias
+ * Retrieve alias name and command from a string
+ * \param char* alias with name and command
+ * \param char** address to string which will contain alias name
+ * \param char** address to string which will contain alias command
  * \return void
- */
-Alias initAlias();
-
-/**
- * Retrieve alias name from command
- * \return Alias name
  */
 void getAliasInfos(char*, char**, char**);
 
 /**
  * Check if an alias already exist
  * \param char* alias name
+ * \return the index of alias or -1 if it not exist
  */
 int isAliasExist(char*);
+
+/**
+ * Check if a string match a specify regex
+ * \param const char* regex
+ * \param char** address to string which will contain the match
+ * \param char* the given string
+ */
+bool checkRegex(const char*, char**, char*);
