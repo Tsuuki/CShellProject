@@ -29,31 +29,24 @@
 extern bool run;
 extern struct AliasArray *aliases;
 
-bool execute(Node *node) {
+bool execute(Node *node, bool isPiped) {
   bool isExecuted = true;
+
   if(node != NULL) {
     if(!checkBuildInCommand(&node)) {
-      switch(executeCommand(node)) {
-        case 1 :
-          isExecuted = false;
-          break;
-        case 2 :
-          isExecuted = false;
-          printf("%s : unknow command\n", node->action->command);
-          break;
-        case 3 :
-          isExecuted = false;
-          printf("wrong command\n");
-          break;
+      if(isPiped) {
+        checkResult(node, executeCommandPiped(node));
+      } else {
+        checkResult(node, executeCommand(node));
       }
     }
   }
+
   return isExecuted;
 }
 
 bool checkBuildInCommand(Node **node) {
   bool isExecuted = true;
-
   int c;
 
   if((c = isAliasExist(node[0]->action->command)) != -1){
@@ -85,6 +78,37 @@ bool checkBuildInCommand(Node **node) {
   return isExecuted;
 }
 
+bool checkResult(Node *node, int code) {
+  bool isExecuted = true;
+
+  switch(code) {
+    case 1 :
+      isExecuted = false;
+      break;
+    case 2 :
+      isExecuted = false;
+      printf("%s : unknow command\n", node->action->command);
+      break;
+    case 3 :
+      isExecuted = false;
+      printf("wrong command\n");
+      break;
+  }
+
+  return isExecuted;
+}
+
+int executeCommandPiped(Node *node) {
+  char **action  = NULL;
+
+  if(node->action == NULL) 
+    return 3;
+
+  fillActionArray(&action, node->action->command, node->action->arguments);
+  execvp(action[0], action);
+  exit(errno);
+}
+
 int executeCommand(Node *node) {
   pid_t pid;
   int code = true;
@@ -98,7 +122,6 @@ int executeCommand(Node *node) {
   CHECK(pid != -1);
   if (pid == 0) {
     fillActionArray(&action, node->action->command, node->action->arguments);
-
     execvp(action[0], action);
 
     exit(errno);
