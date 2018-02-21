@@ -18,4 +18,12 @@ void handle(Node *rootNode);
  */
 void handlePipe(Node *nodeInput, Node *nodeOutput);
 
+/**
+ * Handle command using < and <<
+ * 
+ * \param Node *node command
+ * \param char *file path to create file
+ * \param char *mode to open file
+ */
+void handleRightRedirection(Node *node, char *file, char *mode);
 #endif /** __HANDLER_H__ **/

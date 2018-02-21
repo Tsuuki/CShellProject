@@ -90,6 +90,7 @@ Tree *parse(char *commandParam) {
     }
   }
 
+  //printNodes(rootNode);
   return createTree(rootNode, isBackgrounded);
 }
 

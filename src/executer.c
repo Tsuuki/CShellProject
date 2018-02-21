@@ -29,13 +29,13 @@
 extern bool run;
 extern struct AliasArray *aliases;
 
-bool execute(Node *node, bool isPiped) {
+bool execute(Node *node, bool isThreaded) {
   bool isExecuted = true;
 
   if(node != NULL) {
     if(!checkBuildInCommand(&node)) {
-      if(isPiped) {
-        checkResult(node, executeCommandPiped(node));
+      if(isThreaded) {
+        checkResult(node, executeCommandForked(node));
       } else {
         checkResult(node, executeCommand(node));
       }
@@ -98,7 +98,7 @@ bool checkResult(Node *node, int code) {
   return isExecuted;
 }
 
-int executeCommandPiped(Node *node) {
+int executeCommand(Node *node) {
   char **action  = NULL;
 
   if(node->action == NULL) 
@@ -109,7 +109,7 @@ int executeCommandPiped(Node *node) {
   exit(errno);
 }
 
-int executeCommand(Node *node) {
+int executeCommandForked(Node *node) {
   pid_t pid;
   int code = true;
   int status = 0;

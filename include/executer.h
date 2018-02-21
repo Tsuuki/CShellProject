@@ -28,20 +28,20 @@ bool checkBuildInCommand(Node **node);
 bool checkResult(Node *node, int code);
 
 /**
- * Execute the command without fork : use when piping
+ * Execute the command without fork
  * 
  * \param Node *node containing the command to execute
  * \return int code 0 : ok 1 : error in function 2 : unknown function
  */
-int executeCommandPiped(Node *node);
+int executeCommand(Node *node);
 
 /**
- * Execute the command in parameter
+ * Execute the command in parameter with fork
  *
  * \param Node *node containing the command to execute
  * \return int code 0 : ok 1 : error in function 2 : unknown function
  */
-int executeCommand(Node *node);
+int executeCommandForked(Node *node);
 
 /**
  * Change directory to the path

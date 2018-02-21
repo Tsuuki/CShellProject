@@ -32,18 +32,22 @@ void handle(Node *rootNode) {
   }
   
   if(node->next == NULL) {
-      execute(node, false);
+      execute(node, true);
   } else {
     while(node != NULL && run) {
       if(strcmp("&&", node->operator) == 0) {
-        run = execute(node, false);
+        run = execute(node, true);
       } else if (strcmp("||", node->operator) == 0) {
-        run = !execute(node, false);
+        run = !execute(node, true);
       } else if (strcmp("|", node->operator) == 0) {
         handlePipe(node, node->next);
         node = node->next; // Skip a node
+      } else if (strcmp(">", node->operator) == 0) {
+        handleRightRedirection(node, node->next->action->command, "w");
+      } else if (strcmp(">>", node->operator) == 0) {
+        handleRightRedirection(node, node->next->action->command, "a+");
       } else {
-        execute(node, false);
+        execute(node, true);
       }
 
       node = node->next;
@@ -51,6 +55,32 @@ void handle(Node *rootNode) {
   }
   
   freeIfNeeded(rootNode);
+}
+
+void handleRightRedirection(Node *node, char *file, char *mode) {
+
+    pid_t pidNode;
+
+    int status = 0;
+
+    FILE *fp = NULL;
+
+    if(strlen(file) > 0) {
+
+      if((pidNode = fork()) == 0) {
+        CHECK((fp = fopen(file, mode)) != NULL);
+        dup2(fileno(fp), 1);
+        close(fileno(fp));
+
+        execute(node, false);
+        fclose(fp);
+      } else if(pidNode == -1) {
+        perror("Input fork failed\n");
+        exit(EXIT_FAILURE);
+      }
+
+      waitpid(pidNode, &status, 0);
+    }
 }
 
 void handlePipe(Node *nodeInput, Node *nodeOutput) {
@@ -68,7 +98,7 @@ void handlePipe(Node *nodeInput, Node *nodeOutput) {
       dup2(fileDescriptor[1], 2);
       close(fileDescriptor[1]);
 
-      execute(nodeInput, true);
+      execute(nodeInput, false);
     } else if(pidInput == -1) {
       perror("Input fork failed\n");
       exit(EXIT_FAILURE);
@@ -79,7 +109,7 @@ void handlePipe(Node *nodeInput, Node *nodeOutput) {
       dup2(fileDescriptor[0], 0);
       close(fileDescriptor[0]);
 
-      execute(nodeOutput, true);
+      execute(nodeOutput, false);
     } else if(pidOutput == -1) {
       perror("Output fork failed\n");
       exit(EXIT_FAILURE);
