@@ -1,3 +1,6 @@
+#ifndef __EXECUTER_H__
+#define __EXECUTER_H__
+
 /**
  *Execute the command in the node
  *
@@ -84,3 +87,5 @@ void fillActionArray(char ***action, char *command, char *arguments);
  * \return int size
  */
 int getSize(char *arguments);
+
+#endif /* __EXECUTER_H__ */

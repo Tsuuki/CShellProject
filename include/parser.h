@@ -1,3 +1,6 @@
+#ifndef __PARSER_H__
+#define __PARSER_H__
+
 /**
  * Parse the commmand in parameter
  * 
@@ -51,3 +54,5 @@ void printNodes(Node *node);
  * \return char *str without leading and trailing whitespaces
  */
 char *trimWhitepaces(char *str);
+
+#endif /** __PARSER_H__ **/

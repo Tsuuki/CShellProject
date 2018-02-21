@@ -1,4 +1,5 @@
-#include <stdio.h>
+#ifndef __UTILS_H__
+#define __UTILS_H__
 
 /**
  * Check if the program is execute with root permission
@@ -49,3 +50,5 @@ void clean(const char*, FILE*);
  * \return void
  */
 void freeIfNeeded(void*);
+
+#endif /** __UTILS_H__ **/

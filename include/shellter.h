@@ -1,3 +1,6 @@
+#ifndef __SHELTER_H__
+#define __SHELTER_H__
+
 /**
  * Procedure which displays binary usage
  * by printing on stdout all available options
@@ -47,3 +50,5 @@ char* prompt();
 
 void writeToFile();
 void getCmdNum();
+
+#endif /** __SHELTER_H__ **/

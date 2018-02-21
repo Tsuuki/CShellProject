@@ -1,3 +1,6 @@
+#ifndef __MANAGEENVVAR_H__
+#define __MANAGEENVVAR_H__
+
 /**
  * Print all the existing environment variables in the shell
  * 
@@ -28,3 +31,5 @@ char* getEnvVar(char *name);
  * \return void
  */
 void delEnvVar(char *name);
+
+#endif /** __MANAGEENVVAR_H__**/

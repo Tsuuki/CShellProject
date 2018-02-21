@@ -3,6 +3,7 @@
   - *pointer
   - Erreur avec CHECK / errno voir Andreas
   - struct typdef
+  - nom des variables
 
 2 - Arrow key history
 3 - Redirection erreur /dev/null

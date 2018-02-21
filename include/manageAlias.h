@@ -1,3 +1,6 @@
+#ifndef __MANAGEALIAS_H__
+#define __MANAGEALIAS_H__
+
 /**
  * Call the right function for add print or remove aliases
  * \param Node* node containing command and arguments
@@ -73,3 +76,5 @@ int isAliasExist(char*);
  * \param char* the given string
  */
 bool checkRegex(const char*, char**, char*);
+
+#endif /** __MANAGEALIAS_H__ **/

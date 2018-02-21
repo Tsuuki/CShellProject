@@ -1,3 +1,6 @@
+#ifndef __TYPEDEF_H__
+#define __TYPEDEF_H__
+
 /**
  * Struct Parameters composed by all the parameters of the program
  */
@@ -47,3 +50,4 @@ typedef struct AliasArray {
     Alias *aliases;
 } AliasArray;
 
+#endif /** __TYPEDEF_H__ **/
