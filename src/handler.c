@@ -57,6 +57,7 @@ void handlePipe(Node *nodeInput, Node *nodeOutput) {
   pid_t pidInput, pidOutput; 
 
   int fileDescriptor[2]; 
+  int status = 0;
 
   if(nodeOutput != NULL) {
     CHECK(pipe(fileDescriptor) == 0);
@@ -86,7 +87,7 @@ void handlePipe(Node *nodeInput, Node *nodeOutput) {
 
     close(fileDescriptor[1]);      
     close(fileDescriptor[0]);
-    wait(0);
-    wait(0);
+    waitpid(pidInput, &status, 0);
+    waitpid(pidOutput, &status, 0);
   }
 }
