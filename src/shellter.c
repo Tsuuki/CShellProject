@@ -108,6 +108,7 @@ void executeBatch(char* commandParam) {
 void executeShell() {
   char *line = malloc(BUFFERSIZE * sizeof(char));
   Tree *tree;
+
   printWelcome();
 
   while(run) {

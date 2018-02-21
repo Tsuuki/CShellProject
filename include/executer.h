@@ -1,47 +1,65 @@
 /**
- *Execute the command in the node
+ * Execute the command in the node
  *
- *\param Node *node to be executed
- *\return void
+ * \param Node *node to be executed
+ * \param bool true if it's called from a pipe
+ * \return bool true if there was a command executed
  */
-bool execute(Node *node);
+bool execute(Node *node, bool isPiped);
 
 /**
- *Check if there is a  build in command
+ * Check if there is a  build in command
  *
- *\param Node *node of the tree to check
- *\return bool true if there was a buildInCommand
+ * \param Node *node of the tree to check
+ * \return bool true if there was a buildInCommand
  */
 bool checkBuildInCommand(Node **node);
 
 /**
- *Execute the command in parameter
+ * Check if the command has been executed with the code in parameter
+ * 
+ * \param Node *node to print errors
+ * \param int code
+ * \return bool true if there was a command executed 
+ */
+bool checkResult(Node *node, int code);
+
+/**
+ * Execute the command without fork : use when piping
+ * 
+ * \param Node *node containing the command to execute
+ * \return int code 0 : ok 1 : error in function 2 : unknown function
+ */
+int executeCommandPiped(Node *node);
+
+/**
+ * Execute the command in parameter
  *
- *\param Node *node containing the command to execute
- *\return int code 0 : ok 1 : error in function 2 : unknown function
+ * \param Node *node containing the command to execute
+ * \return int code 0 : ok 1 : error in function 2 : unknown function
  */
 int executeCommand(Node *node);
 
 /**
- *Change directory to the path
+ * Change directory to the path
  *
- *\param char *new path
- *\return void
+ * \param char *new path
+ * \return void
  */
 void changeDirectory(char *path);
 
 /**
- *Print the current working directory
+ * Print the current working directory
  *
- *\return void
+ * \return void
  */
 void printWorkingDirectory();
 
 /**
- *Print the string in the shell
+ * Print the string in the shell
  *
- *\param char *str to print
- *\return void
+ * \param char *str to print
+ * \return void
  */
 void echo(char *str);
 
@@ -60,20 +78,20 @@ void printHistory();
 void exitShell();
 
 /**
- *Trim the double quote at start and end of a string
+ * Trim the double quote at start and end of a string
  *
- *\param str the string
- *\return str the string without starting and ending double quote
+ * \param str the string
+ * \return str the string without starting and ending double quote
  */
 char *trimDoubleQuote(char *str);
 
 /**
- *Fill the action array
+ * Fill the action array
  *
- *\param char** *action array pointer
- *\param char *command 
- *\param char *arguments
- *\return void
+ * \param char** *action array pointer
+ * \param char *command 
+ * \param char *arguments
+ * \return void
  */
 void fillActionArray(char ***action, char *command, char *arguments);
 
