@@ -95,8 +95,6 @@ void handlePipe(Node *nodeInput, Node *nodeOutput) {
     if((pidInput = fork()) == 0) {
       close(fileDescriptor[0]);
       dup2(fileDescriptor[1], 1);
-      dup2(fileDescriptor[1], 2);
-      close(fileDescriptor[1]);
 
       execute(nodeInput, false);
     } else if(pidInput == -1) {
@@ -107,7 +105,6 @@ void handlePipe(Node *nodeInput, Node *nodeOutput) {
     if((pidOutput = fork()) == 0) {
       close(fileDescriptor[1]);
       dup2(fileDescriptor[0], 0);
-      close(fileDescriptor[0]);
 
       execute(nodeOutput, false);
     } else if(pidOutput == -1) {

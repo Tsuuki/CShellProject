@@ -48,7 +48,6 @@ Tree *parse(char *commandParam) {
         while(isspace((unsigned char)commandParamCopy[i]))
           i++; // Skip whitespace
         
-        
         if(rootNode == NULL) {
           rootNode = createNode(operator, command, arguments);
           node = rootNode;
@@ -59,18 +58,19 @@ Tree *parse(char *commandParam) {
         memset(operator, 0, sizeof(operator));
         memset(command, 0, sizeof(command));
         memset(arguments, 0, sizeof(arguments));
+        
         j = 0;
         k = 0;
         l = 0;
+
         isParsingArguments = false;
       }
     }
     if(!isBackgrounded) {
       if(isspace((unsigned char)commandParamCopy[i]) && !isParsingArguments ) {
         isParsingArguments = true;
-        while(isspace((unsigned char)commandParamCopy[i]))
-          i++; // Skip whitespace
       } 
+
       if(!isParsingArguments){
         command[k] = commandParamCopy[i];
         k++;
