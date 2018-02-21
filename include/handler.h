@@ -9,17 +9,6 @@
  */
 void handle(Node *rootNode);
 
-int handlePipe(Node *node);
-
-/**
- * Handle command using a pipe
- * 
- * \param Node *nodeInput node in input of the pipe
- * \param Node *nodeOutput node in output of the pipe
- * \return void
- */
-void handlePipeArray(Node *nodeArray[], int inputFileDescripor, int position);
-
 /**
  * Handle command using < and <<
  * 
@@ -27,7 +16,33 @@ void handlePipeArray(Node *nodeArray[], int inputFileDescripor, int position);
  * \param char *file path to create file
  * \param char *mode to open file
  */
-void handleRightRedirection(Node *node, char *file, char *mode);
+void handleRightRedirection(Node *node, char *file, char *mode, int descripteur);
 
+
+/**
+ * Handle command using a pipe
+ * 
+ * \param Node *nodeInput node in input of the pipe
+ * \return int number of pipe handled
+ */
+int handlePipe(Node *node);
+
+/**
+ * Handle the pipe array recursively
+ * 
+ * \param Node *nodeArray[] array with all the nodes to be piped together
+ * \param in inputFileDescriptor file descriptor
+ * \param position position in the array
+ * \return void
+ */
+void handlePipeArray(Node *nodeArray[], int inputFileDescriptor, int position);
+
+/**
+ * Calculate the number of pipe to handle
+ * 
+ * \param node with a pipe sign
+ * \return int number of pipe to handle
+ */
 int getPipeNumber(Node *node);
+
 #endif /** __HANDLER_H__ **/

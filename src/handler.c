@@ -48,9 +48,11 @@ void handle(Node *rootNode) {
         }
         exit(EXIT_SUCCESS);
       } else if (strcmp(">", node->operator) == 0) {
-        handleRightRedirection(node, node->next->action->command, "w");
+        handleRightRedirection(node, node->next->action->command, "w", 1);
       } else if (strcmp(">>", node->operator) == 0) {
-        handleRightRedirection(node, node->next->action->command, "a+");
+        handleRightRedirection(node, node->next->action->command, "a+", 1);
+      } else if (strcmp("<", node->operator) == 0) {
+        handleRightRedirection(node, node->next->action->command, "r", 0);
       } else {
         execute(node, true);
       }
@@ -61,15 +63,16 @@ void handle(Node *rootNode) {
   freeIfNeeded(rootNode);
 }
 
-void handleRightRedirection(Node *node, char *file, char *mode) {
+void handleRightRedirection(Node *node, char *file, char *mode, int descripteur) {
   pid_t pidNode;
   int status = 0;
   FILE *fp = NULL;
 
   if(strlen(file) > 0) {
+
     if((pidNode = fork()) == 0) {
       CHECK((fp = fopen(file, mode)) != NULL);
-      dup2(fileno(fp), 1);
+      dup2(fileno(fp), descripteur);
       close(fileno(fp));
 
       execute(node, false);
@@ -78,6 +81,7 @@ void handleRightRedirection(Node *node, char *file, char *mode) {
       perror("Input fork failed\n");
       exit(EXIT_FAILURE);
     }
+
     waitpid(pidNode, &status, 0);
   }
 }
