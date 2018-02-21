@@ -33,7 +33,10 @@ bool execute(Node *node, bool isThreaded) {
   bool isExecuted = true;
 
   if(node != NULL) {
-    if(!checkBuildInCommand(&node)) {
+    if(checkBuildInCommand(&node)) {
+      if(!isThreaded)
+        exit(EXIT_SUCCESS);
+    } else {
       if(isThreaded) {
         checkResult(node, executeCommandForked(node));
       } else {
