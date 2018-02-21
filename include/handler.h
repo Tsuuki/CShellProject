@@ -25,5 +25,5 @@ void handlePipe(Node *nodeInput, Node *nodeOutput);
  * \param char *file path to create file
  * \param char *mode to open file
  */
-void handleRightRedirection(Node *node, char *file, char *mode);
+void handleRightRedirection(Node *node, char *file, char *mode, int descripteur);
 #endif /** __HANDLER_H__ **/
