@@ -29,20 +29,16 @@
 extern bool run;
 extern struct AliasArray *aliases;
 
-bool execute(Node *node, bool isThreaded) {
-  bool isExecuted = true;
-
+void execute(Node *node, bool isForked) {
   if(node != NULL) {
     if(!checkBuildInCommand(&node)) {
-      if(isThreaded) {
+      if(isForked) {
         checkResult(node, executeCommandForked(node));
       } else {
         checkResult(node, executeCommand(node));
       }
     }
   }
-
-  return isExecuted;
 }
 
 bool checkBuildInCommand(Node **node) {

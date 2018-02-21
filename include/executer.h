@@ -5,10 +5,9 @@
  * Execute the command in the node
  *
  * \param Node *node to be executed
- * \param bool true if it's called from a pipe
- * \return bool true if there was a command executed
+ * \param bool true if it nedd to be fork
  */
-bool execute(Node *node, bool isPiped);
+void execute(Node *node, bool isForked);
 
 /**
  * Check if there is a  build in command

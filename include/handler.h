@@ -9,6 +9,8 @@
  */
 void handle(Node *rootNode);
 
+int handlePipe(Node *node);
+
 /**
  * Handle command using a pipe
  * 
@@ -16,7 +18,7 @@ void handle(Node *rootNode);
  * \param Node *nodeOutput node in output of the pipe
  * \return void
  */
-void handlePipe(Node *nodeInput, Node *nodeOutput);
+void handlePipeArray(Node *nodeArray[], int inputFileDescripor, int position);
 
 /**
  * Handle command using < and <<
@@ -26,4 +28,6 @@ void handlePipe(Node *nodeInput, Node *nodeOutput);
  * \param char *mode to open file
  */
 void handleRightRedirection(Node *node, char *file, char *mode);
+
+int getPipeNumber(Node *node);
 #endif /** __HANDLER_H__ **/
