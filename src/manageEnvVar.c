@@ -34,7 +34,7 @@ void addEnvVar(char *str) {
     printf("incorrect arguments\n");
   } else {
     if(getenv(string[0]) != NULL) {
-      printf("%s overwrittened\n", string[0]);
+      printf("%s overwritted\n", string[0]);
     } else {
       printf("%s created\n", string[0]);
     }
@@ -49,9 +49,7 @@ char *getEnvVar(char *name) {
   if(name == NULL) {
     printf("name is empty\n");
   } else {
-    if((value = getenv(name)) == NULL) {
-      printf("%s : unknow environment variable\n", name);
-    }
+    value = getenv(name);
   }
 
   return value;
@@ -64,6 +62,9 @@ void delEnvVar(char *name) {
     if(getEnvVar(name)) {
       CHECK(unsetenv(name) != -1);
       printf("%s deleted\n", name);
-    } 
+    }
+    else {
+       printf("%s : unknow environment variable\n", name);
+    }
   }
 }

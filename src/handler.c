@@ -32,7 +32,7 @@ void handle(Node *rootNode) {
   if(rootNode == NULL || (memcmp(rootNode, node, sizeof(Node)) == 0 && strcmp("", node->action->command) == 0)){
     return;
   }
-  
+
   if(node->next == NULL) {
       execute(node, true);
   } else {
@@ -48,11 +48,15 @@ void handle(Node *rootNode) {
           number--;
         }
       } else if (strcmp(">", node->operator) == 0) {
-        handleRightRedirection(node, node->next->action->command, "w", 1);
+        handleRedirection(node, node->next->action->command, "w", 1);
       } else if (strcmp(">>", node->operator) == 0) {
-        handleRightRedirection(node, node->next->action->command, "a+", 1);
+        handleRedirection(node, node->next->action->command, "a+", 1);
       } else if (strcmp("<", node->operator) == 0) {
-        handleRightRedirection(node, node->next->action->command, "r", 0);
+        handleRedirection(node, node->next->action->command, "r", 0);
+        node = node->next;
+      } else if (strcmp("<<", node->operator) == 0) {
+        handleProgressivReading(node, node->next->action->command);
+        node = node->next;
       } else {
         execute(node, true);
       }
@@ -63,7 +67,46 @@ void handle(Node *rootNode) {
   freeIfNeeded(rootNode);
 }
 
-void handleRightRedirection(Node *node, char *file, char *mode, int descripteur) {
+void handleProgressivReading(Node *node, char *endWord) {
+  if(strlen(endWord) > 0) {
+
+    pid_t pidNode;
+    int status = 0;
+    FILE *fp;
+    char *str = malloc(sizeof(char) * 4096);
+
+    if((pidNode = fork()) == 0) {
+
+      CHECK((fp = tmpfile()) != NULL);
+
+      while(strcmp(str,endWord) != 0) {
+        printf("> ");
+        fgets(str, 4096 * sizeof(char), stdin);
+        str[strlen(str)-1] = '\0';
+        
+        if(strcmp(str,endWord) != 0) {
+          fprintf(fp, "%s\n", str);
+        }
+      }
+
+      fseek(fp, 0, SEEK_SET);
+      dup2(fileno(fp), 0);
+      close(fileno(fp));
+      execute(node, false);
+      fclose(fp);
+    } else if(pidNode == -1) {
+      perror("Input fork failed\n");
+      exit(EXIT_FAILURE);
+    }
+
+    waitpid(pidNode, &status, 0);
+  }
+
+  
+}
+
+void handleRedirection(Node *node, char *file, char *mode, int descripteur) {
+
   pid_t pidNode;
   int status = 0;
   FILE *fp = NULL;

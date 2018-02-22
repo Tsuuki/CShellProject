@@ -145,18 +145,33 @@ void printWorkingDirectory(){
 }
 
 void echo(char *str) {
-  if(strcmp(str, "") != 0) {
-    if(strchr("$", str[0])) {
-        str++;
-        char *value = getEnvVar(str);
-        if(value != NULL) {
-          printf("%s\n", getEnvVar(str));
-        } else {
-          printf("%s : unkonw environment variable\n", str);
+  if(strlen(str) > 0) {
+
+    char *env = malloc(sizeof(char) * 4096);
+    char *value;
+    int j = 0;
+
+    for(int i = 0; i < strlen(str); i++) {
+      if(str[i] == '$') {
+
+        i+= 1;
+        while(str[i] != '\0' && str[i] != ' ') {
+          env[j] = str[i];
+          i++;
+          j++;
         }
-    } else {
-      printf("%s\n", str);
+        env[j] = '\0';
+
+        value = getEnvVar(env);
+        if(value != NULL) {
+          printf("%s ", value);
+        }
+      }
+      else {
+        printf("%c", str[i]);
+      }
     }
+    printf("\n");
   }  
 }
 
