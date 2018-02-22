@@ -66,13 +66,6 @@ void printWorkingDirectory();
 void echo(char *str);
 
 /**
- * Print the current history of shell
- * 
- * \return void
- */
-void printHistory();
-
-/**
  * Exit the shell by passing run to false
  * 
  * \return void

@@ -23,6 +23,7 @@
 #include "../include/executer.h"
 #include "../include/manageAlias.h"
 #include "../include/parser.h"
+#include "../include/history.h"
 
 #define MAX_ARGUMENTS 20
 
@@ -62,7 +63,7 @@ bool checkBuildInCommand(Node **node) {
   } else if(strcmp(node[0]->action->command, "delvar") == 0) {
     delEnvVar(node[0]->action->arguments);
   } else if(strcmp(node[0]->action->command, "history") == 0) {
-    printHistory();
+    manageHistory(node[0]);
   } else if(strcmp(node[0]->action->command, "alias") == 0) {
     manageAlias(node[0]);
   } else if(strcmp(node[0]->action->command, "exit") == 0) {
@@ -177,18 +178,6 @@ void echo(char *str) {
 
 void exitShell() { 
   run = false;
-}
-
-void printHistory() {
-  int c;
-  FILE *file;
-  CHECK((file = fopen("/tmp/shellterHistory", "r")) != NULL);
-  if(file) {
-    while((c = getc(file)) != EOF) {
-      putchar(c);
-    }
-    fclose(file);
-  }
 }
 
 void fillActionArray(char ***action, char *command, char *arguments) {

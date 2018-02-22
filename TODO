@@ -5,14 +5,12 @@
   - struct typdef
   - nom des variables
 
-2 - Arrow key history
+2 - history -s commande
 3 - Redirection erreur /dev/null
-4 - Commande incomplète prompt
-5 - ASK Andreas - pourquoi je peux pas passer l'array en paramètre alias
-6 - demander à Andreas - Mettre la macro dans un if(CHECK(...))... + rajouter mode debug
+6 - rajouter mode debug external value a rajouter dans le check
 6 - Faire le verbose mode comme décrit dans le man (ou le bash) (réecriture de la commande) ou bien changerle man
 7 - Man écrire une partie sur les alias
 8 - Man écrire une partie sur les variables d'environnements
 9 - Delete all Alias unalias -a | alias -d -a
 10 - BUG commande < file | Commande ou commande < file > file
-11 - ANDREAS *env = str[i]; dans le echo
+11 - VIRER entrer history

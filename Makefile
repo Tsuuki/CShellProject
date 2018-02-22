@@ -61,7 +61,7 @@ man:
 	sudo gzip /usr/local/man/man1/shellter.1
 	@echo "You can now use 'man shellter'"
 clean:	
-	rm -rf $(OBJ)
+	rm -rf $(OBJ2)
 
 mrproper: clean
 	rm -rf $(BIN_DIR)/*
