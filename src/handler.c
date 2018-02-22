@@ -14,6 +14,7 @@
 #include <sys/types.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 
 #include "../include/typedef.h"
 #include "../include/check.h"
@@ -46,7 +47,6 @@ void handle(Node *rootNode) {
           node = node->next;
           number--;
         }
-        exit(EXIT_SUCCESS);
       } else if (strcmp(">", node->operator) == 0) {
         handleRightRedirection(node, node->next->action->command, "w", 1);
       } else if (strcmp(">>", node->operator) == 0) {
@@ -87,8 +87,10 @@ void handleRightRedirection(Node *node, char *file, char *mode, int descripteur)
 }
 
 int handlePipe(Node *node) {
+  pid_t pid;
   int i;
   int number = getPipeNumber(node);
+  int status = 0;
   Node *nodeArray[number+1];
   
   for(i = 0; i < number; i++) {
@@ -97,26 +99,24 @@ int handlePipe(Node *node) {
   }
   nodeArray[number] = NULL;
 
-  handlePipeArray(nodeArray, STDIN_FILENO, 0);
+  if((pid = fork()) == 0) {
+    handlePipeArray(nodeArray, STDIN_FILENO, 0);
+  } else if(pid == -1) {
+    perror("Fork failed\n");
+    exit(EXIT_FAILURE);
+  } 
+    
+  waitpid(pid, &status, 0);
 
   return number;
 }
 
 void handlePipeArray(Node *nodeArray[], int inputFileDescriptor, int position) {
   pid_t pid;
-  int status = 0;
 
-  if(nodeArray[position +1] == NULL) {
-    if((pid = fork()) == 0) {
-      dup2(inputFileDescriptor, STDIN_FILENO);
-      execute(nodeArray[position], false);
-    } else if(pid == -1) {
-      perror("Fork failed\n");
-      exit(EXIT_FAILURE);
-    } else {      
-      close(inputFileDescriptor);
-      waitpid(pid, &status, 0);
-    }
+  if(nodeArray[position+1] == NULL) {
+    dup2(inputFileDescriptor, STDIN_FILENO);
+    execute(nodeArray[position], false);
   } else {
     int fileDescriptor[2];
     CHECK(pipe(fileDescriptor) == 0);
@@ -129,12 +129,13 @@ void handlePipeArray(Node *nodeArray[], int inputFileDescriptor, int position) {
     } else if(pid == -1) {
       perror("Fork failed\n");
       exit(EXIT_FAILURE);
-    } else {
+    } else { 
       close(fileDescriptor[1]);      
       close(inputFileDescriptor);
       handlePipeArray(nodeArray, fileDescriptor[0], position+1);
     }
   }
+  return;
 }
 
 int getPipeNumber(Node *node) {
