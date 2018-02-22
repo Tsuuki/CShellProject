@@ -5,18 +5,18 @@
  * Parse the commmand in parameter
  * 
  * \param char* commandParam to parse
- * \return Tree *tree return the command into a Tree struct
+ * \return Tree* return the command into a Tree struct
  */
-Tree *parse(char *commandParam);
+LinkedList *parse(char *commandParam);
 
 /**
- * Create and return a new Tree fromm rootNode and isBackground
+ * Create and return a new LinkedList fromm rootNode and isBackground
  * 
  * \param Node *rootNode
  * \param bool isBackground
- * \return Tree *tree
+ * \return LinkedList*
  */
-Tree *createTree(Node *rootNode, bool isBackground);
+LinkedList *createLinkedList(Node *rootNode, bool isBackground);
 
 /**
  * Create and return a new Node from operator and command in parameters 

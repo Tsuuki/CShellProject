@@ -26,13 +26,13 @@ typedef struct Node {
     struct Node *next;
 } Node;
 
-/**
- * Struct Tree composed of the root node and if the command must be launched in background 
+/*
+ * Struct LinkedList composed of a bool for the background mode and a node
  */
-typedef struct Tree {
+typedef struct LinkedList {
     bool isBackgrounded;
     Node *rootNode;
-} Tree;
+} LinkedList;
 
 /**
  * Struct Alias define an alias and its command 

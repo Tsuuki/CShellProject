@@ -18,17 +18,17 @@
 
 #define BUFFERSIZE 4096
 
-Tree *parse(char *commandParam) {
-  int i = 0;
-  int j = 0;
-  int k = 0;
-  int l = 0;
-  bool isParsingArguments = false;
+LinkedList *parse(char *commandParam) {
   bool isBackgrounded = false;
+  bool isParsingArguments = false;
   char commandParamCopy[BUFFERSIZE] = "";
   char operator[BUFFERSIZE] = "";
   char command[BUFFERSIZE] = "";
   char arguments[BUFFERSIZE] = "";
+  int i = 0;
+  int j = 0;
+  int k = 0;
+  int l = 0;
   Node *rootNode = NULL;
   Node *node = NULL;
 
@@ -66,11 +66,10 @@ Tree *parse(char *commandParam) {
         isParsingArguments = false;
       }
     }
+    if(isspace((unsigned char)commandParamCopy[i]) && !isParsingArguments ) {
+      isParsingArguments = true;
+    } 
     if(!isBackgrounded) {
-      if(isspace((unsigned char)commandParamCopy[i]) && !isParsingArguments ) {
-        isParsingArguments = true;
-      } 
-
       if(!isParsingArguments){
         command[k] = commandParamCopy[i];
         k++;
@@ -78,7 +77,7 @@ Tree *parse(char *commandParam) {
         arguments[l] = commandParamCopy[i];
         l++;
       }
-    } 
+    }
     i++;
   }
   // When the while is over, we add the last command
@@ -90,16 +89,17 @@ Tree *parse(char *commandParam) {
     }
   }
 
-  return createTree(rootNode, isBackgrounded);
+  //printNodes(rootNode);
+  return createLinkedList(rootNode, isBackgrounded);
 }
 
-Tree *createTree(Node *rootNode, bool isBackgrounded) {
-  Tree *tree = malloc(sizeof(Tree));
+LinkedList *createLinkedList(Node *rootNode, bool isBackgrounded) {
+  LinkedList *linkedList = malloc(sizeof(LinkedList));
 
-  tree->rootNode = rootNode;
-  tree->isBackgrounded = isBackgrounded;
+  linkedList->rootNode = rootNode;
+  linkedList->isBackgrounded = isBackgrounded;
 
-  return tree;
+return linkedList;
 }
 
 Node *createNode(char *operator, char *command, char *arguments) {
