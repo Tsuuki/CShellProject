@@ -14,6 +14,7 @@
 #include <sys/types.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 
 #include "../include/typedef.h"
 #include "../include/check.h"
@@ -25,8 +26,9 @@
 
 void handle(Node *rootNode) {
   Node *node = rootNode;
-  bool run = true;
+  int number;
 
+  // If command is empty
   if(rootNode == NULL || (memcmp(rootNode, node, sizeof(Node)) == 0 && strcmp("", node->action->command) == 0)){
     return;
   }
@@ -34,14 +36,17 @@ void handle(Node *rootNode) {
   if(node->next == NULL) {
       execute(node, true);
   } else {
-    while(node != NULL && run) {
+    while(node != NULL) {
       if(strcmp("&&", node->operator) == 0) {
-        run = execute(node, true);
+        execute(node, true);
       } else if (strcmp("||", node->operator) == 0) {
-        run = !execute(node, true);
+        execute(node, true);
       } else if (strcmp("|", node->operator) == 0) {
-        handlePipe(node, node->next);
-        node = node->next; // Skip a node
+        number = handlePipe(node);
+        while(number > 1) {
+          node = node->next;
+          number--;
+        }
       } else if (strcmp(">", node->operator) == 0) {
         handleRedirection(node, node->next->action->command, "w", 1);
       } else if (strcmp(">>", node->operator) == 0) {
@@ -53,7 +58,6 @@ void handle(Node *rootNode) {
       } else {
         execute(node, true);
       }
-
       node = node->next;
     }
   }
@@ -79,9 +83,7 @@ void handleProgressivReading(Node *node, char *endWord) {
 void handleRedirection(Node *node, char *file, char *mode, int descripteur) {
 
   pid_t pidNode;
-
   int status = 0;
-
   FILE *fp = NULL;
 
   if(strlen(file) > 0) {
@@ -102,38 +104,65 @@ void handleRedirection(Node *node, char *file, char *mode, int descripteur) {
   }
 }
 
-void handlePipe(Node *nodeInput, Node *nodeOutput) {
-  pid_t pidInput, pidOutput; 
-
-  int fileDescriptor[2]; 
+int handlePipe(Node *node) {
+  pid_t pid;
+  int i;
+  int number = getPipeNumber(node);
   int status = 0;
+  Node *nodeArray[number+1];
+  
+  for(i = 0; i < number; i++) {
+    nodeArray[i] = node;
+    node = node->next;
+  }
+  nodeArray[number] = NULL;
 
-  if(nodeOutput != NULL) {
+  if((pid = fork()) == 0) {
+    handlePipeArray(nodeArray, STDIN_FILENO, 0);
+  } else if(pid == -1) {
+    perror("Fork failed\n");
+    exit(EXIT_FAILURE);
+  } 
+    
+  waitpid(pid, &status, 0);
+
+  return number;
+}
+
+void handlePipeArray(Node *nodeArray[], int inputFileDescriptor, int position) {
+  pid_t pid;
+
+  if(nodeArray[position+1] == NULL) {
+    dup2(inputFileDescriptor, STDIN_FILENO);
+    execute(nodeArray[position], false);
+  } else {
+    int fileDescriptor[2];
     CHECK(pipe(fileDescriptor) == 0);
 
-    if((pidInput = fork()) == 0) {
+    if((pid = fork()) == 0) {
       close(fileDescriptor[0]);
-      dup2(fileDescriptor[1], 1);
-
-      execute(nodeInput, false);
-    } else if(pidInput == -1) {
-      perror("Input fork failed\n");
+      dup2(inputFileDescriptor, STDIN_FILENO);
+      dup2(fileDescriptor[1],STDOUT_FILENO);
+      execute(nodeArray[position], false);
+    } else if(pid == -1) {
+      perror("Fork failed\n");
       exit(EXIT_FAILURE);
+    } else { 
+      close(fileDescriptor[1]);      
+      close(inputFileDescriptor);
+      handlePipeArray(nodeArray, fileDescriptor[0], position+1);
     }
-
-    if((pidOutput = fork()) == 0) {
-      close(fileDescriptor[1]);
-      dup2(fileDescriptor[0], 0);
-
-      execute(nodeOutput, false);
-    } else if(pidOutput == -1) {
-      perror("Output fork failed\n");
-      exit(EXIT_FAILURE);
-    }
-
-    close(fileDescriptor[1]);      
-    close(fileDescriptor[0]);
-    waitpid(pidInput, &status, 0);
-    waitpid(pidOutput, &status, 0);
   }
+  return;
+}
+
+int getPipeNumber(Node *node) {
+  int number = 1;
+
+  while(node->next != NULL && strcmp("|", node->operator) == 0) {
+    node = node->next;
+    number++;
+  }
+
+  return number;
 }
