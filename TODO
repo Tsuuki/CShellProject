@@ -15,3 +15,4 @@
 8 - Man écrire une partie sur les variables d'environnements
 9 - Delete all Alias unalias -a | alias -d -a
 10 - BUG commande < file | Commande ou commande < file > file
+11 - ANDREAS *env = str[i]; dans le echo
