@@ -44,7 +44,7 @@ void addEnvVar(char *str) {
 }
 
 char *getEnvVar(char *name) {
-  char *value = "";
+  char *value;
 
   if(name == NULL) {
     printf("name is empty\n");
