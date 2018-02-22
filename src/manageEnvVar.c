@@ -28,7 +28,7 @@ void printEnvVar() {
 void addEnvVar(char *str) {
   char *string[2];
   string[0] = strtok(str, "=");
-  string[1] = strtok(NULL, "=");
+  string[1] = strtok(NULL, "");
   
   if(string[0] == NULL || string[1] == NULL) {
     printf("incorrect arguments\n");
@@ -40,7 +40,6 @@ void addEnvVar(char *str) {
     }
     
     CHECK(setenv(string[0], string[1], 1) != -1);
-    freeIfNeeded(string);
   }
 }
 
@@ -50,7 +49,9 @@ char *getEnvVar(char *name) {
   if(name == NULL) {
     printf("name is empty\n");
   } else {
-    value = getenv(name);
+    if((value = getenv(name)) == NULL) {
+      printf("%s : unknow environment variable\n", name);
+    }
   }
 
   return value;
@@ -60,7 +61,9 @@ void delEnvVar(char *name) {
   if(name == NULL) {
     printf("name is empty\n");
   } else {
-    CHECK(unsetenv(name) != -1);
-    printf("%s deleted\n", name);
+    if(getEnvVar(name)) {
+      CHECK(unsetenv(name) != -1);
+      printf("%s deleted\n", name);
+    } 
   }
 }

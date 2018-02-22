@@ -74,7 +74,6 @@ void handleRightRedirection(Node *node, char *file, char *mode, int descripteur)
       CHECK((fp = fopen(file, mode)) != NULL);
       dup2(fileno(fp), descripteur);
       close(fileno(fp));
-
       execute(node, false);
       fclose(fp);
     } else if(pidNode == -1) {
@@ -119,6 +118,7 @@ void handlePipeArray(Node *nodeArray[], int inputFileDescriptor, int position) {
     execute(nodeArray[position], false);
   } else {
     int fileDescriptor[2];
+
     CHECK(pipe(fileDescriptor) == 0);
 
     if((pid = fork()) == 0) {
