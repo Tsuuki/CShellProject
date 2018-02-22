@@ -98,23 +98,38 @@ char* dupOptargStr() {
 }
 
 void executeBatch(char* commandParam) {
-  Tree *tree = parse(commandParam);
-  
-  handle(tree->rootNode);
+  handle(parse(commandParam)->rootNode);
 
   exit(EXIT_SUCCESS);
 }
 
 void executeShell() {
+  pid_t pid;
+  int status = 0;
   char *line = malloc(BUFFERSIZE * sizeof(char));
-  Tree *tree;
+  LinkedList *linkedList;
 
   printWelcome();
 
   while(run) {
     prompt(line);
-    tree = parse(line);
-    handle(tree->rootNode);
+    linkedList = parse(line);
+    if((pid = fork()) == 0) {
+      handle(linkedList->rootNode);
+      exit(EXIT_SUCCESS);
+    } else if (pid == -1) {
+      perror("Fork failed\n");
+      exit(EXIT_FAILURE);
+    } else {
+      if(linkedList->isBackgrounded) {
+        printf("[] %d\n", pid);
+      } else {
+        waitpid(pid, &status, 0);
+        if ((pid = waitpid(-1, NULL, WNOHANG)) > 0) {
+          printf("[%d]+   Done\n", pid);
+        }
+      }
+    }
   }
 
   freeIfNeeded(line);

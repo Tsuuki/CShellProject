@@ -112,13 +112,12 @@ int handlePipe(Node *node) {
 
 void handlePipeArray(Node *nodeArray[], int inputFileDescriptor, int position) {
   pid_t pid;
+  int fileDescriptor[2];
 
   if(nodeArray[position+1] == NULL) {
     dup2(inputFileDescriptor, STDIN_FILENO);
     execute(nodeArray[position], false);
   } else {
-    int fileDescriptor[2];
-
     CHECK(pipe(fileDescriptor) == 0);
 
     if((pid = fork()) == 0) {
