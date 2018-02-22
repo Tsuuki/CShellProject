@@ -43,11 +43,13 @@ void handle(Node *rootNode) {
         handlePipe(node, node->next);
         node = node->next; // Skip a node
       } else if (strcmp(">", node->operator) == 0) {
-        handleRightRedirection(node, node->next->action->command, "w", 1);
+        handleRedirection(node, node->next->action->command, "w", 1);
       } else if (strcmp(">>", node->operator) == 0) {
-        handleRightRedirection(node, node->next->action->command, "a+", 1);
+        handleRedirection(node, node->next->action->command, "a+", 1);
       } else if (strcmp("<", node->operator) == 0) {
-        handleRightRedirection(node, node->next->action->command, "r", 0);
+        handleRedirection(node, node->next->action->command, "r", 0);
+      } else if (strcmp("<<", node->operator) == 0) {
+        handleProgressivReading(node, node->next->action->command);
       } else {
         execute(node, true);
       }
@@ -59,7 +61,22 @@ void handle(Node *rootNode) {
   freeIfNeeded(rootNode);
 }
 
-void handleRightRedirection(Node *node, char *file, char *mode, int descripteur) {
+void handleProgressivReading(Node *node, char *endWord) {
+  if(strlen(endWord) > 0) {
+
+    FILE *fp = tmpfile(); //TODO CHECK
+    char *str = malloc(sizeof(char) * 4096);
+
+    while(strcmp(str,endWord) != 0) {
+      printf("> ");
+      fgets(str, 4096 * sizeof(char), stdin);
+      //fprintf(fpHistory, "%d\t%s\n", commandNumber, command);
+      str[strlen(str)-1] = '\0';
+    }
+  }
+}
+
+void handleRedirection(Node *node, char *file, char *mode, int descripteur) {
 
   pid_t pidNode;
 
