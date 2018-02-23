@@ -30,9 +30,10 @@ void executeBatch(char* commandParam);
 /**
  * Run the progam in shell mode
  * 
+ * \param bool verbose print command if true
  * \return void
  */
-void executeShell();
+void executeShell(bool verbose);
 
 char *getHashMapValue(ForkMap *forkMap[], int index);
 

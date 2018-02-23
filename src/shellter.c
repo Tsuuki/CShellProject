@@ -105,7 +105,7 @@ void executeBatch(char* commandParam) {
   exit(EXIT_SUCCESS);
 }
 
-void executeShell() {
+void executeShell(bool verbose) {
   pid_t pid;
   pid_t pidArray[PID_ARRAY_SIZE];
   char *line = malloc(BUFFER_SIZE * sizeof(char));
@@ -118,6 +118,9 @@ void executeShell() {
 
   while(run) {
     prompt(line);
+    if(verbose)
+      printf("%s\n", line);
+      
     linkedList = parse(line);
     if(linkedList->isBackgrounded) {
       if((pid = fork()) == 0) {
@@ -305,10 +308,6 @@ int main(int argc, char** argv)
       case 'v':
         //verbose mode
         parameters.verbose = true;
-        // Printing params
-        dprintf(1, "** PARAMS **\n%-8s: %s\n%-8s: %d\n", 
-                "command", parameters.command, 
-                "verbose", parameters.verbose);
         break;
       case 'h':
         printUsage(argv[0]);
@@ -320,7 +319,7 @@ int main(int argc, char** argv)
   } 
 
   if(shellterMode) {
-    executeShell();
+    executeShell(parameters.verbose);
   }
 
   return EXIT_SUCCESS;

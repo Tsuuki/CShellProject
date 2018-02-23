@@ -69,12 +69,4 @@ void getAliasInfos(char*, char**, char**);
  */
 int isAliasExist(char*);
 
-/**
- * Check if a string match a specify regex
- * \param const char* regex
- * \param char** address to string which will contain the match
- * \param char* the given string
- */
-bool checkRegex(const char*, char**, char*);
-
 #endif /** __MANAGEALIAS_H__ **/
