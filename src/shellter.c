@@ -42,7 +42,7 @@
 
 #define MAX_PATH_LENGTH 4096
 #define BUFFER_SIZE 4096
-#define PID_ARRAY_SIZE 4096
+#define FORKMAP_SIZE 25
 
 #define USAGE_SYNTAX "[options] [command_string | file]"
 #define USAGE_PARAMS "OPTIONS:\n\
@@ -107,11 +107,9 @@ void executeBatch(char* commandParam) {
 
 void executeShell(bool verbose) {
   pid_t pid;
-  pid_t pidArray[PID_ARRAY_SIZE];
   char *line = malloc(BUFFER_SIZE * sizeof(char));
-  int i = 0;
-  int j = 0;
-  ForkMap *forkMap[PID_ARRAY_SIZE];
+  ForkMap **forkMap = malloc(FORKMAP_SIZE * sizeof(ForkMap));
+  ForkMap **forkMapValues = malloc(FORKMAP_SIZE * sizeof(ForkMap));
   LinkedList *linkedList;
 
   printWelcome();
@@ -120,7 +118,8 @@ void executeShell(bool verbose) {
     prompt(line);
     if(verbose)
       printf("%s\n", line);
-      
+
+    ManageForkMap(forkMap, forkMapValues);
     linkedList = parse(line);
     if(linkedList->isBackgrounded) {
       if((pid = fork()) == 0) {
@@ -131,48 +130,75 @@ void executeShell(bool verbose) {
         exit(EXIT_FAILURE);
       } else {
         line = trimAmpersand(line);
-        printf("[%d]          %s\n", pid, line);
-        while ((pid = waitpid(-1, NULL, WNOHANG)) > 0) {
-          printf("[%d]+ Done    \n", pidArray[j]);//, getForkMapValue(forkMap, pid));
-        }
+        FillForkMapValues(forkMapValues, pid, line);
       }
     } else {
-      while ((pid = waitpid(-1, NULL, WNOHANG)) > 0) {
-        pidArray[i] = pid;
-        i++;
-      }
       pid = waitpid(-1, NULL, WNOHANG);
       handle(linkedList->rootNode);
-      while (j != i) {
-        printf("[%d]+ Done    \n", pidArray[j]);//, getForkMapValue(forkMap, pid));
-        j++;
-      }
-      i = 0;
-      j = 0;
     }
+    printForkMap(forkMap);
   }
 
   freeIfNeeded(line);
   freeIfNeeded(linkedList);
   freeIfNeeded(forkMap);
+  freeIfNeeded(forkMapValues);
   
   exit(EXIT_SUCCESS);
 }
 
-
-
-char *getForkMapValue(ForkMap *forkMap[], int index) {
-  char *value = "";
-  int i = 0;
-
-  while(forkMap[i] != NULL) {
-    if(forkMap[i]->index == index) {
-      value = forkMap[i]->value;
+void FillForkMapValues(ForkMap **forkMapValues, int pid, char *value) {
+  int i;
+  
+  for(i = 0; i < FORKMAP_SIZE; i++) {
+    if(forkMapValues[i] == NULL) {
+      printf("[%d]          %d : %s\n", i+1, pid, value);
+      forkMapValues[i] = malloc(sizeof(ForkMap));
+      forkMapValues[i]->pid = pid;
+      forkMapValues[i]->value = malloc(sizeof(char*));
+      strcpy(forkMapValues[i]->value, value);
       break;
     }
-  } 
+  }
+}
 
-  return value;
+void ManageForkMap(ForkMap **forkMap, ForkMap **forkMapValues) {
+  pid_t pid;
+  int i = 0;
+  int j = 0;  
+  
+  while ((pid = waitpid(-1, NULL, WNOHANG)) > 0) {
+    while(forkMap[i] != NULL) 
+      i++;
+    for(j = 0; j < FORKMAP_SIZE; j++) {
+      if(forkMapValues[j] != NULL && forkMapValues[j]->pid == pid) 
+        break;
+    }
+    if(forkMapValues[j] != NULL) {
+      forkMap[i] = malloc(sizeof(ForkMap));
+      forkMap[i]->pid = pid;
+      forkMap[i]->value = malloc(sizeof(char*));
+      strcpy(forkMap[i]->value, forkMapValues[j]->value);
+      freeForkMap(forkMapValues, j);
+    }
+  }
+}
+
+void printForkMap(ForkMap **forkMap) {
+  int i;
+  
+  for(i = 0; i < FORKMAP_SIZE; i++) {
+    if(forkMap[i] != NULL) {
+      printf("[%d]+ Done    %d : %s\n", i+1, forkMap[i]->pid, forkMap[i]->value);
+      freeForkMap(forkMap, i);
+    }
+  }
+}
+
+void freeForkMap(ForkMap **forkMap, int position) {
+  freeIfNeeded(forkMap[position]->value);
+  freeIfNeeded(forkMap[position]);
+  forkMap[position] = NULL;
 }
 
 char *trimAmpersand(char *str) {

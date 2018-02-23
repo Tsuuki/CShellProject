@@ -35,7 +35,38 @@ void executeBatch(char* commandParam);
  */
 void executeShell(bool verbose);
 
-char *getHashMapValue(ForkMap *forkMap[], int index);
+/**
+ * Fill the forMap in param with the pid and value
+ * 
+ * \param ForkMap **forkMapValues contains all the values
+ * \param int pid
+ * \param char *value
+ * \return void
+ */
+void FillForkMapValues(ForkMap **forkMapValues, int pid, char *value);
+
+/**
+ * Fill the first forkMap with the value of the second
+ * \param ForkMap **forkMap
+ * \param ForkMap **forkMapValues
+ * \return void
+ */
+void ManageForkMap(ForkMap **forkMap, ForkMap **forkMapValues);
+
+/**
+ * Print all the fork that finished
+ * \param ForkMap **forkMap
+ * \return void
+ */
+void printForkMap(ForkMap **forkMap);
+
+/**
+ * Free the forkMap at the positon
+ * 
+ * \param int position
+ * \return void
+ */
+void freeForkMap(ForkMap **forkmap, int position);
 
 /**
  * Trim the Ampersand at the end of the string
