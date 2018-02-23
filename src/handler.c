@@ -50,8 +50,10 @@ void handle(Node *rootNode) {
         }
       } else if (strcmp(">", node->operator) == 0) {
         handleRedirection(node, node->next->action->command, "w", 1);
+        node = node->next;
       } else if (strcmp(">>", node->operator) == 0) {
         handleRedirection(node, node->next->action->command, "a+", 1);
+        node = node->next;
       } else if (strcmp("<", node->operator) == 0) {
         handleRedirection(node, node->next->action->command, "r", 0);
         node = node->next;

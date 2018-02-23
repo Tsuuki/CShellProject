@@ -48,6 +48,9 @@ LinkedList *parse(char *commandParam) {
           i++;
           j++;
         }
+
+        while(isspace((unsigned char)commandParamCopy[i]))
+          i++;
         
         if(rootNode == NULL) {
           rootNode = createNode(operator, command, arguments);
