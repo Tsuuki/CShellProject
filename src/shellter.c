@@ -120,7 +120,7 @@ void executeShell(bool verbose) {
     prompt(line);
     if(verbose)
       printf("%s\n", line);
-      
+
     linkedList = parse(line);
     if(linkedList->isBackgrounded) {
       if((pid = fork()) == 0) {

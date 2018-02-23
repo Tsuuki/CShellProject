@@ -23,6 +23,12 @@ void addAlias(char *alias);
 void delAlias(char *alias);
 
 /**
+ * Delete all alias to the current shell
+ * \return void 
+ */ 
+void delAllAlias();
+
+/**
  * Search alias from the current shell
  * \param char* alias name
  * \return void

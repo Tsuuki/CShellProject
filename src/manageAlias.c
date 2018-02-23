@@ -44,6 +44,7 @@ void manageAlias(Node *node) {
     const char *helpRegex = "(^(-h$|--help$))";
     const char *addRegex = "(^[[:alnum:]]+=.+)";
     const char *searchRegex = "(^(-s|--search)\\s[[:alnum:]]+)";
+    const char *delAllRegex = "(^(-d -a|-a -d|-da|-ad)$)";
 
     char *alias = NULL;
 
@@ -59,12 +60,20 @@ void manageAlias(Node *node) {
     else if(checkRegex(helpRegex, &alias, node->action->arguments)) {
       printAliasUsage();
     }
-    else {
+    else if(checkRegex(delAllRegex, &alias, node->action->arguments)) {
+      delAllAlias();
+    } else {
       dprintf(1, "%-8s %s\n%-8s",
           "alias : invalid option:", node->action->arguments,
           "enter \"alias --help\" for more information.\n");
     }
   }
+}
+
+void delAllAlias() {
+  free(aliases->aliases);
+  aliases->aliases = NULL;
+  aliases->numAliases = 0;
 }
 
 void delAlias(char* alias) {
@@ -117,10 +126,12 @@ void printAliasUsage() {
     "CRUD operation on alias.\n\n"
     "%-20s %s\n"
     "%-20s %s\n"
+    "%-20s %s\n"
     "%-20s %s\n",
       "USAGE:", "alias NAME=COMMANDE",
       "  or:", "alias [OPTION] NAME",
       "  or:", "alias [OPTION]",
+      "  -a","when using with -d option delete all alias",
       "  -d","delete the given alias from aliases",
       "  -h, --help","display this help and exit",
       "  -s, --search","search the given alias in aliases");
@@ -137,7 +148,7 @@ void addAlias(char *alias) {
     return;
 
   int c = isAliasExist(aliasName);
-
+  
   if(c == -1) {
     aliases->aliases = realloc(aliases->aliases, sizeof(Alias) *(aliases->numAliases +1));
 
@@ -145,7 +156,6 @@ void addAlias(char *alias) {
       CHECK(aliases->aliases != NULL);
       return;
     }
-
     aliases->aliases[aliases->numAliases].alias = aliasName;
     aliases->aliases[aliases->numAliases].command = aliasCommand;
     aliases->numAliases++;
