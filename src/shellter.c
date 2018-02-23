@@ -212,7 +212,9 @@ char* prompt(char* str) {
 
   fgets(str, BUFFER_SIZE * sizeof(char), stdin);
   clean(str, stdin);
-  writeToFile(str);
+
+  if(strlen(str) > 0)
+    writeToFile(str);
 
   return str;
 }
