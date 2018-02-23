@@ -10,7 +10,7 @@ typedef struct Parameters {
 } Parameters;
 
 /**
- * Struct Parameters composed by all the parameters of the program
+ * Struct Action composed by command and arguments
  */
 typedef struct Action {
     char *command;

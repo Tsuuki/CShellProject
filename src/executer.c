@@ -24,6 +24,7 @@
 #include "../include/manageAlias.h"
 #include "../include/parser.h"
 #include "../include/history.h"
+#include "../include/authors.h"
 
 #define MAX_ARGUMENTS 20
 
@@ -66,6 +67,8 @@ bool checkBuildInCommand(Node **node) {
     manageHistory(node[0]);
   } else if(strcmp(node[0]->action->command, "alias") == 0) {
     manageAlias(node[0]);
+  } else if(strcmp(node[0]->action->command, "authors") == 0) {
+    printAuthors();
   } else if(strcmp(node[0]->action->command, "exit") == 0) {
     exitShell();
   } else {
