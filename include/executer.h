@@ -6,8 +6,9 @@
  *
  * \param Node *node to be executed
  * \param bool true if it nedd to be fork
+ * \return bool true if it was executed
  */
-void execute(Node *node, bool isForked);
+bool execute(Node *node, bool isForked);
 
 /**
  * Check if there is a  build in command
