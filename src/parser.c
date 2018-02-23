@@ -16,15 +16,15 @@
 #include "../include/typedef.h"
 #include "../include/parser.h"
 
-#define BUFFERSIZE 4096
+#define BUFFER_SIZE 4096
 
 LinkedList *parse(char *commandParam) {
   bool isBackgrounded = false;
   bool isParsingArguments = false;
-  char commandParamCopy[BUFFERSIZE] = "";
-  char operator[BUFFERSIZE] = "";
-  char command[BUFFERSIZE] = "";
-  char arguments[BUFFERSIZE] = "";
+  char commandParamCopy[BUFFER_SIZE] = "";
+  char operator[BUFFER_SIZE] = "";
+  char command[BUFFER_SIZE] = "";
+  char arguments[BUFFER_SIZE] = "";
   int i = 0;
   int j = 0;
   int k = 0;
@@ -105,9 +105,9 @@ return linkedList;
 Node *createNode(char *operator, char *command, char *arguments) {
   Node* node = malloc(sizeof(Node));
   Action* action = malloc(sizeof(Action));
-  node->operator = malloc(BUFFERSIZE * sizeof(char));
-  action->command = malloc(BUFFERSIZE * sizeof(char));
-  action->arguments = malloc(BUFFERSIZE * sizeof(char));
+  node->operator = malloc(BUFFER_SIZE * sizeof(char));
+  action->command = malloc(BUFFER_SIZE * sizeof(char));
+  action->arguments = malloc(BUFFER_SIZE * sizeof(char));
 
   strcpy(node->operator, trimWhitepaces(operator));
   strcpy(action->command, trimWhitepaces(command));
@@ -149,7 +149,8 @@ char *trimWhitepaces(char *str) {
 
   // Trim trailing space
   end = str + strlen(str) - 1;
-  while(end > str && isspace((unsigned char)*end)) end--;
+  while(end > str && isspace((unsigned char)*end)) 
+    end--;
 
   // Write new null terminator
   *(end+1) = 0;

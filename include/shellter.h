@@ -34,6 +34,15 @@ void executeBatch(char* commandParam);
  */
 void executeShell();
 
+char *getHashMapValue(ForkMap *forkMap[], int index);
+
+/**
+ * Trim the Ampersand at the end of the string
+ * \param char *str
+ * \return char * without the ampersand at the end
+ */
+char *trimAmpersand(char *str);
+
 /**
  * Print a welcome message
  * 

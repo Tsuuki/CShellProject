@@ -35,6 +35,15 @@ typedef struct LinkedList {
 } LinkedList;
 
 /**
+ * Struct ForkMap with an index and a value
+ */
+typedef struct ForkMap {
+    int index;
+    int pid;
+    char *value;
+} ForkMap;
+
+/**
  * Struct Alias define an alias and its command 
  */
 typedef struct Alias {

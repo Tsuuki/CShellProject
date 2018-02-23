@@ -16,6 +16,7 @@
 #include <sys/types.h>
 #include <wait.h>
 #include <signal.h>
+#include <ctype.h>
 
 #include "../include/typedef.h"
 #include "../include/check.h"
@@ -40,7 +41,8 @@
 #define STDERR 2
 
 #define MAX_PATH_LENGTH 4096
-#define BUFFERSIZE 4096
+#define BUFFER_SIZE 4096
+#define PID_ARRAY_SIZE 4096
 
 #define USAGE_SYNTAX "[options] [command_string | file]"
 #define USAGE_PARAMS "OPTIONS:\n\
@@ -105,8 +107,11 @@ void executeBatch(char* commandParam) {
 
 void executeShell() {
   pid_t pid;
-  int status = 0;
-  char *line = malloc(BUFFERSIZE * sizeof(char));
+  pid_t pidArray[PID_ARRAY_SIZE];
+  char *line = malloc(BUFFER_SIZE * sizeof(char));
+  int i = 0;
+  int j = 0;
+  ForkMap *forkMap[PID_ARRAY_SIZE];
   LinkedList *linkedList;
 
   printWelcome();
@@ -114,27 +119,70 @@ void executeShell() {
   while(run) {
     prompt(line);
     linkedList = parse(line);
-    if((pid = fork()) == 0) {
-      handle(linkedList->rootNode);
-      exit(EXIT_SUCCESS);
-    } else if (pid == -1) {
-      perror("Fork failed\n");
-      exit(EXIT_FAILURE);
-    } else {
-      if(linkedList->isBackgrounded) {
-        printf("[] %d\n", pid);
+    if(linkedList->isBackgrounded) {
+      if((pid = fork()) == 0) {
+        handle(linkedList->rootNode);
+        exit(EXIT_SUCCESS);
+      } else if (pid == -1) {
+        perror("Fork failed\n");
+        exit(EXIT_FAILURE);
       } else {
-        waitpid(pid, &status, 0);
-        if ((pid = waitpid(-1, NULL, WNOHANG)) > 0) {
-          printf("[%d]+   Done\n", pid);
+        line = trimAmpersand(line);
+        printf("[%d]          %s\n", pid, line);
+        while ((pid = waitpid(-1, NULL, WNOHANG)) > 0) {
+          printf("[%d]+ Done    \n", pidArray[j]);//, getForkMapValue(forkMap, pid));
         }
       }
+    } else {
+      while ((pid = waitpid(-1, NULL, WNOHANG)) > 0) {
+        pidArray[i] = pid;
+        i++;
+      }
+      pid = waitpid(-1, NULL, WNOHANG);
+      handle(linkedList->rootNode);
+      while (j != i) {
+        printf("[%d]+ Done    \n", pidArray[j]);//, getForkMapValue(forkMap, pid));
+        j++;
+      }
+      i = 0;
+      j = 0;
     }
   }
 
   freeIfNeeded(line);
+  freeIfNeeded(linkedList);
+  freeIfNeeded(forkMap);
   
   exit(EXIT_SUCCESS);
+}
+
+
+
+char *getForkMapValue(ForkMap *forkMap[], int index) {
+  char *value = "";
+  int i = 0;
+
+  while(forkMap[i] != NULL) {
+    if(forkMap[i]->index == index) {
+      value = forkMap[i]->value;
+      break;
+    }
+  } 
+
+  return value;
+}
+
+char *trimAmpersand(char *str) {
+  char *end;
+
+  end = str + strlen(str) - 1;
+  while(end > str && (isspace((unsigned char)*end) || (unsigned char)*end == '&')) 
+    end--;
+
+  // Write new null terminator
+  *(end+1) = 0;
+
+  return str;
 }
 
 void printWelcome() {
@@ -159,7 +207,7 @@ char* prompt(char* str) {
     KNRM, KWHT, getRootPermission(),
     KNRM);
 
-  fgets(str, BUFFERSIZE * sizeof(char), stdin);
+  fgets(str, BUFFER_SIZE * sizeof(char), stdin);
   clean(str, stdin);
   writeToFile(str);
 
@@ -196,8 +244,8 @@ void getCmdNum() {
     fseek(fpHistory, i, SEEK_END);
   }
 
-  char *nbStr = malloc(BUFFERSIZE * sizeof(char));
-  memset(nbStr, 0, BUFFERSIZE * sizeof(char));
+  char *nbStr = malloc(BUFFER_SIZE * sizeof(char));
+  memset(nbStr, 0, BUFFER_SIZE * sizeof(char));
   int l = 0;
   while((c = fgetc(fpHistory)) <= '9' && c >= '0' && c != EOF) {
     i++;
