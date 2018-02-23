@@ -61,4 +61,6 @@ char* prompt();
 void writeToFile();
 void getCmdNum();
 
+int linux_getch(void);
+
 #endif /** __SHELTER_H__ **/

@@ -17,6 +17,8 @@
 #include <wait.h>
 #include <signal.h>
 #include <ctype.h>
+#include <termios.h>
+
 
 #include "../include/typedef.h"
 #include "../include/check.h"
@@ -103,6 +105,22 @@ void executeBatch(char* commandParam) {
   handle(parse(commandParam)->rootNode);
 
   exit(EXIT_SUCCESS);
+}
+
+int linux_getch(void) 
+{
+  struct termios oldstuff;
+  struct termios newstuff;
+  int    inch;
+  
+  tcgetattr(STDIN_FILENO, &oldstuff);
+  newstuff = oldstuff;                  /* save old attributes               */
+  newstuff.c_lflag &= ~(ICANON | ECHO); /* reset "canonical" and "echo" flags*/
+  tcsetattr(STDIN_FILENO, TCSANOW, &newstuff); /* set new attributes         */
+  inch = getchar();
+  tcsetattr(STDIN_FILENO, TCSANOW, &oldstuff); /* restore old attributes     */
+
+  return inch;
 }
 
 void executeShell(bool verbose) {
@@ -210,12 +228,28 @@ char* prompt(char* str) {
     KNRM, KWHT, getRootPermission(),
     KNRM);
 
-  fgets(str, BUFFER_SIZE * sizeof(char), stdin);
-  clean(str, stdin);
-
-  if(strlen(str) > 0)
-    writeToFile(str);
-
+  int kb_char;
+  int i = 0;
+  while ((kb_char = linux_getch()) != 0x0A) {
+    if('\033' == kb_char) {
+      kb_char = linux_getch();
+      switch(linux_getch()) { // the real value
+        case 'A':
+            break;
+        case 'B':
+            break;
+        default:
+          break;
+      }
+    }
+    else {
+      printf("%c", kb_char);
+      str[i] = kb_char;
+      i++;
+    }
+  }
+  str[i] = '\0';
+  printf("\n");
   return str;
 }
 
