@@ -34,6 +34,9 @@ LinkedList *parse(char *commandParam) {
 
   strcpy(commandParamCopy, commandParam);
 
+  while(isspace((unsigned char)commandParamCopy[i]))
+      i++; // Trim leading whitespace
+  
   while(commandParamCopy[i] != '\0') {
     // Search for operators
     if(strchr("|",commandParamCopy[i]) != NULL || strchr("&",commandParamCopy[i]) != NULL || strchr(">",commandParamCopy[i]) != NULL || strchr("<",commandParamCopy[i]) != NULL) {
@@ -45,8 +48,6 @@ LinkedList *parse(char *commandParam) {
           i++;
           j++;
         }
-        while(isspace((unsigned char)commandParamCopy[i]))
-          i++; // Skip whitespace
         
         if(rootNode == NULL) {
           rootNode = createNode(operator, command, arguments);
