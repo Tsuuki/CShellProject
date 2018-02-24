@@ -28,6 +28,7 @@
 #include "../include/handler.h"
 #include "../include/shellter.h"
 #include "../include/manageAlias.h"
+#include "../include/history.h"
 
 #define KNRM  "\x1B[0m"
 #define KRED  "\x1B[31m"
@@ -215,6 +216,8 @@ void printWelcome() {
 }
 
 char* prompt(char* str) {
+
+  resetHistoryCounter(commandNumber);
   char* cwd = getWorkingDirectory();
 
   if(strstr(cwd, getEnvVar("HOME")) != NULL) {
@@ -231,25 +234,52 @@ char* prompt(char* str) {
   int kb_char;
   int i = 0;
   while ((kb_char = linux_getch()) != 0x0A) {
-    if('\033' == kb_char) {
-      kb_char = linux_getch();
-      switch(linux_getch()) { // the real value
-        case 'A':
-            break;
-        case 'B':
-            break;
-        default:
-          break;
+    if (kb_char == 127 || kb_char == 8) {
+      if(i != 0) {
+        printf("\b \b"); //TODO SUPPRIMER LES CHAR DANS STR
+        i--;
       }
     }
     else {
-      printf("%c", kb_char);
-      str[i] = kb_char;
-      i++;
+      
+      if('\033' == kb_char) {
+        kb_char = linux_getch();
+        switch(linux_getch()) { // the real value
+          case 'A': //ARROW UP
+            readHistory(0, &str);
+            break;
+          case 'B': //ARROW DOWN
+            readHistory(1, &str);
+            break;
+          case 'C':
+            if(i < strlen(str)) {
+              printf("\033[1C"); // Move right column;
+              i++;
+            }
+            break;
+          case 'D':
+            if(i > 0) {
+              printf("\033[1D"); // Move left column;
+              i--;
+            }
+            break;
+          default:
+            break;
+        }
+      }
+      else {
+        printf("%c", kb_char);
+        str[i] = kb_char;
+        i++;
+      }
     }
   }
   str[i] = '\0';
   printf("\n");
+
+  if(strlen(str) > 0)
+    writeToFile(str);
+
   return str;
 }
 

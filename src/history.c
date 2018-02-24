@@ -17,10 +17,13 @@
 #include "../include/history.h"
 #include "../include/check.h"
 #include "../include/reg.h"
+#include "../include/check.h"
+
+int historyResearch;
 
 void manageHistory(Node *node) {
   if(strcmp(node->action->arguments, "") == 0)
-    printHistory("");
+    printHistory("", -1);
   else {
 
     const char *searchRegex = "(^(-s|--search)\\s[[:alnum:]]+)";
@@ -33,12 +36,12 @@ void manageHistory(Node *node) {
         historyCommand++;
       }
       historyCommand++;
-      printHistory(historyCommand);
+      printHistory(historyCommand, -1);
     }
   }
 }
 
-void printHistory(char *search) {
+void printHistory(char *search, int commandNumber) {
   FILE *file;
   CHECK((file = fopen("/tmp/shellterHistory", "r")) != NULL);
 
@@ -46,17 +49,44 @@ void printHistory(char *search) {
     char * line = NULL;
     size_t len = 0;
     ssize_t read;
+    int i = 0;
 
     while ((read = getline(&line, &len, file)) != -1) {
       if(strlen(search) > 0) {
         if(strstr(line, search)) {
           printf("%s", line);
         }
-      }
-      else {
+      } else if(commandNumber != -1) {
+        if(i == commandNumber) {
+          printHistoryCommand(line);
+          break;
+        }
+      } else {
         printf("%s", line);
       }
+      i++;
     }
     fclose(file);
   }
+}
+
+void printHistoryCommand(char *command) {
+  while(*command != '\t'){
+    command++;
+  }
+  command++;
+  printf("%s", command);
+}
+
+void readHistory(int way, char **str) {
+  if(way == 0)
+    historyResearch--;
+  else if(way == 1)
+    historyResearch++;
+
+  printHistory("", historyResearch);  
+}
+
+void resetHistoryCounter(int commandNumber) {
+  historyResearch = commandNumber;
 }
