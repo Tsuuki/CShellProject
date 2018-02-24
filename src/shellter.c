@@ -29,23 +29,7 @@
 #include "../include/shellter.h"
 #include "../include/manageAlias.h"
 #include "../include/history.h"
-
-#define KNRM  "\x1B[0m"
-#define KRED  "\x1B[31m"
-#define KGRN  "\x1B[32m"
-#define KYEL  "\x1B[33m"
-#define KBLU  "\x1B[34m"
-#define KMAG  "\x1B[35m"
-#define KCYN  "\x1B[36m"
-#define KWHT  "\x1B[37m"
-#define BOLD  "\x1B[1m"
-
-#define STDOUT 1
-#define STDERR 2
-
-#define MAX_PATH_LENGTH 4096
-#define BUFFER_SIZE 4096
-#define PID_ARRAY_SIZE 4096
+#include "../include/define.h"
 
 #define USAGE_SYNTAX "[options] [command_string | file]"
 #define USAGE_PARAMS "OPTIONS:\n\
@@ -216,8 +200,9 @@ void printWelcome() {
 }
 
 char* prompt(char* str) {
-
-  resetHistoryCounter(commandNumber);
+  
+  clearStr(str, BUFFER_SIZE);
+  resetHistoryCounter(commandNumber - 1);
   char* cwd = getWorkingDirectory();
 
   if(strstr(cwd, getEnvVar("HOME")) != NULL) {
@@ -236,7 +221,7 @@ char* prompt(char* str) {
   while ((kb_char = linux_getch()) != 0x0A) {
     if (kb_char == 127 || kb_char == 8) {
       if(i != 0) {
-        printf("\b \b"); //TODO SUPPRIMER LES CHAR DANS STR
+        clearPrompt(1);
         i--;
       }
     }
@@ -246,10 +231,17 @@ char* prompt(char* str) {
         kb_char = linux_getch();
         switch(linux_getch()) { // the real value
           case 'A': //ARROW UP
-            readHistory(0, &str);
+            clearPrompt(strlen(str));
+            clearStr(str, BUFFER_SIZE);
+            readHistory(0, &str, commandNumber - 1);
+            printf("%s", str);
+            i = 0; // Size of str
             break;
           case 'B': //ARROW DOWN
-            readHistory(1, &str);
+            clearPrompt(strlen(str));
+            clearStr(str, BUFFER_SIZE);
+            readHistory(1, &str, commandNumber - 1);
+            printf("%s", str);
             break;
           case 'C':
             if(i < strlen(str)) {
@@ -274,7 +266,6 @@ char* prompt(char* str) {
       }
     }
   }
-  str[i] = '\0';
   printf("\n");
 
   if(strlen(str) > 0)
@@ -283,57 +274,21 @@ char* prompt(char* str) {
   return str;
 }
 
+void clearPrompt(int nbCharToDelete) {
+  while(nbCharToDelete-- > 0) {
+    printf("\b \b");
+  }  
+}
+
+void clearStr(char *str, int size) {
+  memset(str, 0x00, size);
+}
+
 void writeToFile(char* command){
-
-  if(commandNumber == -1) {
-    CHECK((fpHistory = fopen("/tmp/shellterHistory", "a+")) != NULL);
-    fseek(fpHistory, 0, SEEK_END);
-
-    if(ftell(fpHistory) > 0)
-        getCmdNum();
-    else
-      commandNumber = 1;
-
-    fclose(fpHistory);
-  }
-
   CHECK((fpHistory = fopen("/tmp/shellterHistory", "a")) != NULL);
   fprintf(fpHistory, "%d\t%s\n", commandNumber, command);
   commandNumber++;
   fclose(fpHistory);
-}
-
-void getCmdNum() {
-
-  int c;
-  int i = -2;
-  fseek(fpHistory, i, SEEK_END);
-  while((c = fgetc(fpHistory)) != '\n') {
-    i--;
-    fseek(fpHistory, i, SEEK_END);
-  }
-
-  char *nbStr = malloc(BUFFER_SIZE * sizeof(char));
-  memset(nbStr, 0, BUFFER_SIZE * sizeof(char));
-  int l = 0;
-  while((c = fgetc(fpHistory)) <= '9' && c >= '0' && c != EOF) {
-    i++;
-    fseek(fpHistory, i, SEEK_SET);
-    nbStr[l] = (char)c;
-    //*nbStr++ = (char)c; //DOESN'T WORK
-    l++;
-  }
-
-  nbStr[l] = '\0';
-  //*(nbStr) = '\0'; DOESN'T WORK
-  
-  int number;
-  if (sscanf(nbStr, "%d", &number) == 1) {
-    commandNumber = number + 1;
-    return;
-  }
-
-  commandNumber = 1;
 }
 
 /**
@@ -354,6 +309,7 @@ int main(int argc, char** argv)
   bool shellterMode = true;
 
   initAliases();
+  commandNumber = retrieveCommandNumber();
 
   while ((opt = getopt_long(argc, argv, binaryOptstr, binaryOpts, &optIdx)) != -1)
   {

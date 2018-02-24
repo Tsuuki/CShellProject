@@ -59,8 +59,8 @@ void printWelcome();
 char* prompt();
 
 void writeToFile();
-void getCmdNum();
-
+void clearPrompt(int nbCharToDelete);
+void clearStr(char* str, int size);
 int linux_getch(void);
 
 #endif /** __SHELTER_H__ **/
