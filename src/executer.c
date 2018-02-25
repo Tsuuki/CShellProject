@@ -31,16 +31,22 @@
 extern bool run;
 extern struct AliasArray *aliases;
 
-void execute(Node *node, bool isForked) {
+bool execute(Node *node, bool isForked) {
+  bool isExecuted = false;
+
   if(node != NULL) {
     if(!checkBuildInCommand(&node)) {
       if(isForked) {
-        checkResult(node, executeCommandForked(node));
+        isExecuted = checkResult(node, executeCommandForked(node));
       } else {
-        checkResult(node, executeCommand(node));
+        isExecuted = checkResult(node, executeCommand(node));
       }
+    } else {
+      isExecuted = true;
     }
   }
+
+  return isExecuted;
 }
 
 bool checkBuildInCommand(Node **node) {

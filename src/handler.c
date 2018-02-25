@@ -25,8 +25,9 @@
 #define BUFFERSIZE 4096 //TODO A FACTO
 
 void handle(Node *rootNode) {
-  Node *node = rootNode;
+  bool run = true;
   int number;
+  Node *node = rootNode;
 
   // If command is empty
   if(rootNode == NULL || (memcmp(rootNode, node, sizeof(Node)) == 0 && strcmp("", node->action->command) == 0)){
@@ -36,11 +37,11 @@ void handle(Node *rootNode) {
   if(node->next == NULL) {
       execute(node, true);
   } else {
-    while(node != NULL) {
+    while(node != NULL && run) {
       if(strcmp("&&", node->operator) == 0) {
-        execute(node, true);
+        run = execute(node, true);
       } else if (strcmp("||", node->operator) == 0) {
-        execute(node, true);
+        run = !execute(node, true);
       } else if (strcmp("|", node->operator) == 0) {
         number = handlePipe(node);
         while(number > 1) {
@@ -49,8 +50,10 @@ void handle(Node *rootNode) {
         }
       } else if (strcmp(">", node->operator) == 0) {
         handleRedirection(node, node->next->action->command, "w", 1);
+        node = node->next;
       } else if (strcmp(">>", node->operator) == 0) {
         handleRedirection(node, node->next->action->command, "a+", 1);
+        node = node->next;
       } else if (strcmp("<", node->operator) == 0) {
         handleRedirection(node, node->next->action->command, "r", 0);
         node = node->next;
