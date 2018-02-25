@@ -217,12 +217,16 @@ char* prompt(char* str) {
     KNRM);
 
   int kb_char;
-  int i = 0;
+  int cursor_position = 0;
   while ((kb_char = linux_getch()) != 0x0A) {
     if (kb_char == 127 || kb_char == 8) {
-      if(i != 0) {
-        clearPrompt(1);
-        i--;
+      if(cursor_position > 0) {
+        removeCharString(cursor_position - 1, &str);
+        moveCursor(1, strlen(str) - cursor_position);
+        clearPrompt(strlen(str) + 1);
+        printf("%s", str);
+        moveCursor(0, strlen(str) - cursor_position);
+        cursor_position--;
       }
     }
     else {
@@ -235,24 +239,25 @@ char* prompt(char* str) {
             clearStr(str, BUFFER_SIZE);
             readHistory(0, &str, commandNumber - 1);
             printf("%s", str);
-            i = 0; // Size of str
+            cursor_position = strlen(str);
             break;
           case 'B': //ARROW DOWN
             clearPrompt(strlen(str));
             clearStr(str, BUFFER_SIZE);
             readHistory(1, &str, commandNumber - 1);
             printf("%s", str);
+            cursor_position = strlen(str);
             break;
           case 'C':
-            if(i < strlen(str)) {
+            if(cursor_position < strlen(str)) {
               printf("\033[1C"); // Move right column;
-              i++;
+              cursor_position++;
             }
             break;
           case 'D':
-            if(i > 0) {
+            if(cursor_position > 0) {
               printf("\033[1D"); // Move left column;
-              i--;
+              cursor_position--;
             }
             break;
           default:
@@ -261,8 +266,8 @@ char* prompt(char* str) {
       }
       else {
         printf("%c", kb_char);
-        str[i] = kb_char;
-        i++;
+        str[cursor_position] = kb_char;
+        cursor_position++;
       }
     }
   }
@@ -272,6 +277,25 @@ char* prompt(char* str) {
     writeToFile(str);
 
   return str;
+}
+
+void moveCursor(int way, int length) {
+  char *move;
+  if(way == 1)
+    move = "\033[1C";
+  else
+    move = "\033[1D";
+
+  for(int i = 0; i <= length; i++) {
+    printf("%s", move);
+  }
+}
+
+void removeCharString(int position, char **str) {
+  while((*str)[position] != '\0'){
+    (*str)[position] = (*str)[position + 1];
+    position++;
+  }
 }
 
 void clearPrompt(int nbCharToDelete) {
