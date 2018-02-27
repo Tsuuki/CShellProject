@@ -11,20 +11,20 @@
 #include <stdbool.h>
 #include <getopt.h>
 #include <unistd.h>
-#include <sys/types.h>
+#include <string.h>
 #include <wait.h>
 #include <ctype.h>
-#include <string.h>
 
 #include "../include/typedef.h"
+#include "../include/define.h"
 #include "../include/utils.h"
 #include "../include/parser.h"
 #include "../include/handler.h"
 #include "../include/alias.h"
 #include "../include/history.h"
 #include "../include/prompt.h"
+#include "../include/fork.h"
 #include "../include/shellter.h"
-#include "../include/define.h"
 
 #define USAGE_SYNTAX "[options] [command_string | file]"
 #define USAGE_PARAMS "OPTIONS:\n\
@@ -33,8 +33,6 @@
   -v, --verbose : enable *verbose* mode\n\
   -h, --help    : display this help\n\
 "
-
-ForkMap **forkMapRunning = NULL;
 
 /**
  * Binary options declaration
@@ -63,6 +61,11 @@ const char* binaryOptstr = "hvc:";
  * If the shell need to run
  */ 
 bool run = true;
+
+/**
+ * ForkMap containing all running process
+ */
+ForkMap **forkMapRunning = NULL;
 
 struct AliasArray *aliases;
 
@@ -126,71 +129,6 @@ void executeShell(bool verbose) {
   freeIfNeeded(forkMapRunning);
   
   exit(EXIT_SUCCESS);
-}
-
-void FillForkMap(ForkMap **forkMap, int pid, char *value) {
-  int i;
-  
-  for(i = 0; i < FORKMAP_SIZE; i++) {
-    if(forkMap[i] == NULL) {
-      printf("[%d]          %d : %s\n", i + 1, pid, value);
-      forkMap[i] = malloc(sizeof(ForkMap));
-      forkMap[i]->index = i + 1;
-      forkMap[i]->pid = pid;
-      forkMap[i]->value = malloc(sizeof(char*));
-      strcpy(forkMap[i]->value, value);
-      break;
-    }
-  }
-}
-
-void ManageForkMap(ForkMap **forkMap1, ForkMap **forkMap2) {
-  pid_t pid;
-  int i = 0;
-  int j = 0;  
-  
-  while ((pid = waitpid(-1, NULL, WNOHANG)) > 0) {
-    while(forkMap1[i] != NULL) 
-      i++;
-    for(j = 0; j < FORKMAP_SIZE; j++) {
-      if(forkMap2[j] != NULL && forkMap2[j]->pid == pid) 
-        break;
-    }
-    if(forkMap2[j] != NULL) {
-      forkMap1[i] = malloc(sizeof(ForkMap));
-      forkMap1[i]->index = forkMap2[j]->index;
-      forkMap1[i]->pid = forkMap2[j]->pid;
-      forkMap1[i]->value = malloc(sizeof(char*));
-      strcpy(forkMap1[i]->value, forkMap2[j]->value);
-      freeForkMap(forkMap2, j);
-    }
-  }
-}
-
-void printForkMap(ForkMap **forkMap) {
-  int i;
-  
-  for(i = 0; i < FORKMAP_SIZE; i++) {
-    if(forkMap[i] != NULL && forkMap[i]->index > 0) {
-      printf("[%d]+ Done    %d : %s\n", forkMap[i]->index, forkMap[i]->pid, forkMap[i]->value);
-      freeForkMap(forkMap, i);
-    }
-  }
-}
-
-void freeForkMap(ForkMap **forkMap, int index) {
-  freeIfNeeded(forkMap[index]->value);
-  freeIfNeeded(forkMap[index]);
-  forkMap[index] = NULL;
-}
-
-void makeForeground(int index) {
-  if(forkMapRunning[index] == NULL) 
-    return;
-
-  printf("%s\n", forkMapRunning[index]->value);
-  waitpid(forkMapRunning[index]->pid, NULL, 0);
-  freeForkMap(forkMapRunning, index);
 }
 
 char *trimAmpersand(char *str) {

@@ -26,7 +26,7 @@
 #include "../include/history.h"
 #include "../include/authors.h"
 #include "../include/define.h"
-#include "../include/shellter.h"
+#include "../include/fork.h"
 #include "../include/executer.h"
 
 extern bool run;

@@ -1,10 +1,10 @@
 /**
  * \file parser.c
- * \brief parse char into a tree.
+ * \brief parse char into a linkedList.
  * \author Quentin D. Jordan H.
  * \version 1.0
  * \date January 26, 2018 
- * parse the command in char in a tree and return the first node
+ * parse the command in char in a linkedList and return the linkedList
  */
 
 #include <string.h>
