@@ -105,11 +105,12 @@ void executeBatch(char* commandParam) {
   exit(EXIT_SUCCESS);
 }
 
+ForkMap **forkMapValues;
 void executeShell(bool verbose) {
   pid_t pid;
   char *line = malloc(BUFFER_SIZE * sizeof(char));
   ForkMap **forkMap = malloc(FORKMAP_SIZE * sizeof(ForkMap));
-  ForkMap **forkMapValues = malloc(FORKMAP_SIZE * sizeof(ForkMap));
+  forkMapValues = malloc(FORKMAP_SIZE * sizeof(ForkMap));
   LinkedList *linkedList;
 
   printWelcome();
@@ -123,6 +124,7 @@ void executeShell(bool verbose) {
     linkedList = parse(line);
     if(linkedList->isBackgrounded) {
       if((pid = fork()) == 0) {
+        setpgid(0, 0);
         handle(linkedList->rootNode);
         exit(EXIT_SUCCESS);
       } else if (pid == -1) {
@@ -152,8 +154,9 @@ void FillForkMapValues(ForkMap **forkMapValues, int pid, char *value) {
   
   for(i = 0; i < FORKMAP_SIZE; i++) {
     if(forkMapValues[i] == NULL) {
-      printf("[%d]          %d : %s\n", i+1, pid, value);
+      printf("[%d]          %d : %s\n", i + 1, pid, value);
       forkMapValues[i] = malloc(sizeof(ForkMap));
+      forkMapValues[i]->index = i + 1;
       forkMapValues[i]->pid = pid;
       forkMapValues[i]->value = malloc(sizeof(char*));
       strcpy(forkMapValues[i]->value, value);
@@ -176,7 +179,8 @@ void ManageForkMap(ForkMap **forkMap, ForkMap **forkMapValues) {
     }
     if(forkMapValues[j] != NULL) {
       forkMap[i] = malloc(sizeof(ForkMap));
-      forkMap[i]->pid = pid;
+      forkMap[i]->index = forkMapValues[j]->index;
+      forkMap[i]->pid = forkMapValues[j]->pid;
       forkMap[i]->value = malloc(sizeof(char*));
       strcpy(forkMap[i]->value, forkMapValues[j]->value);
       freeForkMap(forkMapValues, j);
@@ -189,16 +193,25 @@ void printForkMap(ForkMap **forkMap) {
   
   for(i = 0; i < FORKMAP_SIZE; i++) {
     if(forkMap[i] != NULL) {
-      printf("[%d]+ Done    %d : %s\n", i+1, forkMap[i]->pid, forkMap[i]->value);
+      printf("[%d]+ Done    %d : %s\n", forkMap[i]->index, forkMap[i]->pid, forkMap[i]->value);
       freeForkMap(forkMap, i);
     }
   }
 }
 
-void freeForkMap(ForkMap **forkMap, int position) {
-  freeIfNeeded(forkMap[position]->value);
-  freeIfNeeded(forkMap[position]);
-  forkMap[position] = NULL;
+void makeForeground(int index) {
+  if(forkMapValues[index] == NULL) 
+    return;
+
+  printf("%s\n", forkMapValues[index]->value);
+  waitpid(forkMapValues[index]->pid, NULL, 0);
+  freeForkMap(forkMapValues, index);
+}
+
+void freeForkMap(ForkMap **forkMap, int index) {
+  freeIfNeeded(forkMap[index]->value);
+  freeIfNeeded(forkMap[index]);
+  forkMap[index] = NULL;
 }
 
 char *trimAmpersand(char *str) {

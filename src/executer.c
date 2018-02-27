@@ -20,11 +20,12 @@
 #include "../include/check.h"
 #include "../include/utils.h"
 #include "../include/manageEnvVar.h"
-#include "../include/executer.h"
 #include "../include/manageAlias.h"
 #include "../include/parser.h"
 #include "../include/history.h"
 #include "../include/authors.h"
+#include "../include/shellter.h"
+#include "../include/executer.h"
 
 #define MAX_ARGUMENTS 20
 
@@ -75,6 +76,8 @@ bool checkBuildInCommand(Node **node) {
     manageAlias(node[0]);
   } else if(strcmp(node[0]->action->command, "authors") == 0) {
     printAuthors();
+  } else if(strcmp(node[0]->action->command, "fg") == 0) {
+    manageForeground(node[0]->action->arguments);
   } else if(strcmp(node[0]->action->command, "exit") == 0) {
     exitShell();
   } else {
@@ -183,6 +186,17 @@ void echo(char *str) {
     }
     printf("\n");
   }  
+}
+
+void manageForeground(char *arguments) {
+  int position; 
+
+  position = atoi(arguments);
+
+  if(position < 1 || position > 25)
+    return;
+  
+  makeForeground(position - 1);
 }
 
 void exitShell() { 

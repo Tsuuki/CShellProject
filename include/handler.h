@@ -32,10 +32,10 @@ int handlePipe(Node *node);
  * 
  * \param Node *nodeArray[] array with all the nodes to be piped together
  * \param in inputFileDescriptor file descriptor
- * \param position position in the array
+ * \param index index in the array
  * \return void
  */
-void handlePipeArray(Node *nodeArray[], int inputFileDescriptor, int position);
+void handlePipeArray(Node *nodeArray[], int inputFileDescriptor, int index);
 
 /**
  * Handle command using > >> and >

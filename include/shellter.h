@@ -61,12 +61,20 @@ void ManageForkMap(ForkMap **forkMap, ForkMap **forkMapValues);
 void printForkMap(ForkMap **forkMap);
 
 /**
- * Free the forkMap at the positon
+ * Free the forkMap at the index
  * 
- * \param int position
+ * \param int index
  * \return void
  */
-void freeForkMap(ForkMap **forkmap, int position);
+void freeForkMap(ForkMap **forkmap, int index);
+
+/**
+ * Allow to make the command at the index in foreground
+ * 
+ * \param int index
+ * \retrun void
+ */
+void makeForeground(int index);
 
 /**
  * Trim the Ampersand at the end of the string

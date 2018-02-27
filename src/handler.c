@@ -156,13 +156,13 @@ int handlePipe(Node *node) {
   return number;
 }
 
-void handlePipeArray(Node *nodeArray[], int inputFileDescriptor, int position) {
+void handlePipeArray(Node *nodeArray[], int inputFileDescriptor, int index) {
   pid_t pid;
   int fileDescriptor[2];
 
-  if(nodeArray[position+1] == NULL) {
+  if(nodeArray[index+1] == NULL) {
     dup2(inputFileDescriptor, STDIN_FILENO);
-    execute(nodeArray[position], false);
+    execute(nodeArray[index], false);
   } else {
     CHECK(pipe(fileDescriptor) == 0);
 
@@ -170,14 +170,14 @@ void handlePipeArray(Node *nodeArray[], int inputFileDescriptor, int position) {
       close(fileDescriptor[0]);
       dup2(inputFileDescriptor, STDIN_FILENO);
       dup2(fileDescriptor[1],STDOUT_FILENO);
-      execute(nodeArray[position], false);
+      execute(nodeArray[index], false);
     } else if(pid == -1) {
       perror("Fork failed\n");
       exit(EXIT_FAILURE);
     } else { 
       close(fileDescriptor[1]);      
       close(inputFileDescriptor);
-      handlePipeArray(nodeArray, fileDescriptor[0], position+1);
+      handlePipeArray(nodeArray, fileDescriptor[0], index+1);
     }
   }
   return;
