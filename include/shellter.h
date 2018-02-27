@@ -38,20 +38,20 @@ void executeShell(bool verbose);
 /**
  * Fill the forMap in param with the pid and value
  * 
- * \param ForkMap **forkMapValues contains all the values
+ * \param ForkMap **forkMap contains all the values
  * \param int pid
  * \param char *value
  * \return void
  */
-void FillForkMapValues(ForkMap **forkMapValues, int pid, char *value);
+void FillForkMap(ForkMap **forkMap, int pid, char *value);
 
 /**
  * Fill the first forkMap with the value of the second
- * \param ForkMap **forkMap
- * \param ForkMap **forkMapValues
+ * \param ForkMap **forkMap copied in
+ * \param ForkMap **forkMap who will be copied
  * \return void
  */
-void ManageForkMap(ForkMap **forkMap, ForkMap **forkMapValues);
+void ManageForkMap(ForkMap **forkMap1, ForkMap **forkMap2);
 
 /**
  * Print all the fork that finished
