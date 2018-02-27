@@ -67,6 +67,14 @@ void printWorkingDirectory();
 void echo(char *str);
 
 /**
+ * Call makeForeground to make the command in foreground
+ * 
+ * \param char *arguments
+ * \return void
+ */
+void manageForeground(char *arguments);
+
+/**
  * Exit the shell by passing run to false
  * 
  * \return void

@@ -35,7 +35,7 @@ typedef struct LinkedList {
 } LinkedList;
 
 /**
- * Struct ForkMap with an index and a value
+ * Struct ForkMap with an index, a pid and a value
  */
 typedef struct ForkMap {
     int index;
