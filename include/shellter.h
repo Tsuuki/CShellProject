@@ -75,25 +75,4 @@ void freeForkMap(ForkMap **forkmap, int position);
  */
 char *trimAmpersand(char *str);
 
-/**
- * Print a welcome message
- * 
- * \return void
- */
-void printWelcome();
-
-/**
- * Display shell prompt at screen
- * 
- * \return char* command enter by the user
- */
-char* prompt();
-
-void writeToFile();
-void clearPrompt(int nbCharToDelete);
-void clearStr(char* str, int size);
-void removeCharString(int position, char **str);
-int linux_getch(void);
-void moveCursor(int way, int length);
-
 #endif /** __SHELTER_H__ **/

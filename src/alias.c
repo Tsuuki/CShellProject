@@ -8,16 +8,13 @@
  * File containing all the alias functions
  */
 
-#include <unistd.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <ctype.h>
 
 #include "../include/typedef.h"
-#include "../include/manageAlias.h"
+#include "../include/alias.h"
 #include "../include/check.h"
 #include "../include/reg.h"
 

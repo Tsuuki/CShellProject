@@ -7,7 +7,6 @@
  * 
  * File containing all the history functions
  */
-#include <unistd.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
@@ -16,11 +15,12 @@
 #include "../include/typedef.h"
 #include "../include/check.h"
 #include "../include/reg.h"
-#include "../include/check.h"
 #include "../include/history.h"
 #include "../include/define.h"
 
 int historyResearch;
+FILE *fpHistory = NULL;
+int commandNumber = -1;
 
 void manageHistory(Node *node) {
   if(strcmp(node->action->arguments, "") == 0)
@@ -93,17 +93,17 @@ void resetHistoryCounter(int commandNumber) {
   historyResearch = commandNumber;
 }
 
-int retrieveCommandNumber() {
+void retrieveCommandNumber() {
   FILE *fpHistory;
   CHECK((fpHistory = fopen("/tmp/shellterHistory", "a+")) != NULL);
   fseek(fpHistory, 0, SEEK_END);
 
   if(ftell(fpHistory) > 0)
-      return getCmdNum(fpHistory);
-
+    commandNumber = getCmdNum(fpHistory);
+  else
+    commandNumber = 1;
+  
   fclose(fpHistory);
-
-  return 1;
 }
 
 int getCmdNum(FILE *fpHistory) {
@@ -134,4 +134,11 @@ int getCmdNum(FILE *fpHistory) {
   }
 
   return 1;
+}
+
+void writeToFile(char* command){
+  CHECK((fpHistory = fopen("/tmp/shellterHistory", "a")) != NULL);
+  fprintf(fpHistory, "%d\t%s\n", commandNumber, command);
+  commandNumber++;
+  fclose(fpHistory);
 }

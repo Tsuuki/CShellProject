@@ -1,3 +1,6 @@
+#ifndef __DEFINE_H__
+#define __DEFINE_H__
+
 #define KNRM  "\x1B[0m"
 #define KRED  "\x1B[31m"
 #define KGRN  "\x1B[32m"
@@ -15,3 +18,7 @@
 #define BUFFER_SIZE 4096
 #define PID_ARRAY_SIZE 4096
 #define FORKMAP_SIZE 25
+
+#define MAX_ARGUMENTS 20
+
+#endif /** __DEFINE_H__ **/

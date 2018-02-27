@@ -10,23 +10,23 @@
 
 #include <unistd.h>
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <string.h>
 
 #include "../include/typedef.h"
 #include "../include/check.h"
 #include "../include/utils.h"
-#include "../include/manageEnvVar.h"
+#include "../include/environment.h"
 #include "../include/executer.h"
-#include "../include/manageAlias.h"
+#include "../include/alias.h"
 #include "../include/parser.h"
 #include "../include/history.h"
 #include "../include/authors.h"
-
-#define MAX_ARGUMENTS 20
+#include "../include/define.h"
 
 extern bool run;
 extern struct AliasArray *aliases;
@@ -135,7 +135,6 @@ int executeCommandForked(Node *node) {
     wait(&status);
     if(WIFEXITED(status))
       code = WEXITSTATUS(status);
-      
     freeIfNeeded(action);
   }
 

@@ -43,9 +43,9 @@ void resetHistoryCounter(int commandNumber);
 
 /**
  * Function that retrieve command number from history file
- * \return int command number
+ * \return void
  */ 
-int retrieveCommandNumber();
+void retrieveCommandNumber();
 
 /**
  * Function that extract command number from line command
@@ -53,4 +53,11 @@ int retrieveCommandNumber();
  * \return int command number
  */ 
 int getCmdNum(FILE *fpHistory);
+
+/**
+ * Procedure that write command into history file
+ * 
+ * \return void
+ */ 
+void writeToFile();
 #endif /** __HISTORY_H__ **/

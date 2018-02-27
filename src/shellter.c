@@ -8,27 +8,22 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <stdbool.h>
 #include <getopt.h>
 #include <unistd.h>
-#include <string.h>
 #include <sys/types.h>
 #include <wait.h>
-#include <signal.h>
 #include <ctype.h>
-#include <termios.h>
-
+#include <string.h>
 
 #include "../include/typedef.h"
-#include "../include/check.h"
 #include "../include/utils.h"
-#include "../include/manageEnvVar.h"
 #include "../include/parser.h"
 #include "../include/handler.h"
-#include "../include/shellter.h"
-#include "../include/manageAlias.h"
+#include "../include/alias.h"
 #include "../include/history.h"
+#include "../include/prompt.h"
+#include "../include/shellter.h"
 #include "../include/define.h"
 
 #define USAGE_SYNTAX "[options] [command_string | file]"
@@ -38,9 +33,6 @@
   -v, --verbose : enable *verbose* mode\n\
   -h, --help    : display this help\n\
 "
-
-FILE *fpHistory = NULL;
-int commandNumber = -1;
 
 /**
  * Binary options declaration
@@ -90,22 +82,6 @@ void executeBatch(char* commandParam) {
   handle(parse(commandParam)->rootNode);
 
   exit(EXIT_SUCCESS);
-}
-
-int linux_getch(void) 
-{
-  struct termios oldstuff;
-  struct termios newstuff;
-  int    inch;
-  
-  tcgetattr(STDIN_FILENO, &oldstuff);
-  newstuff = oldstuff;                  /* save old attributes               */
-  newstuff.c_lflag &= ~(ICANON | ECHO); /* reset "canonical" and "echo" flags*/
-  tcsetattr(STDIN_FILENO, TCSANOW, &newstuff); /* set new attributes         */
-  inch = getchar();
-  tcsetattr(STDIN_FILENO, TCSANOW, &oldstuff); /* restore old attributes     */
-
-  return inch;
 }
 
 void executeShell(bool verbose) {
@@ -193,7 +169,7 @@ void printForkMap(ForkMap **forkMap) {
   for(i = 0; i < FORKMAP_SIZE; i++) {
     if(forkMap[i] != NULL) {
       printf("[%d]+ Done    %d : %s\n", i+1, forkMap[i]->pid, forkMap[i]->value);
-      freeForkMap(forkMap, i);
+      //freeForkMap(forkMap, i);
     }
   }
 }
@@ -217,130 +193,6 @@ char *trimAmpersand(char *str) {
   return str;
 }
 
-void printWelcome() {
-  printf("╔═════════════════════════════════════╗\n");
-  printf("║               WELCOME               ║\n");
-  printf("║               IN THE                ║\n");
-  printf("║              SHELLTER               ║\n");
-  printf("╚═════════════════════════════════════╝\n");
-}
-
-char* prompt(char* str) {
-  
-  clearStr(str, BUFFER_SIZE);
-  resetHistoryCounter(commandNumber - 1);
-  char* cwd = getWorkingDirectory();
-
-  if(strstr(cwd, getEnvVar("HOME")) != NULL) {
-    cwd = str_replace(cwd, getEnvVar("HOME"), "~");
-  }
- 
-  printf("%s%s@%s%s:%s%s%s%s%s%s%s ",
-    KCYN, getUserName(),
-    getUserHostName(), KWHT,
-    KYEL, BOLD, cwd,
-    KNRM, KWHT, getRootPermission(),
-    KNRM);
-
-  int kb_char;
-  int cursor_position = 0;
-  while ((kb_char = linux_getch()) != 0x0A) {
-    if (kb_char == 127 || kb_char == 8) {
-      if(cursor_position > 0) {
-        removeCharString(cursor_position - 1, &str);
-        moveCursor(1, strlen(str) - cursor_position);
-        clearPrompt(strlen(str) + 1);
-        printf("%s", str);
-        moveCursor(0, strlen(str) - cursor_position);
-        cursor_position--;
-      }
-    }
-    else {
-      
-      if('\033' == kb_char) {
-        kb_char = linux_getch();
-        switch(linux_getch()) { // the real value
-          case 'A': //ARROW UP
-            clearPrompt(strlen(str));
-            clearStr(str, BUFFER_SIZE);
-            readHistory(0, &str, commandNumber - 1);
-            printf("%s", str);
-            cursor_position = strlen(str);
-            break;
-          case 'B': //ARROW DOWN
-            clearPrompt(strlen(str));
-            clearStr(str, BUFFER_SIZE);
-            readHistory(1, &str, commandNumber - 1);
-            printf("%s", str);
-            cursor_position = strlen(str);
-            break;
-          case 'C':
-            if(cursor_position < strlen(str)) {
-              printf("\033[1C"); // Move right column;
-              cursor_position++;
-            }
-            break;
-          case 'D':
-            if(cursor_position > 0) {
-              printf("\033[1D"); // Move left column;
-              cursor_position--;
-            }
-            break;
-          default:
-            break;
-        }
-      }
-      else {
-        printf("%c", kb_char);
-        str[cursor_position] = kb_char;
-        cursor_position++;
-      }
-    }
-  }
-  printf("\n");
-
-  if(strlen(str) > 0)
-    writeToFile(str);
-
-  return str;
-}
-
-void moveCursor(int way, int length) {
-  char *move;
-  if(way == 1)
-    move = "\033[1C";
-  else
-    move = "\033[1D";
-
-  for(int i = 0; i <= length; i++) {
-    printf("%s", move);
-  }
-}
-
-void removeCharString(int position, char **str) {
-  while((*str)[position] != '\0'){
-    (*str)[position] = (*str)[position + 1];
-    position++;
-  }
-}
-
-void clearPrompt(int nbCharToDelete) {
-  while(nbCharToDelete-- > 0) {
-    printf("\b \b");
-  }  
-}
-
-void clearStr(char *str, int size) {
-  memset(str, 0x00, size);
-}
-
-void writeToFile(char* command){
-  CHECK((fpHistory = fopen("/tmp/shellterHistory", "a")) != NULL);
-  fprintf(fpHistory, "%d\t%s\n", commandNumber, command);
-  commandNumber++;
-  fclose(fpHistory);
-}
-
 /**
  * Binary main loop
  *
@@ -359,7 +211,7 @@ int main(int argc, char** argv)
   bool shellterMode = true;
 
   initAliases();
-  commandNumber = retrieveCommandNumber();
+  retrieveCommandNumber();
 
   while ((opt = getopt_long(argc, argv, binaryOptstr, binaryOpts, &optIdx)) != -1)
   {

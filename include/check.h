@@ -4,8 +4,7 @@
 
 #include <stdio.h> // For fprintf, perror
 #include <stdlib.h> // For exit
-#include <string.h>
-#include <errno.h>
+#include <errno.h> // For perror and errno
 
 #define CHECK(x) \
   do { \

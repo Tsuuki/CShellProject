@@ -15,8 +15,7 @@
 
 #include "../include/typedef.h"
 #include "../include/parser.h"
-
-#define BUFFER_SIZE 4096
+#include "../include/define.h"
 
 LinkedList *parse(char *commandParam) {
   bool isBackgrounded = false;

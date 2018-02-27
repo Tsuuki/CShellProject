@@ -8,12 +8,12 @@
  * File containing all the functions on environment variables
  */
 
-#include <unistd.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "../include/utils.h"
 #include "../include/check.h"
-#include "../include/manageEnvVar.h"
+#include "../include/environment.h"
 
 extern char **environ;
 

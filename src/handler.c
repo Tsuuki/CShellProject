@@ -15,6 +15,7 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include <fcntl.h>
+#include <string.h>
 
 #include "../include/typedef.h"
 #include "../include/check.h"

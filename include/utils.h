@@ -51,4 +51,25 @@ void clean(const char*, FILE*);
  */
 void freeIfNeeded(void*);
 
+/**
+ * Procedure that clean a char* with 0x00
+ * 
+ * \param char *str the string to clean
+ * \param int size the size of string
+ * 
+ * \return void
+ * 
+ */ 
+void clearStr(char* str, int size);
+
+/**
+ * Procedure that remove a char from a string at specific position
+ * And then, change index of every char after
+ * 
+ * \param int position the char position to remove
+ * \param char **str a pointer to the string
+ * 
+ */ 
+void removeCharString(int position, char **str);
+
 #endif /** __UTILS_H__ **/

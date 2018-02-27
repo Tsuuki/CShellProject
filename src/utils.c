@@ -7,7 +7,6 @@
  * 
  * Contain all the utils functions
  */
-#include <sys/types.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,7 +14,7 @@
 #include <string.h>
 
 #include "../include/utils.h"
-#include "../include/manageEnvVar.h"
+#include "../include/environment.h"
 
 // FREE MEMORY ??
 char* getRootPermission() {
@@ -116,4 +115,15 @@ void clean(const char *buffer, FILE *fp){
 
 void freeIfNeeded(void* toFree) {
   if (toFree != NULL) free(toFree);  
+}
+
+void clearStr(char *str, int size) {
+  memset(str, 0x00, size);
+}
+
+void removeCharString(int position, char **str) {
+  while((*str)[position] != '\0'){
+    (*str)[position] = (*str)[position + 1];
+    position++;
+  }
 }
