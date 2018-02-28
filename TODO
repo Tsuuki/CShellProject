@@ -11,6 +11,4 @@
 8 - Man écrire une partie sur les variables d'environnements
 10 - BUG commande < file | Commande ou commande < file > file
 11 - PARSER gerer " "
-12 - Gérer écrire au milieu d'une commande
 13 - Gérer move cursor + arrow key
-14 - Forkmap externe + fichier forkamp.h
