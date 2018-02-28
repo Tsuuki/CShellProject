@@ -31,8 +31,13 @@ void printWelcome() {
 
 char* prompt(char* str) {
   
+  // Erase all memory in the string
   clearStr(str, BUFFER_SIZE);
-  resetHistoryCounter(commandNumber - 1);
+
+  // Put history at the end for arrow key 
+  resetHistoryCounter(commandNumber - 1); 
+
+  // Write in terminal the current user, system and path
   char* cwd = getWorkingDirectory();
 
   if(strstr(cwd, getEnvVar("HOME")) != NULL) {
@@ -48,21 +53,35 @@ char* prompt(char* str) {
 
   int kb_char;
   int cursor_position = 0;
+
+  // While keyboard code is different to enter char
   while ((kb_char = linux_getch()) != 0x0A) {
+
+    // If this is keyboard backspace code
     if (kb_char == 127 || kb_char == 8) {
       if(cursor_position > 0) {
+
+        // Delete char from String
         removeCharString(cursor_position - 1, &str);
+
+        // Move cursor to the end
         moveCursor(1, strlen(str) - cursor_position);
+
+        // Clear all the prompt section
         clearPrompt(strlen(str) + 1);
         printf("%s", str);
+
+        // Then put the cursor at the right place
         moveCursor(0, strlen(str) - cursor_position);
         cursor_position--;
       }
     }
     else {
       
+      // If we catch arrow key
       if('\033' == kb_char) {
         kb_char = linux_getch();
+
         switch(linux_getch()) { // the real value
           case 'A': //ARROW UP
             clearPrompt(strlen(str));
@@ -78,13 +97,13 @@ char* prompt(char* str) {
             printf("%s", str);
             cursor_position = strlen(str);
             break;
-          case 'C':
+          case 'C': //ARROW RIGHT
             if(cursor_position < strlen(str)) {
               printf("\033[1C"); // Move right column;
               cursor_position++;
             }
             break;
-          case 'D':
+          case 'D': //ARROW LEFT
             if(cursor_position > 0) {
               printf("\033[1D"); // Move left column;
               cursor_position--;
@@ -94,9 +113,19 @@ char* prompt(char* str) {
             break;
         }
       }
+
+      // Else this is a char to write
       else {
-        printf("%c", kb_char);
-        str[cursor_position] = kb_char;
+        if(cursor_position != strlen(str)) {
+          writeToString(kb_char, cursor_position, &str);
+          moveCursor(1, strlen(str) - cursor_position);
+          clearPrompt(strlen(str) + 1);
+          printf("%s", str);
+          moveCursor(0, strlen(str) - cursor_position - 2);
+        } else {
+          str[cursor_position] = kb_char;
+          printf("%c", kb_char);
+        }
         cursor_position++;
       }
     }

@@ -15,6 +15,8 @@
 
 #include "../include/utils.h"
 #include "../include/environment.h"
+#include "../include/define.h"
+#include "../include/check.h"
 
 // FREE MEMORY ??
 char* getRootPermission() {
@@ -126,4 +128,10 @@ void removeCharString(int position, char **str) {
     (*str)[position] = (*str)[position + 1];
     position++;
   }
+}
+
+void writeToString(int kb_char, int cursor_position, char **str) {
+    CHECK(strlen(*str) + 1 < BUFFER_SIZE);
+    memmove(*str + cursor_position + 1, *str + cursor_position, strlen(*str) - cursor_position + 1);
+    (*str)[cursor_position] = kb_char;
 }
