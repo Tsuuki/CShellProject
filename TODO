@@ -6,7 +6,6 @@
   - nom des variables
 
 3 - Redirection erreur /dev/null
-6 - rajouter mode debug external
 7 - Man écrire une partie sur les alias
 8 - Man écrire une partie sur les variables d'environnements
 10 - BUG commande < file | Commande ou commande < file > file

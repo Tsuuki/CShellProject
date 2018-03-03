@@ -19,6 +19,22 @@ Display a usage message on standard output and exit successfully.
 .TP
 .BR -v
 Display readline variable names and values in such a way that they can be re-read.
+.SH INFO
+This shell have the following command implemented : 
+    - auhors : Display a picture of the authors
+    - alias :
+    - cd : Change directory
+    - echo : Echo the text in parameter
+    - exit : Exit shell
+    - environment varibles : manage environment variables
+        - addenv: Add the environment variable. Use : TEST=TEST
+        - printenv : Print all the environment variables
+        - delenv : Delete the environment variable in parameter
+    - fg : Make the number of the sleeped process in foreground
+    - history : Print the history of all commands
+    - pwd : Print the working directory
+.TP
+All other commands aren't build-in commands.
 .SH COPYRIGHT
 Shellter is Copyright (C) 2018 under MIT License
 .SH SEE ALSO
