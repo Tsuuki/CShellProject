@@ -17,6 +17,7 @@
 %token WORD
 
 /*** Rules section ***/
+%%
 argument:
   argument WORD
   |
@@ -68,7 +69,9 @@ command:
   | pipe_command control_list background NEWLINE
   | NEWLINE
   | error NEWLINE {yyerrok;}
+  ;
 
 command_list:
   command_list command
   ;
+  %%
