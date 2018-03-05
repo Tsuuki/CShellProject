@@ -1,6 +1,12 @@
 /*** Definition section ***/
 %{
   #include <stdio.h>
+
+  void yyerror(char *s) {
+      fprintf(stderr, "ERROR : Line %d --> %s\n", yylineno, s);
+      exit(SYNTAX_ERROR);
+  }
+
 %}
 
 /*** Token ***/
@@ -18,50 +24,10 @@
 
 /*** Rules section ***/
 %%
-argument:
-  argument WORD
-  |
-  ;
 
-arguments:
-  MINUS argument
-  | arguments argument
-  ;
-
-command_args:
-  WORD arguments
-  ;
-
-pipe_command:
-  pipe_command PIPE command_args
-  | command_args
-  ;
-
-io:
-  GREAT WORD
-  | GREATGREAT WORD
-  | LESS WORD
-  | LESSLESS WORD
-  ;
-
-io_list:
-  io_list io
-  |
-  ;
-
-background:
-  AMPERSAND
-  |
-  ;
-
-control:
-  AMPERSANDAMPERSAND WORD
-  | PIPEPIPE WORD
-  ;
-
-control_list:
-  control_list control
-  |
+command_list:
+  command_list command { printf("Get a command");}
+  | command
   ;
 
 command:
@@ -71,7 +37,51 @@ command:
   | error NEWLINE {yyerrok;}
   ;
 
-command_list:
-  command_list command
+pipe_command:
+  pipe_command PIPE command_args
+  | command_args
   ;
-  %%
+
+command_args:
+  WORD arguments
+  | WORD
+  ;
+
+arguments:
+  | MINUS argument
+  ;
+
+
+argument:
+  argument WORD
+  | WORD
+  ;
+
+io_list:
+  io_list io
+  |
+  ;
+
+// io:
+//   GREAT WORD
+//   | GREATGREAT WORD
+//   | LESS WORD
+//   | LESSLESS WORD
+//   ;
+
+// background:
+//   AMPERSAND
+//   |
+//   ;
+
+// control:
+//   AMPERSANDAMPERSAND WORD
+//   | PIPEPIPE WORD
+//   ;
+
+// control_list:
+//   control_list control
+//   |
+//   ;
+
+%%
