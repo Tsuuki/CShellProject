@@ -18,11 +18,22 @@ typedef struct Action {
 } Action;
 
 /**
+ * Struct Redirection composed by operator and file
+ */
+typedef struct Redirection {
+    char *operator;
+    char *file;
+} Redirection;
+
+/**
  * Struct Node composed of a command and an operator
  */
 typedef struct Node {
     char *operator;
     Action *action;
+    Redirection *input;
+    Redirection *output;
+    Redirection *error;
     struct Node *next;
 } Node;
 
