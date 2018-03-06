@@ -1,26 +1,31 @@
+%option nounput
+%option noinput
+%option noyywrap
+
 /*** Definition section ***/
 %{
 
   #include <string.h>
-  #define SAVE_TOKEN yylval.string_val = strdup(yytext)
+  #include "../include/parser.tab.h"
 %}
 
 %%
 
-"|"       { return PIPE; }
-">"       { return GREAT; }
-">>"      { return GREATGREAT; }
-"<"       { return LESS; }
-"<<"      { return LESSLESS; }
-"&"       { return AMPERSAND; }
-"&&"      { return AMPERSANDAMPERSAND; }
-"||"      { return PIPEPIPE; }
-"-"       { return MINUS; }
-"\n"      { return NEWLINE; }
-[ \t]     { /* Remove space and tabs */ }
-[^ \t\n][^ \t\n]* {
+"|"       { printf("|\n"); return PIPE; }
+">"       { printf(">\n"); return GREAT; }
+">>"      { printf(">>\n"); return GREATGREAT; }
+"<"       { printf("<\n"); return LESS; }
+"<<"      { printf("<<\n"); return LESSLESS; }
+"&"       { printf("&\n"); return AMPERSAND; }
+"&&"      { printf("&&\n"); return AMPERSANDAMPERSAND; }
+"||"      { printf("||\n"); return PIPEPIPE; }
+"-"       { printf("-\n"); return MINUS; }
+"\n"      { printf("NEWLINE\n"); return NEWLINE; }
+[ \t]     { printf("TAB\n"); /* Remove space and tabs */ }
+[[:alnum:]]* {
   /** Words contains only alpha chars */
-  SAVE_TOKEN;
+  yylval.string=strdup(yytext);
+  printf("word : %s\n", yytext); 
   return WORD;
 }
 [.]*         { printf("Unknown token"); }

@@ -1,13 +1,21 @@
 /*** Definition section ***/
 %{
   #include <stdio.h>
+  #include "../include/parser.tab.h"
 
-  void yyerror(char *s) {
-      fprintf(stderr, "ERROR : Line %d --> %s\n", yylineno, s);
-      exit(SYNTAX_ERROR);
+  extern int yylex();
+
+  void  yyerror (char *s){
+    printf ("\nErreur : %s\n", s);
   }
 
+  int yyparse();
+
 %}
+
+%union{
+  char* string;
+}
 
 /*** Token ***/
 %token PIPE
@@ -22,66 +30,68 @@
 %token NEWLINE
 %token WORD
 
+%left MINUS
 /*** Rules section ***/
 %%
 
 command_list:
-  command_list command { printf("Get a command");}
-  | command
+  command_list command_line { printf("command_list 1\n");}
+  | command_line            { printf("command_list 2\n");}
   ;
 
-command:
-  pipe_command io_list background NEWLINE
-  | pipe_command control_list background NEWLINE
-  | NEWLINE
+command_line:
+  pipe_command io_list background NEWLINE         { printf("command_line 1\n"); }
+  | pipe_command control_list background NEWLINE  { printf("command_line 2\n"); }
+  | NEWLINE                                       { printf("command_line empty command\n");}
   | error NEWLINE {yyerrok;}
   ;
 
 pipe_command:
-  pipe_command PIPE command_args
-  | command_args
+  pipe_command PIPE command     { printf("pipe_command 1\n"); }
+  | command                     { printf("pipe_command 2 1\n"); }
   ;
 
-command_args:
-  WORD arguments
-  | WORD
+command:
+  WORD list_args    { printf("command 1\n"); } 
   ;
 
-arguments:
-  | MINUS argument
+list_args:
+  list_args arg     {printf("list_args 1\n");}
+  | arg             {printf("list_args 2\n");}
   ;
 
-
-argument:
-  argument WORD
-  | WORD
+arg:
+  MINUS WORD          {printf("arg 1\n");}
+  | MINUS MINUS WORD  {printf("arg 2\n");}
+  | WORD              {printf("arg 3\n");}
+  |                   {printf("arg nothing\n");}
   ;
 
 io_list:
-  io_list io
-  |
+  io_list io          {printf("io_list 1\n");}
+  |                   {printf("io_list empty\n");}
   ;
 
-// io:
-//   GREAT WORD
-//   | GREATGREAT WORD
-//   | LESS WORD
-//   | LESSLESS WORD
-//   ;
+io:
+  GREAT WORD          {printf("io great word\n");}
+  | GREATGREAT WORD   {printf("io greatgreat word\n");}
+  | LESS WORD         {printf("io less word\n");}
+  | LESSLESS WORD     {printf("io lessless word\n");}
+  ;
 
-// background:
-//   AMPERSAND
-//   |
-//   ;
+control_list:
+  control_list control    {printf("control_list 1\n");}
+  |                       {printf("control_list empty\n");}
+  ;
 
-// control:
-//   AMPERSANDAMPERSAND WORD
-//   | PIPEPIPE WORD
-//   ;
+control:
+  AMPERSANDAMPERSAND WORD   {printf("control && word\n");}
+  | PIPEPIPE WORD           {printf("control || word\n");}
+  ;
 
-// control_list:
-//   control_list control
-//   |
-//   ;
+background:
+  AMPERSAND
+  |
+  ;
 
 %%

@@ -25,6 +25,7 @@
 #include "../include/prompt.h"
 #include "../include/fork.h"
 #include "../include/shellter.h"
+#include "../include/parser.tab.h"
 
 #define USAGE_SYNTAX "[options] [command_string | file]"
 #define USAGE_PARAMS "OPTIONS:\n\
@@ -33,6 +34,9 @@
   -v, --verbose : enable *verbose* mode\n\
   -h, --help    : display this help\n\
 "
+extern FILE *yyin; 
+extern FILE *yyout; 
+extern int yyparse(void);
 
 /**
  * Binary options declaration
@@ -163,6 +167,8 @@ int main(int argc, char** argv)
 
   initAliases();
   retrieveCommandNumber();
+
+  yyparse();
 
   while ((opt = getopt_long(argc, argv, binaryOptstr, binaryOpts, &optIdx)) != -1)
   {

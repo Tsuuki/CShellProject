@@ -4,6 +4,7 @@ LDFLAGS=-I ./include/
 
 SRC_DIR=./src
 OBJ_DIR=./obj
+PARSER_DIR=./parser
 INC_DIR=./include
 BIN_DIR=./bin
 DOC_DIR=./doc
@@ -24,6 +25,14 @@ AR_NAME=archive_$(EXEC).tar.gz
 
 
 all: $(SRC) $(EXEC)
+
+
+parser: $(PARSER_DIR)/parser.y
+	flex parser/shellter_scanner.l
+	mv lex.yy.c $(SRC_DIR)
+	bison -d $(PARSER_DIR)/parser.y
+	mv parser.tab.c $(SRC_DIR)
+	mv parser.tab.h $(INC_DIR)
     
 %.o:%.c
 	$(CC) $(CFLAGS) $< $(LDFLAGS) -o $(OBJ_DIR)/$(notdir $@)
@@ -60,8 +69,12 @@ man:
 	sudo cp ./ShellterMan /usr/local/man/man1/shellter.1
 	sudo gzip /usr/local/man/man1/shellter.1
 	@echo "You can now use 'man shellter'"
+
 clean:	
 	rm -rf $(OBJ2)
+	rm -f $(SRC_DIR)/lex.yy.c
+	rm -f $(INC_DIR)/parser.tab.h
+	rm -f $(SRC_DIR)/parser.tab.c
 
 mrproper: clean
 	rm -rf $(BIN_DIR)/*
