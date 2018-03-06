@@ -15,6 +15,7 @@
 
 %union{
   char* string;
+  int value;
 }
 
 /*** Token ***/
@@ -28,9 +29,11 @@
 %token PIPEPIPE
 %token MINUS
 %token NEWLINE
-%token WORD
+%token <string> WORD
+
 
 %left MINUS
+
 /*** Rules section ***/
 %%
 
@@ -48,11 +51,11 @@ command_line:
 
 pipe_command:
   pipe_command PIPE command     { printf("pipe_command 1\n"); }
-  | command                     { printf("pipe_command 2 1\n"); }
+  | command                     { printf("pipe_command 2\n"); }
   ;
 
 command:
-  WORD list_args    { printf("command 1\n"); } 
+  WORD list_args    { printf("command 1 %s\n", $1); } 
   ;
 
 list_args:
@@ -61,9 +64,9 @@ list_args:
   ;
 
 arg:
-  MINUS WORD          {printf("arg 1\n");}
-  | MINUS MINUS WORD  {printf("arg 2\n");}
-  | WORD              {printf("arg 3\n");}
+  MINUS WORD          {printf("arg 1 %s\n", $2);}
+  | MINUS MINUS WORD  {printf("arg 2 %s\n", $3);}
+  | WORD              {printf("arg 3 %s\n", $1);}
   |                   {printf("arg nothing\n");}
   ;
 
@@ -90,8 +93,8 @@ control:
   ;
 
 background:
-  AMPERSAND
-  |
+  AMPERSAND                 {printf("background \n");}
+  |                         {printf("background empty \n");}
   ;
 
 %%
