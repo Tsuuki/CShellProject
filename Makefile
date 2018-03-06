@@ -35,9 +35,11 @@ parser: $(PARSER_DIR)/parser.y
 	mv parser.tab.h $(INC_DIR)
     
 %.o:%.c
+	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) $< $(LDFLAGS) -o $(OBJ_DIR)/$(notdir $@)
 
-$(EXEC): $(OBJ) 
+$(EXEC): $(OBJ)
+	@mkdir -p $(BIN_DIR)
 	$(CC) -o $(BIN_DIR)/$@ -Wall $(LDFLAGS) $(OBJ2)
 
 $(GEXEC):
