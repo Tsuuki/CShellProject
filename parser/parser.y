@@ -27,12 +27,9 @@
 %token AMPERSAND
 %token AMPERSANDAMPERSAND
 %token PIPEPIPE
-%token MINUS
+%token <string> ARGUMENT
 %token NEWLINE
 %token <string> WORD
-
-
-%left MINUS
 
 /*** Rules section ***/
 %%
@@ -43,8 +40,9 @@ command_list:
   ;
 
 command_line:
-  pipe_command io_list background NEWLINE         { printf("command_line 1\n"); }
-  | pipe_command control_list background NEWLINE  { printf("command_line 2\n"); }
+  pipe_command io background NEWLINE          { printf("command_line 1\n"); }
+  | pipe_command control background NEWLINE   { printf("command_line 2\n"); }
+  | pipe_command background NEWLINE           { printf("command_line 3\n"); }
   | NEWLINE                                       { printf("command_line empty command\n");}
   | error NEWLINE {yyerrok;}
   ;
@@ -55,41 +53,25 @@ pipe_command:
   ;
 
 command:
-  WORD list_args    { printf("command 1 %s\n", $1); } 
+  WORD               { printf("command 1 %s\n", $1); } 
+  | WORD list_args    { printf("command 2 %s\n", $1); } 
   ;
 
 list_args:
-  list_args arg     {printf("list_args 1\n");}
-  | arg             {printf("list_args 2\n");}
-  ;
-
-arg:
-  MINUS WORD          {printf("arg 1 %s\n", $2);}
-  | MINUS MINUS WORD  {printf("arg 2 %s\n", $3);}
-  | WORD              {printf("arg 3 %s\n", $1);}
-  |                   {printf("arg nothing\n");}
-  ;
-
-io_list:
-  io_list io          {printf("io_list 1\n");}
-  |                   {printf("io_list empty\n");}
+  list_args ARGUMENT     {printf("list_args 1 args %s\n", $2);}
+  | ARGUMENT              {printf("list_args 2 args %s\n", $1);}
   ;
 
 io:
-  GREAT WORD          {printf("io great word\n");}
-  | GREATGREAT WORD   {printf("io greatgreat word\n");}
-  | LESS WORD         {printf("io less word\n");}
-  | LESSLESS WORD     {printf("io lessless word\n");}
-  ;
-
-control_list:
-  control_list control    {printf("control_list 1\n");}
-  |                       {printf("control_list empty\n");}
+  GREAT WORD          {printf("io great word %s\n", $2);}
+  | GREATGREAT WORD   {printf("io greatgreat word %s\n", $2);}
+  | LESS WORD         {printf("io less word %s\n", $2);}
+  | LESSLESS WORD     {printf("io lessless word %s\n", $2);}
   ;
 
 control:
-  AMPERSANDAMPERSAND WORD   {printf("control && word\n");}
-  | PIPEPIPE WORD           {printf("control || word\n");}
+  AMPERSANDAMPERSAND WORD   {printf("control && word %s\n", $2);}
+  | PIPEPIPE WORD           {printf("control || word %s\n", $2);}
   ;
 
 background:

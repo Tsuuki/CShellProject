@@ -19,9 +19,13 @@
 "&"       { /*printf("&\n");*/ return AMPERSAND; }
 "&&"      { /*printf("&&\n");*/ return AMPERSANDAMPERSAND; }
 "||"      { /*printf("||\n");*/ return PIPEPIPE; }
-"-"       { /*printf("-\n");*/ return MINUS; }
 "\n"      { /*printf("NEWLINE\n");*/ return NEWLINE; }
 [ \t]     { /*printf("TAB\n");*/ /* Remove space and tabs */ }
+[-][A-Za-z]*      { 
+  /*printf("-\n");*/
+  yylval.string=strdup(yytext);
+  return ARGUMENT;
+}
 [[:alnum:]]* {
   /** Words contains only alpha chars */
   yylval.string=strdup(yytext);
