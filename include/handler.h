@@ -38,16 +38,6 @@ int handlePipe(Node *node);
 void handlePipeArray(Node *nodeArray[], int inputFileDescriptor, int index);
 
 /**
- * Handle command using > >> and >
- * 
- * \param Node *node command
- * \param char *file path to create file
- * \param char *mode to open file
- * \return void
- */
-void handleRedirection(Node *node, char *file, char *mode, int descripteur);
-
-/**
  * Handle command using <<
  * 
  * \param Node *node command

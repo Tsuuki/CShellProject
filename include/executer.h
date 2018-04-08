@@ -10,6 +10,8 @@
  */
 bool execute(Node *node, bool isForked);
 
+int redirectsDescriptor(int oldFD, int newFD);
+
 /**
  * Check if there is a  build in command
  *

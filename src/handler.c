@@ -97,29 +97,6 @@ void handleProgressivReading(Node *node, char *endWord) {
   
 }
 
-void handleRedirection(Node *node, char *file, char *mode, int descripteur) {
-
-  pid_t pidNode;
-  int status = 0;
-  FILE *fp = NULL;
-
-  if(strlen(file) > 0) {
-
-    if((pidNode = fork()) == 0) {
-      CHECK((fp = fopen(file, mode)) != NULL);
-      dup2(fileno(fp), descripteur);
-      close(fileno(fp));
-      execute(node, false);
-      fclose(fp);
-    } else if(pidNode == -1) {
-      perror("Input fork failed\n");
-      exit(EXIT_FAILURE);
-    }
-
-    waitpid(pidNode, &status, 0);
-  }
-}
-
 int handlePipe(Node *node) {
   pid_t pid;
   int i;

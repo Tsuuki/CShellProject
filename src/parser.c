@@ -32,9 +32,11 @@ LinkedList *parse(char *commandParam) {
   Node *node = NULL;
 
   Redirection *input = createRedirection("<", "file");
-  Redirection *output = createRedirection(">>", "file2");
-  rootNode = createNode("|", "ls", "", NULL, NULL, NULL);
-  node = createNode("", "grep" , "o", NULL, NULL, NULL);
+  Redirection *output = createRedirection(">", "file2");
+  rootNode = createNode("|", "cat", "", input, NULL, NULL);
+  node = createNode("", "grep" , "o -i", NULL, output, NULL);
+  Node *node1 = createNode("", "grep", "h", NULL, output, NULL);
+  // node->next = node1;
   rootNode->next = node;
 
   /*strcpy(commandParamCopy, commandParam);
