@@ -98,6 +98,8 @@ void executeShell(bool verbose) {
   char *line = malloc(BUFFER_SIZE * sizeof(char));
   ForkMap **forkMapEnded = malloc(FORKMAP_SIZE * sizeof(ForkMap));
   forkMapRunning = malloc(FORKMAP_SIZE * sizeof(ForkMap));
+  initForkMap(forkMapEnded);
+  initForkMap(forkMapRunning);
   LinkedList *linkedList;
 
   printWelcome();
