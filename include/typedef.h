@@ -21,7 +21,7 @@ typedef struct Action {
  * Struct Redirection composed by operator and file
  */
 typedef struct Redirection {
-    char *operator;
+    char *type;
     char *file;
 } Redirection;
 

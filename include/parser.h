@@ -26,7 +26,9 @@ LinkedList *createLinkedList(Node *rootNode, bool isBackground);
  * \param char *arguments to add in the node
  * \return Node *newly created
  */
-Node *createNode(char *operator, char *command, char *arguments);
+Node *createNode(char *operator, char *command, char *arguments, Redirection *input, Redirection *output, Redirection *error);
+
+Redirection *createRedirection(char *type, char *file);
 
 /**
  * Add the next node to a node and return the next node

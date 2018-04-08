@@ -127,7 +127,7 @@ void executeShell(bool verbose) {
       pid = waitpid(-1, NULL, WNOHANG);
       handle(linkedList->rootNode);
     }
-    //printForkMap(forkMapEnded);
+    printForkMap(forkMapEnded);
   }
 
   freeIfNeeded(line);
