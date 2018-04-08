@@ -74,9 +74,6 @@ man:
 
 clean:	
 	rm -rf $(OBJ2)
-	rm -f $(SRC_DIR)/lex.yy.c
-	rm -f $(INC_DIR)/parser.tab.h
-	rm -f $(SRC_DIR)/parser.tab.c
 
 mrproper: clean
 	rm -rf $(BIN_DIR)/*
