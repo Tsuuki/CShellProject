@@ -109,6 +109,7 @@ void executeShell(bool verbose) {
 
     ManageForkMap(forkMapEnded, forkMapRunning);
     linkedList = parse(line);
+    printNodes(linkedList->rootNode);
     if(linkedList->isBackgrounded) {
       if((pid = fork()) == 0) {
         setpgid(0, 0);
@@ -124,7 +125,7 @@ void executeShell(bool verbose) {
       pid = waitpid(-1, NULL, WNOHANG);
       handle(linkedList->rootNode);
     }
-    printForkMap(forkMapEnded);
+    //printForkMap(forkMapEnded);
   }
 
   freeIfNeeded(line);
@@ -168,7 +169,7 @@ int main(int argc, char** argv)
   initAliases();
   retrieveCommandNumber();
 
-  yyparse();
+  //yyparse();
 
   while ((opt = getopt_long(argc, argv, binaryOptstr, binaryOpts, &optIdx)) != -1)
   {
