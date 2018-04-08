@@ -21,6 +21,16 @@
 
 extern ForkMap **forkMapRunning;
 
+void initForkMap(ForkMap **forkMap) {
+  int i;
+
+  for(i = 0; i < FORKMAP_SIZE; i++) {
+    if(forkMap[i] != NULL) {
+      forkMap[i] = NULL;
+    }
+  }
+}
+
 void FillForkMap(ForkMap **forkMap, int pid, char *value) {
   int i;
   
@@ -64,7 +74,7 @@ void printForkMap(ForkMap **forkMap) {
   int i;
   
   for(i = 0; i < FORKMAP_SIZE; i++) {
-    if(forkMap[i] != NULL && forkMap[i]->index > 0 && forkMap[i]->pid > 0) {
+    if(forkMap[i] != NULL) {
       printf("[%d]+ Done    %d : %s\n", forkMap[i]->index, forkMap[i]->pid, forkMap[i]->value);
       freeForkMap(forkMap, i);
     }

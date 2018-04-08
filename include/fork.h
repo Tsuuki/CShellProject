@@ -1,5 +1,14 @@
 #ifndef __FORK_H__
 #define __FORK_H__
+
+/**
+ * Init the forkMap in param
+ * 
+ * \param ForkMap **forkMap to init
+ * \return void
+ */
+void initForkMap(ForkMap **forkMap);
+
 /**
  * Fill the forMap in param with the pid and value
  * 
