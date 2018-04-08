@@ -35,16 +35,17 @@ extern struct AliasArray *aliases;
 bool execute(Node *node, bool isForked) {
   bool isExecuted = false;
 
-  if(node != NULL) {
-    if(!checkBuildInCommand(&node)) {
-      if(isForked) {
-        isExecuted = checkResult(node, executeCommandForked(node));
-      } else {
-        isExecuted = checkResult(node, executeCommand(node));
-      }
+  if(node == NULL)
+    return false;
+
+  if(!checkBuildInCommand(&node)) {
+    if(isForked) {
+      isExecuted = checkResult(node, executeCommandForked(node));
     } else {
-      isExecuted = true;
+      isExecuted = checkResult(node, executeCommand(node));
     }
+  } else {
+    isExecuted = true;
   }
 
   return isExecuted;

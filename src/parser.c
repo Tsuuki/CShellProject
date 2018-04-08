@@ -19,7 +19,7 @@
 
 LinkedList *parse(char *commandParam) {
   bool isBackgrounded = false;
-  bool isParsingArguments = false;
+  /*bool isParsingArguments = false;
   char commandParamCopy[BUFFER_SIZE] = "";
   char operator[BUFFER_SIZE] = "";
   char command[BUFFER_SIZE] = "";
@@ -27,11 +27,17 @@ LinkedList *parse(char *commandParam) {
   int i = 0;
   int j = 0;
   int k = 0;
-  int l = 0;
+  int l = 0;*/
   Node *rootNode = NULL;
   Node *node = NULL;
 
-  strcpy(commandParamCopy, commandParam);
+  Redirection *input = createRedirection("<", "file");
+  Redirection *output = createRedirection(">>", "file2");
+  rootNode = createNode("|", "ls", "", NULL, NULL, NULL);
+  node = createNode("", "grep" , "o", NULL, NULL, NULL);
+  rootNode->next = node;
+
+  /*strcpy(commandParamCopy, commandParam);
 
   while(isspace((unsigned char)commandParamCopy[i]))
       i++; // Trim leading whitespace
@@ -90,7 +96,7 @@ LinkedList *parse(char *commandParam) {
     } else {
       node = addNode(node, operator, command, arguments);
     }
-  }
+  }*/
 
   //printNodes(rootNode);
   return createLinkedList(rootNode, isBackgrounded);
@@ -105,16 +111,39 @@ LinkedList *createLinkedList(Node *rootNode, bool isBackgrounded) {
 return linkedList;
 }
 
-Node *createNode(char *operator, char *command, char *arguments) {
-  Node* node = malloc(sizeof(Node));
-  Action* action = malloc(sizeof(Action));
+Redirection *createRedirection(char *type, char *file) {
+  Redirection *redirection = malloc(sizeof(Redirection));
+  redirection->type = malloc(SMALL_BUFFER_SIZE * sizeof(char));
+  redirection->file = malloc(BUFFER_SIZE * sizeof(char));
+
+  strcpy(redirection->type, type);
+  strcpy(redirection->file, file);
+
+  return redirection;
+}
+
+Node *createNode(char *operator, char *command, char *arguments, Redirection *input, Redirection *output, Redirection *error) {
+  Node *node = malloc(sizeof(Node));
+  Action *action = malloc(sizeof(Action));
   node->operator = malloc(BUFFER_SIZE * sizeof(char));
   action->command = malloc(BUFFER_SIZE * sizeof(char));
   action->arguments = malloc(BUFFER_SIZE * sizeof(char));
+  node->input = NULL;
+  node->output = NULL;
+  node->error = NULL;
 
-  strcpy(node->operator, trimWhitepaces(operator));
-  strcpy(action->command, trimWhitepaces(command));
-  strcpy(action->arguments, trimWhitepaces(arguments));
+  if(input != NULL)
+    node->input = input;
+
+  if(output != NULL) 
+    node->output = output;
+
+  if(error != NULL) 
+    node->error = error;
+
+  strcpy(node->operator, operator);
+  strcpy(action->command, command);
+  strcpy(action->arguments, arguments);
 
   node->action = action;
   node->next = NULL;
@@ -126,7 +155,7 @@ Node *addNode(Node *node, char *operator, char *command, char *arguments) {
   Node* next;
   
   if(node != NULL) {
-    next = createNode(operator, command, arguments);
+    next = createNode(operator, command, arguments, NULL, NULL, NULL);
     node->next = next;
     node = next;
   }
@@ -138,13 +167,21 @@ void printNodes(Node *node) {
   printf("Nodes :\n");
   while(node != NULL) {
     printf("  operator : %s, command : %s, arguments : %s\n", node->operator, node->action->command, node->action->arguments);
+    if(node->input != NULL)
+      printf("%8s %s %8s %s\n","input", node->input->type, "file", node->input->file);
+
+    if(node->output != NULL)
+      printf("%8s %s %8s %s\n","output", node->output->type, "file", node->output->file);
+
+    if(node->error != NULL)
+      printf("%8s %s %8s %s\n","error", node->error->type, "file", node->error->file);
+
     node = node->next;
   }
 }
 
 char *trimWhitepaces(char *str) {
   char *end;
-
   // Trim leading space
   while(isspace((unsigned char)*str)) str++;
   if(*str == 0)
@@ -157,6 +194,5 @@ char *trimWhitepaces(char *str) {
 
   // Write new null terminator
   *(end+1) = 0;
-
   return str;
 }
