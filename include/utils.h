@@ -72,4 +72,16 @@ void clearStr(char* str, int size);
  */ 
 void removeCharString(int position, char **str);
 
+/**
+ * Procedure that add a char in string at specific position
+ * and move other char
+ * 
+ * \param int kb_char specific char
+ * \param int cursor_position the position
+ * \param char **str the address of string
+ * 
+ * \return void
+ * 
+ */
+void writeToString(int kb_char, int cursor_position, char **str); 
 #endif /** __UTILS_H__ **/
