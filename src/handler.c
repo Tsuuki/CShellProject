@@ -59,44 +59,6 @@ void handle(Node *rootNode) {
   freeIfNeeded(rootNode);
 }
 
-void handleProgressivReading(Node *node, char *endWord) {
-  if(strlen(endWord) > 0) {
-
-    pid_t pidNode;
-    int status = 0;
-    FILE *fp;
-    char *str = malloc(sizeof(char) * 4096);
-
-    if((pidNode = fork()) == 0) {
-
-      CHECK((fp = tmpfile()) != NULL);
-
-      while(strcmp(str,endWord) != 0) {
-        printf("> ");
-        fgets(str, 4096 * sizeof(char), stdin);
-        str[strlen(str)-1] = '\0';
-        
-        if(strcmp(str,endWord) != 0) {
-          fprintf(fp, "%s\n", str);
-        }
-      }
-
-      fseek(fp, 0, SEEK_SET);
-      dup2(fileno(fp), 0);
-      close(fileno(fp));
-      execute(node, false);
-      fclose(fp);
-    } else if(pidNode == -1) {
-      perror("Input fork failed\n");
-      exit(EXIT_FAILURE);
-    }
-
-    waitpid(pidNode, &status, 0);
-  }
-
-  
-}
-
 int handlePipe(Node *node) {
   pid_t pid;
   int i;

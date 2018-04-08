@@ -37,15 +37,6 @@ int handlePipe(Node *node);
  */
 void handlePipeArray(Node *nodeArray[], int inputFileDescriptor, int index);
 
-/**
- * Handle command using <<
- * 
- * \param Node *node command
- * \param char *endWord get text untils end word is type
- * \return void
- */
-void handleProgressivReading(Node *node, char *endWord);
-
 /*
  * Calculate the number of pipe to handle
  * 

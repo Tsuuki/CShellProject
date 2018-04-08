@@ -61,8 +61,9 @@ bool execute(Node *node, bool isForked) {
         saveInputFD = dup(0);
         dup2(fileno(fpInput), 0);
       } else if(strcmp("<<", node->input->type) == 0) {
-        printf("Redirection entrée <<\n");
-        // handleProgressivReading(node, node->next->action->command);
+        fpInput = handleProgressivReading(node->input->file);
+        saveInputFD = dup(0);
+        dup2(fileno(fpInput), 0);
       }
     }
 
@@ -91,8 +92,27 @@ bool execute(Node *node, bool isForked) {
   return isExecuted;
 }
 
-int redirectsDescriptor(int oldFD, int newFD) {
-  return 1;
+FILE *handleProgressivReading(char *endWord) {
+  if(strlen(endWord) > 0) {
+
+    FILE *fp;
+    char *str = malloc(sizeof(char) * BUFFER_SIZE);
+
+    CHECK((fp = tmpfile()) != NULL);
+
+    while(strcmp(str,endWord) != 0) {
+      fgets(str, BUFFER_SIZE * sizeof(char), stdin);
+      str[strlen(str)-1] = '\0';
+      
+      if(strcmp(str,endWord) != 0) {
+        fprintf(fp, "%s\n", str);
+      }
+    }
+
+    fseek(fp, 0, SEEK_SET);
+    return fp;
+  }
+  return NULL;
 }
 
 bool checkBuildInCommand(Node **node) {

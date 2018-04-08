@@ -13,6 +13,14 @@ bool execute(Node *node, bool isForked);
 int redirectsDescriptor(int oldFD, int newFD);
 
 /**
+ * Handle command using <<
+ * 
+ * \param char *endWord get text untils end word is type
+ * \return void
+ */
+FILE *handleProgressivReading(char *endWord);
+
+/**
  * Check if there is a  build in command
  *
  * \param Node *node of the tree to check
