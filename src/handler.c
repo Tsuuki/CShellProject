@@ -23,8 +23,6 @@
 #include "../include/executer.h"
 #include "../include/handler.h"
 
-#define BUFFERSIZE 4096 //TODO A FACTO
-
 void handle(Node *rootNode) {
   bool run = true;
   int number;
