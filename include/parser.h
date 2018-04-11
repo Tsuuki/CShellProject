@@ -24,10 +24,20 @@ LinkedList *createLinkedList(Node *rootNode, bool isBackground);
  * \param char *operator to add in the node
  * \param char *command to add in the node
  * \param char *arguments to add in the node
+ * \param Redirection *input to add in the node
+ * \param Redirection *output to add in the node
+ * \param Redirection *error to add in the node
  * \return Node *newly created
  */
 Node *createNode(char *operator, char *command, char *arguments, Redirection *input, Redirection *output, Redirection *error);
 
+/**
+ * Create and return a new Redirection from type and file in parameters 
+ * 
+ * \param char *type to add in the Redirection
+ * \param char *file to add in the Redirection
+ * \return Redirection *newly created
+ */
 Redirection *createRedirection(char *type, char *file);
 
 /**
@@ -37,9 +47,12 @@ Redirection *createRedirection(char *type, char *file);
  * \param char *operator to add in the next node
  * \param char *command to add in the node
  * \param char *arguments to add in the node
+ * \param Redirection *input to add in the node
+ * \param Redirection *output to add in the node
+ * \param Redirection *error to add in the node
  * \return Node *node created
  */
-Node *addNode(Node *node, char *operator, char *command, char *arguments);
+Node *addNode(Node *node, char *operator, char *command, char *arguments, Redirection *input, Redirection *output, Redirection *error);
 
 /**
  * Print all the node tree

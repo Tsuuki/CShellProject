@@ -22,18 +22,22 @@ LinkedList *parse(char *commandParam) {
   bool isParsingArguments = false;
   char commandParamCopy[BUFFER_SIZE] = "";
   char operator[BUFFER_SIZE] = "";
+  char redirection[BUFFER_SIZE] = "";
+  char redirectionFile[BUFFER_SIZE] = "";
   char command[BUFFER_SIZE] = "";
   char arguments[BUFFER_SIZE] = "";
   int i = 0;
   int j = 0;
   int k = 0;
   int l = 0;
+  int m = 0;
   Node *rootNode = NULL;
   Node *node = NULL;
 
-  /*Redirection *input = createRedirection("<<", "END");
-  Redirection *output = createRedirection(">", "file2");
-  rootNode = createNode("|", "sort", "-n", input, NULL, NULL);
+  Redirection *input = NULL;
+  Redirection *output = NULL;
+
+  /*rootNode = createNode("|", "sort", "-n", input, NULL, NULL);
   node = createNode("", "head" , "-3", NULL, output, NULL);
   rootNode->next = node;*/
 
@@ -44,11 +48,11 @@ LinkedList *parse(char *commandParam) {
   
   while(commandParamCopy[i] != '\0') {
     // Search for operators
-    if(strchr("|",commandParamCopy[i]) != NULL || strchr("&",commandParamCopy[i]) != NULL || strchr(">",commandParamCopy[i]) != NULL || strchr("<",commandParamCopy[i]) != NULL) {
+    if(strchr("|",commandParamCopy[i]) != NULL || strchr("&",commandParamCopy[i]) != NULL) {
       if(strlen(commandParamCopy) > i && commandParamCopy[i+1] == '\0') {
         isBackgrounded = true;
       } else {
-        while (strchr("|",commandParamCopy[i]) != NULL || strchr("&",commandParamCopy[i])!= NULL || strchr(">",commandParamCopy[i]) != NULL || strchr("<",commandParamCopy[i]) != NULL) {
+        while (strchr("|",commandParamCopy[i]) != NULL || strchr("&",commandParamCopy[i])!= NULL) {
           operator[j] = commandParamCopy[i];
           i++;
           j++;
@@ -57,16 +61,22 @@ LinkedList *parse(char *commandParam) {
         while(isspace((unsigned char)commandParamCopy[i]))
           i++;
         
+
         if(rootNode == NULL) {
-          rootNode = createNode(operator, command, arguments, NULL, NULL, NULL);
+          rootNode = createNode(operator, command, arguments, input, output, NULL);
           node = rootNode;
         } else {
-          node = addNode(node, operator, command, arguments);
+          node = addNode(node, operator, command, arguments, input, output, NULL);
         }
+
+        input = NULL;
+        output = NULL;
 
         memset(operator, 0, sizeof(operator));
         memset(command, 0, sizeof(command));
         memset(arguments, 0, sizeof(arguments));
+        memset(redirection, 0, sizeof(redirection));
+        memset(redirectionFile, 0, sizeof(redirectionFile));
         
         j = 0;
         k = 0;
@@ -74,6 +84,32 @@ LinkedList *parse(char *commandParam) {
 
         isParsingArguments = false;
       }
+    } // Search for redirection
+    if(strchr(">",commandParamCopy[i]) != NULL || strchr("<",commandParamCopy[i]) != NULL) {
+      while (strchr(">",commandParamCopy[i]) != NULL || strchr("<",commandParamCopy[i]) != NULL) {
+        redirection[j] = commandParamCopy[i];
+        i++;
+        j++;
+      }
+
+     while(isspace((unsigned char)commandParamCopy[i]))
+        i++; // Trim space between redirection and file
+
+      while(commandParamCopy[i] != '\0' && commandParamCopy[i] != ' ') {
+        redirectionFile[m] = commandParamCopy[i];
+        i++;
+        m++;
+      }
+
+      if(strcmp("<", redirection) == 0 || strcmp("<<", redirection) == 0) {
+        input = createRedirection(redirection, redirectionFile);
+      }
+
+      if(strcmp(">", redirection) == 0 || strcmp(">>", redirection) == 0) {
+        output = createRedirection(redirection, redirectionFile);
+      }
+
+      j = m = 0;
     }
     if(isspace((unsigned char)commandParamCopy[i]) && !isParsingArguments ) {
       isParsingArguments = true;
@@ -92,10 +128,12 @@ LinkedList *parse(char *commandParam) {
   // When the while is over, we add the last command
   if(command != NULL){
     if(rootNode == NULL) {
-      rootNode = createNode(operator, command, arguments, NULL, NULL, NULL);
+      rootNode = createNode(operator, command, arguments, input, output, NULL);
     } else {
-      node = addNode(node, operator, command, arguments);
+      node = addNode(node, operator, command, arguments, input, output, NULL);
     }
+    input = NULL;
+    output = NULL;
   }
 
   //printNodes(rootNode);
@@ -151,11 +189,11 @@ Node *createNode(char *operator, char *command, char *arguments, Redirection *in
   return node;
 }
 
-Node *addNode(Node *node, char *operator, char *command, char *arguments) {
+Node *addNode(Node *node, char *operator, char *command, char *arguments, Redirection *input, Redirection *output, Redirection *error) {
   Node* next;
   
   if(node != NULL) {
-    next = createNode(operator, command, arguments, NULL, NULL, NULL);
+    next = createNode(operator, command, arguments, input, output, error);
     node->next = next;
     node = next;
   }
