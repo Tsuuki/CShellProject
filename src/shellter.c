@@ -25,7 +25,6 @@
 #include "../include/prompt.h"
 #include "../include/fork.h"
 #include "../include/shellter.h"
-#include "../include/parser.tab.h"
 
 #define USAGE_SYNTAX "[options] [command_string | file]"
 #define USAGE_PARAMS "OPTIONS:\n\
@@ -34,9 +33,6 @@
   -v, --verbose : enable *verbose* mode\n\
   -h, --help    : display this help\n\
 "
-extern FILE *yyin; 
-extern FILE *yyout; 
-extern int yyparse(void);
 
 /**
  * Binary options declaration
@@ -111,7 +107,7 @@ void executeShell(bool verbose) {
 
     ManageForkMap(forkMapEnded, forkMapRunning);
     linkedList = parse(line);
-    printNodes(linkedList->rootNode);
+
     if(linkedList->isBackgrounded) {
       if((pid = fork()) == 0) {
         setpgid(0, 0);

@@ -19,7 +19,7 @@
 
 LinkedList *parse(char *commandParam) {
   bool isBackgrounded = false;
-  /*bool isParsingArguments = false;
+  bool isParsingArguments = false;
   char commandParamCopy[BUFFER_SIZE] = "";
   char operator[BUFFER_SIZE] = "";
   char command[BUFFER_SIZE] = "";
@@ -27,17 +27,17 @@ LinkedList *parse(char *commandParam) {
   int i = 0;
   int j = 0;
   int k = 0;
-  int l = 0;*/
+  int l = 0;
   Node *rootNode = NULL;
   Node *node = NULL;
 
-  Redirection *input = createRedirection("<<", "END");
+  /*Redirection *input = createRedirection("<<", "END");
   Redirection *output = createRedirection(">", "file2");
   rootNode = createNode("|", "sort", "-n", input, NULL, NULL);
   node = createNode("", "head" , "-3", NULL, output, NULL);
-  rootNode->next = node;
+  rootNode->next = node;*/
 
-  /*strcpy(commandParamCopy, commandParam);
+  strcpy(commandParamCopy, commandParam);
 
   while(isspace((unsigned char)commandParamCopy[i]))
       i++; // Trim leading whitespace
@@ -58,7 +58,7 @@ LinkedList *parse(char *commandParam) {
           i++;
         
         if(rootNode == NULL) {
-          rootNode = createNode(operator, command, arguments);
+          rootNode = createNode(operator, command, arguments, NULL, NULL, NULL);
           node = rootNode;
         } else {
           node = addNode(node, operator, command, arguments);
@@ -92,11 +92,11 @@ LinkedList *parse(char *commandParam) {
   // When the while is over, we add the last command
   if(command != NULL){
     if(rootNode == NULL) {
-      rootNode = createNode(operator, command, arguments);
+      rootNode = createNode(operator, command, arguments, NULL, NULL, NULL);
     } else {
       node = addNode(node, operator, command, arguments);
     }
-  }*/
+  }
 
   //printNodes(rootNode);
   return createLinkedList(rootNode, isBackgrounded);
