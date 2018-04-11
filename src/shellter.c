@@ -99,7 +99,6 @@ void executeShell(bool verbose) {
   LinkedList *linkedList;
 
   printWelcome();
-
   while(run) {
     prompt(line);
     if(verbose)
@@ -107,7 +106,7 @@ void executeShell(bool verbose) {
 
     ManageForkMap(forkMapEnded, forkMapRunning);
     linkedList = parse(line);
-
+    printNodes(linkedList->rootNode);
     if(linkedList->isBackgrounded) {
       if((pid = fork()) == 0) {
         setpgid(0, 0);

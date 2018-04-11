@@ -111,11 +111,13 @@ LinkedList *parse(char *commandParam) {
 
       j = m = 0;
     }
-    if(isspace((unsigned char)commandParamCopy[i]) && !isParsingArguments ) {
+    if(isspace((unsigned char)commandParamCopy[i]) && !isParsingArguments && strlen(command) > 0) {
       isParsingArguments = true;
     } 
     if(!isBackgrounded) {
       if(!isParsingArguments){
+        while(isspace((unsigned char)commandParamCopy[i]))
+          i++;
         command[k] = commandParamCopy[i];
         k++;
       } else {
