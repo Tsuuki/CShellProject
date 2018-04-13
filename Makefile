@@ -17,6 +17,7 @@ SRC=$(wildcard $(SRC_DIR)/*.c)
 OBJ=$(SRC:.c=.o)
 OBJ2= $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(SRC)))
 EXEC=shellter
+RM=rm
 
 GEXEC=$(EXEC).cov
 
@@ -44,32 +45,34 @@ gcov: $(GEXEC)
 	$(GCOV_DIR)/$(GEXEC) -h
 	$(GCOV_DIR)/$(GEXEC) -i input -o output -v
 
-	find ./ -maxdepth 1 -name *.gcno -exec mv {} $(GCOV_DIR) \;
-	find ./ -maxdepth 1 -name *.gcda -exec mv {} $(GCOV_DIR) \;
+	find ./ -maxdepth 1 -name '*.gcno' -exec mv {} $(GCOV_DIR) \;
+	find ./ -maxdepth 1 -name '*.gcda' -exec mv {} $(GCOV_DIR) \;
 
 	gcov -o $(GCOV_DIR) $(GEXEC)
 	lcov -o $(GCOV_DIR)/$(LCOV_REPORT) -c -f -d $(GCOV_DIR)
 	genhtml -o $(GCOV_DIR)/report $(GCOV_DIR)/$(LCOV_REPORT)
 
-package: gcov doc all
-	rm -rf $(AR_NAME)
+package: all gcov doc 
+	$(RM) -rf $(AR_NAME)
 	tar cvfz $(AR_NAME) ./*
 
 man:
-	apt-get update
-	apt-get install groff
 	sudo mkdir -p /usr/local/man/man1
 	sudo cp ./ShellterMan /usr/local/man/man1/shellter.1
 	sudo gzip /usr/local/man/man1/shellter.1
 	@echo "You can now use 'man shellter'"
 
+install: 
+	apt-get update
+	apt-get install lcov doxygen groff
+
 clean:	
-	rm -rf $(OBJ2)
+	$(RM) -rf $(OBJ2)
 
 mrproper: clean
-	rm -rf $(BIN_DIR)/*
-	rm -rf $(DOC_DIR)/latex/
-	rm -rf $(DOC_DIR)/html/
-	rm -rf $(GCOV_DIR)/*
+	$(RM) -rf $(BIN_DIR)/*
+	$(RM) -rf $(DOC_DIR)/latex/
+	$(RM) -rf $(DOC_DIR)/html/
+	$(RM) -rf $(GCOV_DIR)/*
 
 .PHONY: doc
