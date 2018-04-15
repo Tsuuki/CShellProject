@@ -106,5 +106,5 @@ No license for now
 ## Acknowledgments
 
 * This is a school project
-* Learn a lot of new things
+* We learnt a lot of new things
 * We tried our best to make the better project !
