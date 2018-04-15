@@ -31,6 +31,7 @@ You will need
 ```
 Git - pull the project
 Linux environment - launch the project
+```
 
 And all the following package (you can use the make install when you pulled the project)
 
