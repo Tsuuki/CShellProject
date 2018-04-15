@@ -63,8 +63,8 @@ man:
 	@echo "You can now use 'man shellter'"
 
 install: 
-	apt-get update
-	apt-get install lcov doxygen groff
+	sudo apt-get update
+	sudo apt-get install lcov doxygen graphviz groff
 
 clean:	
 	$(RM) -rf $(OBJ2)
