@@ -41,52 +41,51 @@ bool execute(Node *node, bool isForked) {
   if(node == NULL)
     return false;
 
-  if(!checkBuildInCommand(&node)) {
+  if(node->output != NULL) {
+    if(strcmp(">", node->output->type) == 0) {
+      CHECK((fpOutput = fopen(node->output->file, "w")) != NULL);
+      saveOutputFD = dup(1);
+      dup2(fileno(fpOutput), 1);
+    } else if(strcmp(">>", node->output->type) == 0) {
+      CHECK((fpOutput = fopen(node->output->file, "a+")) != NULL);
+      saveOutputFD = dup(1);
+      dup2(fileno(fpOutput), 1);
+    }
+  }
+  
+  if(node->input != NULL) {
+    if(strcmp("<", node->input->type) == 0) {
+      CHECK((fpInput = fopen(node->input->file, "r")) != NULL);
+      saveInputFD = dup(0);
+      dup2(fileno(fpInput), 0);
+    } else if(strcmp("<<", node->input->type) == 0) {
+      fpInput = handleProgressivReading(node->input->file);
+      saveInputFD = dup(0);
+      dup2(fileno(fpInput), 0);
+    }
+  }
 
-    if(node->output != NULL) {
-      if(strcmp(">", node->output->type) == 0) {
-        CHECK((fpOutput = fopen(node->output->file, "w")) != NULL);
-        saveOutputFD = dup(1);
-        dup2(fileno(fpOutput), 1);
-      } else if(strcmp(">>", node->output->type) == 0) {
-        CHECK((fpOutput = fopen(node->output->file, "a+")) != NULL);
-        saveOutputFD = dup(1);
-        dup2(fileno(fpOutput), 1);
-      }
-    }
-    
-    if(node->input != NULL) {
-      if(strcmp("<", node->input->type) == 0) {
-        CHECK((fpInput = fopen(node->input->file, "r")) != NULL);
-        saveInputFD = dup(0);
-        dup2(fileno(fpInput), 0);
-      } else if(strcmp("<<", node->input->type) == 0) {
-        fpInput = handleProgressivReading(node->input->file);
-        saveInputFD = dup(0);
-        dup2(fileno(fpInput), 0);
-      }
-    }
+  if(!checkBuildInCommand(&node)) {
 
     if(isForked) {
       isExecuted = checkResult(node, executeCommandForked(node));
     } else {
       isExecuted = checkResult(node, executeCommand(node));
     }
-
-    if(fpOutput != NULL) {
-      dup2(saveOutputFD, 1);
-      close(saveOutputFD);
-      fclose(fpOutput);
-    }
-
-    if(fpInput != NULL) {
-      dup2(saveInputFD, 0);
-      close(saveInputFD);
-      fclose(fpInput);
-    }
-
   } else {
     isExecuted = true;
+  }
+
+  if(fpOutput != NULL) {
+    dup2(saveOutputFD, 1);
+    close(saveOutputFD);
+    fclose(fpOutput);
+  }
+
+  if(fpInput != NULL) {
+    dup2(saveInputFD, 0);
+    close(saveInputFD);
+    fclose(fpInput);
   }
 
   return isExecuted;

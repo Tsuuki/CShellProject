@@ -48,11 +48,11 @@ LinkedList *parse(char *commandParam) {
   
   while(commandParamCopy[i] != '\0') {
     // Search for operators
-    if(strchr("|",commandParamCopy[i]) != NULL || strchr("&",commandParamCopy[i]) != NULL) {
+    if(strchr("|",commandParamCopy[i]) != NULL || strchr("&",commandParamCopy[i]) != NULL || strchr(";",commandParamCopy[i]) != NULL) {
       if(strlen(commandParamCopy) > i && commandParamCopy[i+1] == '\0') {
         isBackgrounded = true;
       } else {
-        while (strchr("|",commandParamCopy[i]) != NULL || strchr("&",commandParamCopy[i])!= NULL) {
+        while (strchr("|",commandParamCopy[i]) != NULL || strchr("&",commandParamCopy[i])!= NULL || strchr(";",commandParamCopy[i])!= NULL) {
           operator[j] = commandParamCopy[i];
           i++;
           j++;

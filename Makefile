@@ -41,6 +41,7 @@ doc:
 	doxygen $(DOC_DIR)/doxygen.conf
 
 gcov: $(GEXEC)
+	@mkdir -p $(GCOV_DIR)
 	# generate some data for gcov by calling the generated binary with various options
 	$(GCOV_DIR)/$(GEXEC) -h
 	$(GCOV_DIR)/$(GEXEC) -i input -o output -v
@@ -52,7 +53,7 @@ gcov: $(GEXEC)
 	lcov -o $(GCOV_DIR)/$(LCOV_REPORT) -c -f -d $(GCOV_DIR)
 	genhtml -o $(GCOV_DIR)/report $(GCOV_DIR)/$(LCOV_REPORT)
 
-package: all gcov doc 
+package: all gcov doc
 	$(RM) -rf $(AR_NAME)
 	tar cvfz $(AR_NAME) ./*
 
