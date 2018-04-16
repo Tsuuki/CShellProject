@@ -162,10 +162,6 @@ bool checkResult(Node *node, int code) {
       isExecuted = false;
       printf("%s : unknow command\n", node->action->command);
       break;
-    case 3 :
-      isExecuted = false;
-      printf("wrong command\n");
-      break;
   }
 
   return isExecuted;
@@ -173,9 +169,6 @@ bool checkResult(Node *node, int code) {
 
 int executeCommand(Node *node) {
   char **action  = NULL;
-
-  if(node->action == NULL) 
-    return 3;
 
   fillActionArray(&action, node->action->command, node->action->arguments);
   execvp(action[0], action);
@@ -187,9 +180,6 @@ int executeCommandForked(Node *node) {
   int code = true;
   int status = 0;
   char **action  = NULL;
-
-  if(node->action == NULL) 
-    return 3;
 
   pid = fork();
   CHECK(pid != -1);

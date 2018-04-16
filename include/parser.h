@@ -62,12 +62,4 @@ Node *addNode(Node *node, char *operator, char *command, char *arguments, Redire
  */
 void printNodes(Node *node);
 
-/**
- * Trim leading and trailing whitespaces of the char*
- * 
- * \param char *str that need whitespaces to be removed
- * \return char *str without leading and trailing whitespaces
- */
-char *trimWhitepaces(char *str);
-
 #endif /** __PARSER_H__ **/

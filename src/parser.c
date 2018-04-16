@@ -57,6 +57,8 @@ LinkedList *parse(char *commandParam) {
         while(isspace((unsigned char)commandParamCopy[i]))
           i++;
         
+        if(strchr(" ", arguments[0]) != NULL)
+          memmove(arguments, arguments+1, strlen(arguments));
 
         if(rootNode == NULL) {
           rootNode = createNode(operator, command, arguments, input, output, NULL);
@@ -125,6 +127,9 @@ LinkedList *parse(char *commandParam) {
   }
   // When the while is over, we add the last command
   if(command != NULL){
+    if(strchr(" ", arguments[0]) != NULL)
+      memmove(arguments, arguments+1, strlen(arguments));
+    
     if(rootNode == NULL) {
       rootNode = createNode(operator, command, arguments, input, output, NULL);
     } else {
@@ -199,36 +204,23 @@ Node *addNode(Node *node, char *operator, char *command, char *arguments, Redire
   return node;
 }
 
-void printNodes(Node *node) {
-  printf("Nodes :\n");
-  while(node != NULL) {
-    printf("  operator : %s, command : %s, arguments : %s\n", node->operator, node->action->command, node->action->arguments);
-    if(node->input != NULL)
-      printf("%8s %s %8s %s\n","input", node->input->type, "file", node->input->file);
+/**
+ * For debugging purpose
+ * 
+ */
+// void printNodes(Node *node) {
+//   printf("Nodes :\n");
+//   while(node != NULL) {
+//     printf("  operator : %s, command : %s, arguments : %s\n", node->operator, node->action->command, node->action->arguments);
+//     if(node->input != NULL)
+//       printf("%8s %s %8s %s\n","input", node->input->type, "file", node->input->file);
 
-    if(node->output != NULL)
-      printf("%8s %s %8s %s\n","output", node->output->type, "file", node->output->file);
+//     if(node->output != NULL)
+//       printf("%8s %s %8s %s\n","output", node->output->type, "file", node->output->file);
 
-    if(node->error != NULL)
-      printf("%8s %s %8s %s\n","error", node->error->type, "file", node->error->file);
+//     if(node->error != NULL)
+//       printf("%8s %s %8s %s\n","error", node->error->type, "file", node->error->file);
 
-    node = node->next;
-  }
-}
-
-char *trimWhitepaces(char *str) {
-  char *end;
-  // Trim leading space
-  while(isspace((unsigned char)*str)) str++;
-  if(*str == 0)
-    return str;
-
-  // Trim trailing space
-  end = str + strlen(str) - 1;
-  while(end > str && isspace((unsigned char)*end)) 
-    end--;
-
-  // Write new null terminator
-  *(end+1) = 0;
-  return str;
-}
+//     node = node->next;
+//   }
+// }

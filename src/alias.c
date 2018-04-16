@@ -35,9 +35,6 @@ void initAliases() {
 
 void manageAlias(Node *node) {
 
-  if(isspace((unsigned char)node->action->arguments[0]))
-    node->action->arguments++;
-
   if(strcmp(node->action->arguments, "") == 0)
     printAlias();
   else {
