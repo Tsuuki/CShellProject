@@ -12,6 +12,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #include "../include/typedef.h"
 #include "../include/alias.h"
@@ -33,6 +34,10 @@ void initAliases() {
 }
 
 void manageAlias(Node *node) {
+
+  if(isspace((unsigned char)node->action->arguments[0]))
+    node->action->arguments++;
+
   if(strcmp(node->action->arguments, "") == 0)
     printAlias();
   else {

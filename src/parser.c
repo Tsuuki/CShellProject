@@ -37,10 +37,6 @@ LinkedList *parse(char *commandParam) {
   Redirection *input = NULL;
   Redirection *output = NULL;
 
-  /*rootNode = createNode("|", "sort", "-n", input, NULL, NULL);
-  node = createNode("", "head" , "-3", NULL, output, NULL);
-  rootNode->next = node;*/
-
   strcpy(commandParamCopy, commandParam);
 
   while(isspace((unsigned char)commandParamCopy[i]))
