@@ -20,7 +20,18 @@ This shell have the following command implemented :
     * You can use arrow key to navigate in command history
  * `pwd` : Print the working directory
 
-All other commands aren't build-in commands.
+All other commands aren't build-in commands such as 
+
+```
+ls
+cat
+grep
+etc...
+```
+
+With the following operators and redirections : `&& & || | > >> < << ;`
+
+
 
 ## Getting Started
 

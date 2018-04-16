@@ -36,7 +36,13 @@ This shell have the following command implemented :
         - You can use arrow key to navigate in command history
     - pwd : Print the working directory
 .TP
-All other commands aren't build-in commands.
+All other commands aren't build-in commands such as 
+    - ls
+    - cat
+    - grep
+    - etc...
+.TP  
+With the following operators and redirections : `&& & || | > >> < << ;`
 .SH COPYRIGHT
 Shellter is Copyright (C) 2018 under MIT License
 .SH SEE ALSO
