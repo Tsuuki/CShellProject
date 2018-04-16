@@ -5,18 +5,20 @@ This is the shellter project : a bash made for beginners !
 ## Features
 
 This shell have the following command implemented : 
- * auhors : Display a picture of the authors
- * alias :
- * cd : Change directory
- * echo : Echo the text in parameter
- * exit : Exit shell
+ * `auhors` : Display a picture of the authors
+ * `alias` : manage shell-internal aliases
+    * See `alias -h` or `alias --help` for more information
+ * `cd` : Change directory
+ * `echo` : Echo the text in parameter
+ * `exit` : Exit shell
  * environment varibles : manage environment variables
-     * addenv: Add the environment variable. Use : TEST=TEST
-     * printenv : Print all the environment variables
-     * delenv : Delete the environment variable in parameter
- * fg : Make the number of the sleeped process in foreground
- * history : Print the history of all commands
- * pwd : Print the working directory
+     * `addenv`: Add the environment variable. Use : TEST=TEST
+     * `printenv` : Print all the environment variables
+     * `delenv` : Delete the environment variable in parameter
+ * `fg` : Make the number of the sleeped process in foreground
+ * `history` : Print the history of all commands
+    * You can use arrow key to navigate in command history
+ * `pwd` : Print the working directory
 
 All other commands aren't build-in commands.
 
@@ -91,8 +93,7 @@ make package
 
 ## Built With
 
-* Flex
-* Bison
+* [C](http://devdocs.io/c/) - Language
 
 ## Authors
 
@@ -101,10 +102,22 @@ make package
 
 ## License
 
-No license for now
+Shellter is Copyright (C) 2018 under MIT License
 
 ## Acknowledgments
 
 * This is a school project
 * We learnt a lot of new things
 * We tried our best to make the better project !
+
+## Getting lost ?
+
+Run the following command
+
+```
+make man
+```
+
+```
+man shellter
+```
