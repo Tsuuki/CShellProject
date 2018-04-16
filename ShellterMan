@@ -22,7 +22,8 @@ Display readline variable names and values in such a way that they can be re-rea
 .SH INFO
 This shell have the following command implemented : 
     - auhors : Display a picture of the authors
-    - alias :
+    - alias : manage shell-internal aliases
+        -  See alias -h or --help for more information
     - cd : Change directory
     - echo : Echo the text in parameter
     - exit : Exit shell
@@ -32,6 +33,7 @@ This shell have the following command implemented :
         - delenv : Delete the environment variable in parameter
     - fg : Make the number of the sleeped process in foreground
     - history : Print the history of all commands
+        - You can use arrow key to navigate in command history
     - pwd : Print the working directory
 .TP
 All other commands aren't build-in commands.
@@ -40,6 +42,6 @@ Shellter is Copyright (C) 2018 under MIT License
 .SH SEE ALSO
 bash(1)
 .SH BUGS
-No known bugs.
+Graphical issue when using navigation with arrow key through command history
 .SH AUTHOR
 Quentin Dell & Jordan Hiertz
