@@ -42,9 +42,15 @@ doc:
 
 gcov: $(GEXEC)
 	@mkdir -p $(GCOV_DIR)
-	# generate some data for gcov by calling the generated binary with various options
+	
+	#Shellter help
 	$(GCOV_DIR)/$(GEXEC) -h
-	$(GCOV_DIR)/$(GEXEC) -i input -o output -v
+
+	#Shellter batch mode
+	$(GCOV_DIR)/$(GEXEC) -c "ls -al | grep bin" 
+	
+	#Shellter shell mode
+	$(GCOV_DIR)/$(GEXEC)
 
 	find ./ -maxdepth 1 -name '*.gcno' -exec mv {} $(GCOV_DIR) \;
 	find ./ -maxdepth 1 -name '*.gcda' -exec mv {} $(GCOV_DIR) \;
