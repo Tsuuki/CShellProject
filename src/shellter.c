@@ -161,28 +161,16 @@ int main(int argc, char** argv)
   int opt = -1;
   int optIdx = -1;
 
-  bool shellterMode = true;
-
   initAliases();
   retrieveCommandNumber();
 
-  //yyparse();
-
-  while ((opt = getopt_long(argc, argv, binaryOptstr, binaryOpts, &optIdx)) != -1)
-  {
-    switch (opt)
-    {
+  while ((opt = getopt_long(argc, argv, binaryOptstr, binaryOpts, &optIdx)) != -1) {
+    switch (opt) {
       case 'c':
-        //command param
-        if (optarg)
-        {
-          shellterMode = false; 
-          parameters.command = dupOptargStr();      
-          executeBatch(parameters.command);   
-        } else {
-          freeIfNeeded(parameters.command);
-          exit(EXIT_FAILURE);
-        }
+        parameters.command = dupOptargStr();      
+        executeBatch(parameters.command); 
+        freeIfNeeded(parameters.command);
+        exit(EXIT_SUCCESS);  
         break;
       case 'v':
         //verbose mode
@@ -197,9 +185,7 @@ int main(int argc, char** argv)
     }
   } 
 
-  if(shellterMode) {
-    executeShell(parameters.verbose);
-  }
+  executeShell(parameters.verbose);
 
   return EXIT_SUCCESS;
 }
