@@ -39,8 +39,20 @@ void handle(Node *rootNode) {
     while(node != NULL && run) {
       if(strcmp("&&", node->operator) == 0) {
         run = execute(node, true);
+        if(!run) {
+          if(node->next != NULL) {
+            node = node->next;
+            run = true;
+          }
+        }
       } else if (strcmp("||", node->operator) == 0) {
         run = !execute(node, true);
+        if(!run) {
+          if(node->next != NULL) {
+            node = node->next;
+            run = true;
+          }
+        }
       } else if (strcmp("|", node->operator) == 0) {
         number = handlePipe(node);
         while(number > 1) {
