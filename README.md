@@ -109,7 +109,7 @@ make package
 ## Authors
 
 * **Quentin Dell** - *Developer* - [Arcahyxe](https://github.com/Arcahyxe)
-* **Jordan Hiertz** - *Developer* - [Tsuuki](https://github.com/Tsuuki)
+* **Jordan Hiertz** - *Developer* - [j-hiertz](https://github.com/j-hiertz)
 
 ## License
 
